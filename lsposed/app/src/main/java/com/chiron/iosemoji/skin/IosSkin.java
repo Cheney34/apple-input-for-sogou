@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Shader;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -155,14 +157,17 @@ public final class IosSkin {
         changed |= putColor(sections, "COMMON_TEXT_POPUP_COLORS", "TEXT_COLOR", popupText);
         changed |= putColor(sections, "COMMON_TEXT_POPUP_COLORS", "TEXT_COLOR_PRESSED", accentOnBar);
 
-        // 候选栏 / 拼音区 / 顶部条：**底色统一成键盘底色**（不是透明）——
-        // 搜狗默认是浅灰 + 灰底块，跟键盘底色不一致，看起来"状态栏那一块没跟着一起画"。
+        // 候选栏 / 拼音区 / 顶部工具条：**底色统一成键盘底色**（不是透明）——
+        // 搜狗默认是浅灰 + 灰底块，跟键盘底色不一致，看起来"上面那条没跟着一起画"。
+        //
+        // alpha12：不再只盯 8 个写死的段名，而是把 cands.ini 里**所有**候选/工具条类段
+        // （CandidateView / CandidateWordView / CandidateTabView / FirstCandidateContainer /
+        // More_Cands_Bar / Translate_Bar / SymbolGridView …）一起统一，否则总有一条漏网。
         int barText = ensureContrast(p.text, p.kbBg, 3.0);
-        String[] bars = {"ComposingView", "CloudView", "CandidateBar", "FloatWindow",
-                "HeaderView", "KeyboardHeader", "SmartBar", "ToolbarView"};
-        for (String bar : bars) {
-            changed |= unifyBg(sections, bar, p.kbBg);
-            changed |= putColor(sections, bar, "TEXT_COLOR", barText);
+        for (String name : sections.keySet()) {
+            if (!isBarSection(name)) continue;
+            changed |= unifyBg(sections, name, p.kbBg);
+            changed |= putColor(sections, name, "TEXT_COLOR", barText);
         }
 
         // 候选选中项：强调色（iOS 蓝 / 微信绿 / Google 蓝 / 莫奈 accent）
@@ -171,6 +176,29 @@ public final class IosSkin {
         changed |= putColor(sections, "CloudView", "TEXT_HIGHLIGHT_STYLE", accentOnBar);
 
         return changed;
+    }
+
+    /**
+     * 这一段是不是「候选栏 / 顶部工具条 / 拼音区」这类**需要跟键盘底色统一**的段。
+     *
+     * <p>判据是段名里的关键词，而不是写死清单：这套皮肤的 ini 有 300+ 个段，
+     * 候选相关就有 CandidateView / CandidateWordView / CandidateTabView / CandidateGridView /
+     * FirstCandidate* / CandidateViewWeixin / CandidateViewDoubleLines / FloatCandidateViewContainer …
+     * 写死清单永远会漏，所以按语义匹配。
+     */
+    private static boolean isBarSection(String name) {
+        if (name == null || name.isEmpty()) return false;
+        String s = name.toLowerCase();
+        // 候选（含 tab / grid / 首候选 / 双行 / 微信样式 / 悬浮）
+        if (s.contains("candidate")) return true;
+        // 明确属于"条"的段
+        return s.equals("composingview") || s.equals("cloudview") || s.equals("floatwindow")
+                || s.equals("headerview") || s.equals("keyboardheader") || s.equals("smartbar")
+                || s.equals("toolbarview") || s.equals("more_cands_bar")
+                || s.equals("translate_bar") || s.equals("symbolgridview")
+                || s.equals("keyboardswitchcontainer") || s.equals("platformcontainer")
+                || s.equals("editview") || s.equals("customfunctionview")
+                || s.equals("searchbar") || s.equals("passive_text_view");
     }
 
     /** 段落若存在就把它的底色类键统一成 {@code bgColor}。 */
@@ -217,21 +245,19 @@ public final class IosSkin {
         if (fileName == null) return KIND_NONE;
         String n = baseName(fileName).toLowerCase();
         if (!n.endsWith(".png") && !n.endsWith(".webp")) return KIND_NONE;
-        if (isProtected(n)) return KIND_NONE;
 
         // 气泡（要先判，避免 popup bg 被当成普通底色）
         if (n.startsWith("popup") || n.startsWith("bg_popup")) return KIND_POPUP;
 
-        // 整块底色：只认"明确的背景图"命名，避免误伤同名图标
-        if (n.equals("bg.png") || n.equals("bg1.png")
-                || n.startsWith("bg_cands") || n.startsWith("bg_cloud")
-                || n.startsWith("bg_composing") || n.startsWith("bg_candidate")
-                || n.startsWith("cand_bg") || n.startsWith("bg_header")
-                || n.startsWith("bg_smart") || n.startsWith("bg_top")
-                || n.startsWith("toolbar_bg") || n.startsWith("smartbar_bg")
-                || n.startsWith("bg_toolbar")) {
-            return KIND_FILL;
-        }
+        // 整块底色：显式白名单，而且**放在 isProtected 之前**。
+        //
+        // alpha12：候选栏 / 顶部工具条那一片的底色图叫 candidate_bg*.png、first_cand_bottom.png、
+        // more_cands_bar_bg.png、function_bg.png —— 旧规则里写的是 "bg_candidate"（顺序反了），
+        // 一个都没匹配上；再加上 "more"/"tool" 在黑名单里，more_cands_bar_bg 还会被误杀。
+        // 结果就是「键盘换了色，上面那条候选/工具条还是搜狗原来的灰」。
+        if (isBgImage(n)) return KIND_FILL;
+
+        if (isProtected(n)) return KIND_NONE;
 
         // 键帽：startsWith("key") 白名单（key_qwerty / key_us / key_n / key_function …）
         if (n.startsWith("key_qwerty") || n.startsWith("key_us") || n.startsWith("key_uk")
@@ -253,6 +279,40 @@ public final class IosSkin {
      * 以及语言/地区那面「旗帜」图标 —— 它们都是透明底单色字形，
      * 一旦被当成键帽平铺，就会变成一块纯色方块。
      */
+    /**
+     * 「整块底色」白名单 —— 从这套皮肤的 ini 里逐个抠出来的真实文件名。
+     *
+     * <p>来源：`cands.ini` 里各段的 `BG_IMAGE` / `BG_IMAGE_BOTTOM` / `BG_IMAGES`，
+     * 经 `image_list.ini` 映射到 png（如 `CandBg_Normal → candidate.png`）。
+     * 这些图必须**整张贴底色**：它们就是候选栏、顶部工具条、拼音区、更多候选面板的底。
+     */
+    private static boolean isBgImage(String n) {
+        if (n.equals("bg.png") || n.equals("bg1.png")) return true;
+        // 键盘底 / 候选栏底 / 拼音区底 / 云候选底
+        if (n.startsWith("bg_cands") || n.startsWith("bg_cloud") || n.startsWith("bg_composing")) return true;
+        // 候选栏：candidate_bg / candidate_bg_land / candidate_bg_tab / candidate_bg_weixin / candidate_bg_2lines
+        if (n.startsWith("candidate_bg")) return true;
+        // 候选格子底色（每格一张，CandBg_Normal → candidate.png / candidate_n / candidate_p）
+        if (n.equals("candidate.png") || n.equals("candidate_n.png") || n.equals("candidate_p.png")) return true;
+        // 候选 tab
+        if (n.startsWith("candidate_tab")) return true;
+        // 首候选条底
+        if (n.startsWith("first_cand_bottom")) return true;
+        // 更多候选 / 符号面板的底
+        if (n.startsWith("more_cands_bar_bg") || n.startsWith("more_cands_filter_bg")
+                || n.startsWith("more_cands_filteritems_bg") || n.startsWith("more_candis_grid")) return true;
+        // 顶部工具条 / 功能键条 / 悬浮工具条
+        if (n.startsWith("function_bg") || n.startsWith("float_function") || n.startsWith("float_function_grey"))
+            return true;
+        if (n.startsWith("cloud_bg") || n.startsWith("blank_shadow_bg")) return true;
+        if (n.startsWith("bg_container_key")) return true;
+        // 兜底：显式的 *_bg / bg_* 命名（header / smartbar / toolbar）
+        if (n.startsWith("bg_header") || n.startsWith("bg_smart") || n.startsWith("bg_top")
+                || n.startsWith("bg_toolbar") || n.startsWith("toolbar_bg") || n.startsWith("smartbar_bg"))
+            return true;
+        return n.startsWith("cand_bg") || n.startsWith("bg_candidate");
+    }
+
     public static boolean isProtected(String fileName) {
         if (fileName == null) return false;
         String n = baseName(fileName).toLowerCase();
@@ -365,8 +425,17 @@ public final class IosSkin {
             paint.setStyle(Paint.Style.FILL);
 
             if (kind == KIND_FILL) {
-                paint.setColor(color);
-                canvas.drawRect(0f, 0f, w, h, paint);
+                // 莫奈取色：底色不是一块死板的灰，而是一层极轻的竖向渐变
+                // （顶部略提亮 6%、底部略压暗 5%），这就是"氛围感"的来源。
+                if (p.gradient && h > 4) {
+                    paint.setShader(new LinearGradient(0f, 0f, 0f, h,
+                            lighten(color, 0.06f), darken(color, 0.05f), Shader.TileMode.CLAMP));
+                    canvas.drawRect(0f, 0f, w, h, paint);
+                    paint.setShader(null);
+                } else {
+                    paint.setColor(color);
+                    canvas.drawRect(0f, 0f, w, h, paint);
+                }
                 return out;
             }
 
@@ -541,6 +610,18 @@ public final class IosSkin {
         int r = (int) (((argb >> 16) & 0xFF) * (1f - factor));
         int g = (int) (((argb >> 8) & 0xFF) * (1f - factor));
         int b = (int) ((argb & 0xFF) * (1f - factor));
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
+    /** 往白色方向提亮（莫奈渐变用）。 */
+    private static int lighten(int argb, float factor) {
+        int a = (argb >>> 24) & 0xFF;
+        int r = (argb >> 16) & 0xFF;
+        int g = (argb >> 8) & 0xFF;
+        int b = argb & 0xFF;
+        r = Math.round(r + (255 - r) * factor);
+        g = Math.round(g + (255 - g) * factor);
+        b = Math.round(b + (255 - b) * factor);
         return (a << 24) | (r << 16) | (g << 8) | b;
     }
 

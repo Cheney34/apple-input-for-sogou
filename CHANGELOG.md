@@ -2,6 +2,76 @@
 
 本项目遵循「分析 → 验证 → 实现」的推进方式：每个版本只写**有证据支撑**的东西。
 
+## v2.0.0-alpha12 — 三套皮肤「照着原生抄」+ 顶部工具条终于跟着一起画
+
+### 用户反馈
+
+> 「那个微信的皮肤。你没有学习到它配色，然后 google 那个。莫奈取色的色调有点不够氛围感。
+> 然后上面那个工具栏没有统一到啊。」
+
+### 1. 顶部工具条没统一：不是配色问题，是**那几张底图根本没被匹配到**
+
+候选栏/工具条那一片的底色图在皮肤里叫 `candidate_bg*.png`、`first_cand_bottom.png`、
+`more_cands_bar_bg.png`、`function_bg.png`、`candidate.png / candidate_p.png`（每格一张）。
+而旧的名字规则写的是 `bg_candidate`（词序反了）→ **一个都没匹配上**；
+更糟的是 `more` / `tool` 在「图标黑名单」里，`more_cands_bar_bg` 还会被当成图标跳过。
+
+```
+键盘底换了色 ✅   候选条/工具条底还是搜狗原来的灰 ❌   ← 你说的"上面那个工具栏没有统一到"
+```
+
+现在：
+- 新增 `isBgImage()` 白名单，并且**放在图标黑名单之前**判断（背景图不会被 `more/tool` 误杀）；
+  覆盖 `candidate_bg*`、`candidate(_n/_p)`、`candidate_tab*`、`first_cand_bottom`、
+  `more_cands_bar_bg`、`more_cands_filter*_bg`、`function_bg`、`float_function*_bg`、
+  `cloud_bg*`、`bg_cloud*`、`bg_composing*`、`blank_shadow_bg`、`bg_container_key` 等；
+- `patchIni` 不再只改 8 个写死的段名，改成**语义匹配全部候选/工具条段**
+  （`CandidateView` / `CandidateWordView` / `CandidateTabView` / `CandidateGridView` /
+  `FirstCandidate*` / `CandidateViewWeixin` / `CandidateViewDoubleLines` / `More_Cands_Bar` /
+  `Translate_Bar` / `SymbolGridView` / `ComposingView` / `CloudView` / `SmartBar` …），
+  底色统一成键盘底色、文字色按对比度算。
+
+### 2. 微信：按微信自己那套键盘重写配色
+
+之前只是「浅灰底 + 白键 + 绿强调色」，太笼统。微信键盘的真实观感是：
+
+| 项 | 之前 | 现在 |
+| --- | --- | --- |
+| 底色 | `#F2F2F2`（偏白） | **`#EBEBEB` 米灰**（微信那种略带暖的灰） |
+| 功能键 | `#E9E9E9`（和底色几乎一样） | `#E3E3E3`，按下 `#D5D5D5` |
+| 键帽形状 | 有 iOS 那道底边线 | **平的**：投影只有一点点（`0x14000000`），没有底边线 |
+| 底边线 | 有 | **去掉**（`edgeLine=false`） |
+| 夜间 | `#121212 / #3A3A3A` | `#1A1A1A / #303030`（微信夜间是黑灰，不是蓝黑），功能键只比底深一点 `#262626` |
+
+### 3. Google：Gboard 的关系和 iOS 正好相反（已改成对的）
+
+之前是「白底 + 灰键帽」，等于把 Gboard 画反了。Gboard 实际是**浅灰底 + 白键帽浮在上面**：
+
+| 项 | 之前 | 现在 |
+| --- | --- | --- |
+| 底色 | `#FFFFFF` | **`#F1F3F4`**（浅灰） |
+| 键帽 | `#F1F3F4`（比底深） | **`#FFFFFF`**（比底亮，靠投影浮起来） |
+| 投影 | `0x0F000000` 很淡 | `0x1F000000`，半径 2.5 / 位移 1.5（Gboard 的 elevation 感） |
+| 功能键 | `#E8EAED` | `#E8EAED`（和底色接近，只靠图标区分） |
+| 夜间 | `#17181B / #4A4F55` | `#1F2023 / #3C4043`，功能键压到 `#2D2F31` |
+
+### 4. 莫奈取色：把 accent 的色相「掺」进底色
+
+之前只是拿 `neutral1_*` 直接铺 —— 结果就是一块灰板，没有氛围感。现在：
+
+- **混色**：底色 = `neutral1_100` 与 `accent1_50` 混 45%；键帽 = `neutral1_50` 与 `accent1_100` 混 18%；
+  功能键 = `neutral2_200` 与 `accent1_100` 混 30%；夜间同理（`neutral1_900` ↔ `accent1_900`）；
+- **渐变**：底色加一层极轻的竖向渐变（顶部提亮 6%、底部压暗 5%）—— 整块键盘像从壁纸里长出来的；
+- **保底**：混色后键帽可能贴太近，新增 `separate()` 保证键帽/功能键与底色至少 1.6:1 / 1.3:1。
+
+### 5. 构建与验证
+
+- `AppleInputForSogou_v2.0.0-alpha12.apk` 22,746,693 B，`versionCode 31` / `2.0.0-alpha12`；
+  证书 SHA-256 `4fbf65ed…c207`（同签名覆盖升级）。
+- `classes.dex` 140,664 B，117 个类全部属 `com.chiron.iosemoji`，`de.robv` 定义 0。
+- dex 内确认含 `isBgImage`、`isBarSection`、`blend`、`separate`、`lighten` 及
+  `candidate_bg` / `more_cands_bar_bg` / `first_cand_bottom` / `function_bg` 等新匹配名。
+
 ## v2.0.0-alpha11 — 表情包补齐：分组页签图标 + Unicode 16 新表情
 
 ### 用户反馈
