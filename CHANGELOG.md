@@ -2,6 +2,50 @@
 
 本项目遵循「分析 → 验证 → 实现」的推进方式：每个版本只写**有证据支撑**的东西。
 
+## v2.0.2-beta3 — 皮肤改到「资源层」：不再依赖混淆类名 + 治「连不上」
+
+### 用户反馈
+> 它是能够连接上的，但是它不能应用皮肤。然后真正的 oppo 机主，它又说连不上，我又没有 oppo 手机，我又做不了测试。
+
+两条都不需要我手上有机器就能改对：一条靠**换拦截层**，一条靠**换配置通道**。
+
+### 1. 皮肤：新增资源级 hook（H50 `AssetSkinHook`）
+之前所有皮肤改动都挂在「主题解析类」上（小米 `parse.utils.b#a` / OPPO `defpackage.yy1#a`），
+只要 OEM 版把类改名，整条链就断。但**所有版本读皮肤资源的物理动作是同一个**：
+
+```
+context.getAssets().open("theme/theme_default/1080/res/black/key_qwerty.png")
+```
+
+于是直接在 `android.content.res.AssetManager#open(String)` / `open(String,int)` 上做后置替换：
+
+- `*.ini`（布局/颜色/图片清单）→ 按行解析成段表 → `IosSkin.patchIni(...)` 改颜色 → 序列化回文本流；
+- `*.png` → 解码 → `IosSkin.synth(...)` 按预设重绘键帽 → 重新编码成 PNG 流；
+- 其它一律原样放行；emoji / lottie / 字体明确排除，不碰。
+
+好处：**与类名、与版本、与 OEM 无关**；坏处：只有「从 assets 读」时才命中——
+所以它同时是探针，把见过的皮肤资源路径记下来（`asample=`），一看就知道该版是不是改成解包到文件了。
+
+### 2. 配置：「连不上」改成不依赖广播
+- `ConfigBridge` 新增**定时重读**：进程启动后 2/5/10/20/40/60 秒各读一次模块 App 的
+  `ContentProvider`（普通 Binder 调用，ColorOS/HyperOS 拦得住广播、拦不住它）；
+- 新增 `resyncNow()`，挂在 **H02 键盘装上**的时机上 —— 「改完设置 → 切回输入框 → 键盘重弹」
+  就对齐一次配置，等于绕开广播；
+- 状态串新增 `resync=`（重读次数）与 `asample=`（资源样本），设置页对应显示
+  「资源=open/theme/ini/img」「重读=N」「读到的皮肤资源：…」；
+- 「兼容信息 → 作用域」不再写死两个包名，改为按 `Protocol.TARGETS` 列出（**含 OPPO 包名**）——
+  之前这行漏了 OPPO，容易让人以为不用勾作用域。
+
+### 构建与验证
+- `versionCode 38` / `2.0.2-beta3`，`AppleInputForSogou_v2.0.2-beta3.apk` = 22,754,885 B
+- 证书 `CN=Android Debug` SHA-256 `4fbf65ed…c207`（同包名覆盖升级）
+- `classes.dex` 152,828 B：**120 个类全部 `Lcom/chiron/iosemoji/*`**，无 `de/robv` 定义；
+  已确认含 `AssetSkinHook`、`asample`、`resync`、`scheduleResync`、`H50 asset skin hook ready`
+
+### 需要用户回报的三行（决定下一步往哪修）
+1. `asset=openN/themeN/iniN/imgN` —— `theme` 是 0 说明皮肤不是走 assets 读的
+2. `asample=…` —— 实际读到的资源路径长什么样
+3. `H41 bitmap getters hooked on …: N/6` —— 类名这条路挂上没
 ## v2.0.2-beta2 — 修好 OPPO 定制版「皮肤完全不生效」
 
 ### 用户反馈

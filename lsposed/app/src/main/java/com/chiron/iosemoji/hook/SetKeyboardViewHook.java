@@ -47,6 +47,10 @@ public final class SetKeyboardViewHook {
                             @Override
                             protected void afterHookedMethod(MethodHookParam param) {
                                 try {
+                                    // 键盘被装上 = 用户正准备打字：顺手对齐一次模块 App 的配置。
+                                    // 这样即使系统拦掉了配置广播（ColorOS/HyperOS 常见），
+                                    // 「改完设置 → 切回输入框 → 键盘重弹」也能生效。
+                                    ConfigBridge.resyncNow();
                                     if (!VersionProfile.allowUiReplacement()) return;
                                     if (!ModuleConfig.keyboardReplaceEnabled()) {
                                         // 运行中被关掉：把我们注入的键盘摘走，立刻回到搜狗原键盘

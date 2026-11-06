@@ -390,6 +390,9 @@ public class SettingsActivity extends Activity {
         String skinProtected = null;
         String skinContrast = null;
         String skinSkip = null;
+        String skinAsset = null;
+        String skinSample = null;
+        String skinResync = null;
         StringBuilder eff = new StringBuilder();
         for (String part : raw.split(";")) {
             int eq = part.indexOf('=');
@@ -436,6 +439,15 @@ public class SettingsActivity extends Activity {
                 case "skip":
                     skinSkip = v;
                     break;
+                case "asset":
+                    skinAsset = v;
+                    break;
+                case "asample":
+                    skinSample = v;
+                    break;
+                case "resync":
+                    skinResync = v;
+                    break;
                 default:
                     if (eff.length() > 0) eff.append(' ');
                     eff.append(k).append('=').append("1".equals(v) ? "开" : "关");
@@ -454,9 +466,15 @@ public class SettingsActivity extends Activity {
         if (skinKept != null) skinLine.append("  保留=").append(skinKept);
         if (skinProtected != null) skinLine.append("  跳过图标=").append(skinProtected);
         if (skinContrast != null) skinLine.append("  对比修正=").append(skinContrast);
+        // 资源级（AssetManager）通道：这条不通，说明皮肤不是从 assets 读的（可能解包到文件了）
+        if (skinAsset != null) skinLine.append("\n资源=").append(skinAsset);
+        if (skinResync != null) skinLine.append("  重读=").append(skinResync);
         if (eff.length() > 0) skinLine.append('\n').append(eff);
         if (skinSkip != null && skinSkip.length() > 0) {
             skinLine.append("\n没认出来的图：").append(skinSkip);
+        }
+        if (skinSample != null && skinSample.length() > 0) {
+            skinLine.append("\n读到的皮肤资源：").append(skinSample);
         }
         effectiveText.setText(skinLine.toString());
         requestHint.setText("搜狗版本 " + (sg == null ? "unknown" : sg)
@@ -474,7 +492,7 @@ public class SettingsActivity extends Activity {
         addInfo(info, "已 DEX 验证的搜狗版本", VersionProfile.TARGET_VERSION_NAME);
         addInfo(info, "目标版本白名单", VersionProfile.describe());
         addInfo(info, "设备上的搜狗", readSogouVersion());
-        addInfo(info, "作用域", "com.sohu.inputmethod.sogou.xiaomi\ncom.sohu.inputmethod.sogou");
+        addInfo(info, "作用域", String.join("\n", Protocol.TARGETS));
         addInfo(info, "日志 TAG", "AppleInputForSogou");
 
         root.addView(IosUi.sectionHeader(this, "说明"));

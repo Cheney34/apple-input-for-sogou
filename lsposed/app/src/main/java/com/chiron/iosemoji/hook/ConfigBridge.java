@@ -36,6 +36,9 @@ public final class ConfigBridge {
 
     private static final AtomicBoolean INSTALLED = new AtomicBoolean(false);
     private static final AtomicBoolean PROVIDER_DONE = new AtomicBoolean(false);
+    /** 定时重读 provider 的次数（诊断用：看到它在涨说明进程活着、通道在跑）。 */
+    private static final java.util.concurrent.atomic.AtomicInteger RESYNC =
+            new java.util.concurrent.atomic.AtomicInteger();
 
     /** 配置发生变化后要重做的事（补装 hook 等），由 HookEntry 在 attach 时注入。 */
     private static volatile Runnable sOnConfigChanged;
@@ -68,6 +71,7 @@ public final class ConfigBridge {
                                 + " (" + n + " keys)");
                         // 换皮肤预设后必须丢掉搜狗的位图缓存，否则还是上一套配色
                         ThemeSkinHook.dropCaches();
+                        AssetSkinHook.reset();
                         setResultCode(Protocol.RESULT_OK);
                         setResultData(state(ctx));
                         runConfigCallback();
@@ -116,10 +120,38 @@ public final class ConfigBridge {
                 ctx.registerReceiver(receiver, filter);
             }
             HookRegistry.log("config bridge ready in " + ctx.getPackageName());
+            scheduleResync(ctx);
         } catch (Throwable t) {
             INSTALLED.set(false);
             HookRegistry.log("config bridge register failed");
             HookRegistry.log(t);
+        }
+    }
+
+    /**
+     * 定时重读配置 —— 专治「广播收不到 / 连不上」。
+     *
+     * <p>ColorOS / HyperOS 等系统会限制后台应用的隐式广播，模块 App 的有序广播未必送达到
+     * 输入法进程；而 {@link ContentResolver} 查询是普通 Binder 调用，只要进程活着就能读。
+     * 所以这里在进程启动后的头 60 秒里按 2/5/10/20/40/60 秒重读几次，读到的值覆盖
+     * {@link RuntimeConfig}；用户哪怕"先开键盘、后改设置"，只要重新点开一次键盘就会生效。
+     */
+    private static void scheduleResync(final Context ctx) {
+        try {
+            final android.os.Handler h = new android.os.Handler(android.os.Looper.getMainLooper());
+            final long[] delays = {2000L, 5000L, 10000L, 20000L, 40000L, 60000L};
+            for (final long d : delays) {
+                h.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        RESYNC.incrementAndGet();
+                        loadFromProviderAsync(ctx);
+                    }
+                }, d);
+            }
+            HookRegistry.log("config resync scheduled: 6 times (2s..60s)");
+        } catch (Throwable t) {
+            HookRegistry.log("config resync schedule failed");
         }
     }
 
@@ -136,10 +168,15 @@ public final class ConfigBridge {
         sb.append(";sg=").append(sogouVersion(ctx));
         // 皮肤改动是否真的落到了搜狗的皮肤资源上 —— 这行是"改没改到"的唯一判据
         sb.append(';').append(ThemeSkinHook.stateFields());
+        sb.append(';').append(AssetSkinHook.stateFields());
         String unmatched = ThemeSkinHook.unmatchedNames();
         if (unmatched.length() > 0) sb.append(";skip=").append(unmatched);
         String seen = ThemeSkinHook.seenNames();
         if (seen.length() > 0) sb.append(";seen=").append(seen);
+        // 资源级（AssetManager）实际读到的皮肤路径样本：判断皮肤是走 assets 还是解包文件
+        String asamples = AssetSkinHook.samples();
+        if (asamples.length() > 0) sb.append(";asample=").append(asamples);
+        sb.append(";resync=").append(RESYNC.get());
         return sb.toString();
     }
 
@@ -211,6 +248,19 @@ public final class ConfigBridge {
 
     public static boolean providerLoaded() {
         return PROVIDER_DONE.get();
+    }
+
+    /**
+     * 立刻重读一次模块 App 的配置（异步、绝不在主线程碰 ContentResolver）。
+     *
+     * <p>挂在「键盘被装上」这个时机上（{@code H02}），等于「每次弹出键盘都对齐一次配置」——
+     * 用户改完设置、切回输入框，配置就生效了，不依赖广播能不能送达。
+     */
+    public static void resyncNow() {
+        Context ctx = HookState.context();
+        if (ctx == null) return;
+        RESYNC.incrementAndGet();
+        loadFromProviderAsync(ctx);
     }
 
     /** 便于 HookEntry 在 attach 日志里打一行"当前生效配置"。 */

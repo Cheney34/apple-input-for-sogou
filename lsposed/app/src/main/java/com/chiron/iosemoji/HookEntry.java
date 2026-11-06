@@ -12,6 +12,7 @@ import com.chiron.iosemoji.core.HookState;
 import com.chiron.iosemoji.diagnostics.ViewTreeDumper;
 import com.chiron.iosemoji.compat.Targets;
 import com.chiron.iosemoji.hook.CandidateProbeHook;
+import com.chiron.iosemoji.hook.AssetSkinHook;
 import com.chiron.iosemoji.hook.ConfigBridge;
 import com.chiron.iosemoji.hook.HookRegistry;
 import com.chiron.iosemoji.hook.KeyboardRootHook;
@@ -195,6 +196,14 @@ public class HookEntry implements IXposedHookLoadPackage {
             ThemeSkinHook.install(cl, sTargets);
         } catch (Throwable t) {
             HookRegistry.log("theme skin hook failed");
+            HookRegistry.log(t);
+        }
+        // 资源级兜底：直接拦 AssetManager.open()，不依赖任何混淆类名。
+        // 小米版能命中就命中；OPPO 等改名字的版本靠这一层也能改到皮肤。
+        try {
+            AssetSkinHook.install(cl);
+        } catch (Throwable t) {
+            HookRegistry.log("asset skin hook failed");
             HookRegistry.log(t);
         }
     }
