@@ -2,12 +2,48 @@
 
 本项目遵循「分析 → 验证 → 实现」的推进方式：每个版本只写**有证据支撑**的东西。
 
-## v2.0.0-alpha12 — 三套皮肤「照着原生抄」+ 顶部工具条终于跟着一起画
+## v2.0.1-beta1 — 微信皮肤重做 + 候选栏底色独立（barBg）
+
+### 1. 微信皮肤"还是不像"的三个具体原因
+
+之前那一版只是把 iOS 的白键灰底换成米灰，动作太小，观感区别不出来。这次按微信键盘自己的结构改：
+
+| 部位 | 微信键盘真实观感 | 这一版 |
+| --- | --- | --- |
+| 功能键（123 / ⌫ / ⏎ / 中英） | **没有键帽**，直接画在底色上 | 功能键色 = 底色 `#EDEDED`（原来 `#E3E3E3`，能看出一个方块） |
+| 键帽圆角 | 比方正，约 6–8dp | `radiusRatio` 0.10 → **0.16** |
+| 投影 | 几乎没有 | 位移 1 → **0.5**，Alpha `0x14` → `0x12` |
+| 候选栏底 | **白底**，跟键盘的米灰不同 | 新增 `barBg` 字段，微信 = `#FFFFFF`（原来一律用键盘底色） |
+| 夜间 | 黑灰 `#111111` 底 / `#303030` 键 / 候选栏 `#232323` | 同（原来底色 `#1A1A1A` 偏亮、候选栏与底同色） |
+
+### 2. `barBg`：候选栏 / 顶部工具条不再强制跟键盘同色
+
+新增 `SkinPreset.barBg`（iOS = 与底色同 `#D1D4D9`；微信 = 白 `#FFFFFF`；Google = 白；莫奈 = 底色掺 accent 后的更亮一档）。
+
+配套三处：
+- `IosSkin.isBarImage()`：把 `candidate*` / `cand_bg*` / `bg_cand*` / `first_cand*` / `more_cands*` / `function_bg*` / `float_function*` / `cloud_bg*` / `bg_cloud*` / `bg_composing*` 判定为"条类底图"，平铺时取 `barBg`，其余取 `kbBg`；
+- `patchIni()` 里 8 个候选/工具条段的 `BG_COLOR` 改用 `barBg`，文字对比度也按 `barBg` 实算；
+- 候选高亮（accent）的对比度基准由 `kbBg` 改为 `barBg`。
+
+### 3. 构建
+
+- `versionCode 32` / `2.0.1-beta1`，`AppleInputForSogou_v2.0.1-beta1.apk` 22,746,693 B；
+- `classes.dex` 141,200 B，`dexdump` 非 `com.chiron.iosemoji` 类 **0** 个；
+- dex 内确认 `isBarImage` / `barBg` / `blend` / `separate` / `candidate_bg` / `more_cands_bar_bg` / `first_cand_bottom` / `function_bg`；
+- 证书 `CN=Android Debug` SHA-256 `4fbf65ed…c207`（同包名覆盖升级 v1.7 / v1.8 / alpha2–alpha12）。
+
+### 4. 仍待确认
+
+- 回车/发送键的绿色：`py_9.ini` 里 `[Key_Enter]` 没有独立 `BG_IMAGES`，回车用的是字母键底图 `key_qwerty.png`，**按文件名上色做不到"只有发送键变绿"**，需要在键盘组件层单独处理（后续版本）。
+- 若你看到"微信仍然像 iOS"，请截图或告诉我是哪一块（底色 / 键帽 / 功能键 / 候选栏 / 文字），我按部位单独调，每套皮肤的每个色值都是独立参数。
+# v2.0.0-alpha12 — 三套皮肤「照着原生抄」+ 顶部工具条终于跟着一起画
 
 ### 用户反馈
 
 > 「那个微信的皮肤。你没有学习到它配色，然后 google 那个。莫奈取色的色调有点不够氛围感。
 > 然后上面那个工具栏没有统一到啊。」
+
+## v2.0.0-alpha12 — 微信/Google/莫奈配色重写 + 候选栏与顶部工具条统一
 
 ### 1. 顶部工具条没统一：不是配色问题，是**那几张底图根本没被匹配到**
 

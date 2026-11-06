@@ -39,6 +39,7 @@ public final class SkinPreset {
     public final int func;          // 功能键（123 / ⌫ / ⏎）
     public final int funcPressed;
     public final int popup;         // 长按气泡底
+    public final int barBg;         // 候选栏 / 顶部工具条底色（可与键盘底色不同）
 
     // 文字与强调色
     public final int text;
@@ -54,7 +55,7 @@ public final class SkinPreset {
     public final boolean gradient;  // 底色是否画极轻的竖向渐变（莫奈用，营造氛围感）
 
     private SkinPreset(String id, int kbBg, int key, int keyPressed, int func, int funcPressed,
-                       int popup, int text, int textPressed, int accent,
+                       int popup, int barBg, int text, int textPressed, int accent,
                        float radiusRatio, int shadowColor, float shadowRadius, float shadowDy,
                        boolean edgeLine, boolean gradient) {
         this.id = id;
@@ -64,6 +65,7 @@ public final class SkinPreset {
         this.func = func;
         this.funcPressed = funcPressed;
         this.popup = popup;
+        this.barBg = barBg;
         this.text = text;
         this.textPressed = textPressed;
         this.accent = accent;
@@ -106,7 +108,7 @@ public final class SkinPreset {
     private static SkinPreset iosLight() {
         return new SkinPreset(IOS,
                 0xFFD1D4D9, 0xFFFFFFFF, 0xFFE5E5EA, 0xFFADB3BC, 0xFF9FA5AE,
-                0xFFFFFFFF, 0xFF000000, 0xFF000000, 0xFF007AFF,
+                0xFFFFFFFF, 0xFFD1D4D9, 0xFF000000, 0xFF000000, 0xFF007AFF,
                 0.12f, 0x1A000000, 2f, 1f, true, false);
     }
 
@@ -115,7 +117,7 @@ public final class SkinPreset {
         // 在深色屏幕上对比度只有 ≈3.2:1，键帽边界几乎看不出来。
         return new SkinPreset(IOS,
                 0xFF0F0F10, 0xFF6E6E73, 0xFF87878C, 0xFF55555A, 0xFF6A6A6F,
-                0xFF6E6E73, 0xFFFFFFFF, 0xFFFFFFFF, 0xFF3F9BFF,
+                0xFF6E6E73, 0xFF0F0F10, 0xFFFFFFFF, 0xFFFFFFFF, 0xFF3F9BFF,
                 0.12f, 0x40000000, 2f, 1f, true, false);
     }
 
@@ -127,17 +129,17 @@ public final class SkinPreset {
     //   4. 强调色是品牌绿 #07C160，只出现在"发送/回车"和候选高亮上。
     private static SkinPreset wechatLight() {
         return new SkinPreset(WECHAT,
-                0xFFEBEBEB, 0xFFFFFFFF, 0xFFDCDCDC, 0xFFE3E3E3, 0xFFD5D5D5,
-                0xFFFFFFFF, 0xFF191919, 0xFF191919, 0xFF07C160,
-                0.10f, 0x14000000, 1.5f, 1f, false, false);
+                0xFFEDEDED, 0xFFFFFFFF, 0xFFDCDCDC, 0xFFEDEDED, 0xFFDCDCDC,
+                0xFFFFFFFF, 0xFFFFFFFF, 0xFF191919, 0xFF191919, 0xFF07C160,
+                0.16f, 0x12000000, 2f, 0.5f, false, false);
     }
 
     private static SkinPreset wechatDark() {
         // 微信夜间是"黑灰"而不是"蓝黑"：底 #1A1A1A、键 #303030、功能键只比底深一点。
         return new SkinPreset(WECHAT,
-                0xFF1A1A1A, 0xFF303030, 0xFF3C3C3C, 0xFF262626, 0xFF333333,
-                0xFF303030, 0xFFE6E6E6, 0xFFE6E6E6, 0xFF07C160,
-                0.10f, 0x39000000, 1.5f, 1f, false, false);
+                0xFF111111, 0xFF303030, 0xFF3C3C3C, 0xFF111111, 0xFF2A2A2A,
+                0xFF303030, 0xFF232323, 0xFFE6E6E6, 0xFFE6E6E6, 0xFF07C160,
+                0.16f, 0x33000000, 2f, 0.5f, false, false);
     }
 
     // ── Google（Gboard / Material 3）──────────────────────────────────────
@@ -146,7 +148,7 @@ public final class SkinPreset {
     private static SkinPreset googleLight() {
         return new SkinPreset(GOOGLE,
                 0xFFF1F3F4, 0xFFFFFFFF, 0xFFE3E5E8, 0xFFE8EAED, 0xFFDADCE0,
-                0xFFFFFFFF, 0xFF202124, 0xFF202124, 0xFF1A73E8,
+                0xFFFFFFFF, 0xFFFFFFFF, 0xFF202124, 0xFF202124, 0xFF1A73E8,
                 0.14f, 0x1F000000, 2.5f, 1.5f, false, false);
     }
 
@@ -155,7 +157,7 @@ public final class SkinPreset {
         // 键帽 #3C4043、功能键压到 #2D2F31。
         return new SkinPreset(GOOGLE,
                 0xFF1F2023, 0xFF3C4043, 0xFF4A4D51, 0xFF2D2F31, 0xFF3A3D40,
-                0xFF3C4043, 0xFFE8EAED, 0xFFE8EAED, 0xFF8AB4F8,
+                0xFF3C4043, 0xFF2A2C2F, 0xFFE8EAED, 0xFFE8EAED, 0xFF8AB4F8,
                 0.14f, 0x40000000, 2.5f, 1.5f, false, false);
     }
 
@@ -181,7 +183,7 @@ public final class SkinPreset {
         int funcPressed = blend(n2_200, a1_200, 0.45f);
 
         return new SkinPreset(MONET, bg, key, keyPressed, func, funcPressed,
-                key, text, text, accent,
+                key, blend(n100, a1_50, 0.62f), text, text, accent,
                 0.16f, 0x1A000000, 2f, 1f, false, true);
     }
 
@@ -202,7 +204,7 @@ public final class SkinPreset {
         int funcPressed = blend(n800, a1_800, 0.45f);
 
         return new SkinPreset(MONET, bg, key, keyPressed, func, funcPressed,
-                key, text, text, accent,
+                key, blend(n800, a1_800, 0.42f), text, text, accent,
                 0.16f, 0x40000000, 2f, 1f, false, true);
     }
 

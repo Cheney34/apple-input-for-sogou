@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -136,7 +137,7 @@ public final class IosSkin {
         int keyText = ensureContrast(p.text, p.key, 3.0);
         int funcText = ensureContrast(p.text, p.func, 3.0);
         int keyTextPressed = ensureContrast(p.textPressed, p.keyPressed, 3.0);
-        int accentOnBar = ensureContrast(p.accent, p.kbBg, 3.0);
+        int accentOnBar = ensureContrast(p.accent, p.barBg, 3.0);
         Map<String, String> def = sections.get("DEFAULT_TEXT_COLORS");
         if (def != null) {
             changed |= put(def, "COLOR_FIRST_DEFAULT_THEME", hexNoAlpha(accentOnBar));
@@ -163,10 +164,10 @@ public final class IosSkin {
         // alpha12：不再只盯 8 个写死的段名，而是把 cands.ini 里**所有**候选/工具条类段
         // （CandidateView / CandidateWordView / CandidateTabView / FirstCandidateContainer /
         // More_Cands_Bar / Translate_Bar / SymbolGridView …）一起统一，否则总有一条漏网。
-        int barText = ensureContrast(p.text, p.kbBg, 3.0);
+        int barText = ensureContrast(p.text, p.barBg, 3.0);
         for (String name : sections.keySet()) {
             if (!isBarSection(name)) continue;
-            changed |= unifyBg(sections, name, p.kbBg);
+            changed |= unifyBg(sections, name, p.barBg);
             changed |= putColor(sections, name, "TEXT_COLOR", barText);
         }
 
@@ -186,6 +187,23 @@ public final class IosSkin {
      * FirstCandidate* / CandidateViewWeixin / CandidateViewDoubleLines / FloatCandidateViewContainer …
      * 写死清单永远会漏，所以按语义匹配。
      */
+    /**
+     * 这张平铺底图属于「候选栏 / 顶部工具条」还是「键盘底」。
+     *
+     * <p>微信那套皮肤里候选栏是**白底**、键盘底是米灰，两者不同色；iOS/Gboard 则基本同色，
+     * 所以底色要分开取值，不能一张 {@code p.kbBg} 铺到底。</p>
+     */
+    private static boolean isBarImage(String fileName) {
+        if (fileName == null) return false;
+        String n = fileName.toLowerCase(Locale.ROOT);
+        int slash = n.lastIndexOf('/');
+        if (slash >= 0) n = n.substring(slash + 1);
+        return n.startsWith("candidate") || n.startsWith("cand_bg") || n.startsWith("bg_cand")
+                || n.startsWith("first_cand") || n.startsWith("more_cands")
+                || n.startsWith("function_bg") || n.startsWith("float_function")
+                || n.startsWith("cloud_bg") || n.startsWith("bg_cloud")
+                || n.startsWith("bg_composing") || n.startsWith("composing_bg");
+    }
     private static boolean isBarSection(String name) {
         if (name == null || name.isEmpty()) return false;
         String s = name.toLowerCase();
@@ -389,7 +407,7 @@ public final class IosSkin {
         boolean func = isFuncKey(fileName);
         switch (kind) {
             case KIND_FILL:
-                return p.kbBg;
+                return isBarImage(fileName) ? p.barBg : p.kbBg;
             case KIND_POPUP:
                 return p.popup;
             case KIND_KEY:
