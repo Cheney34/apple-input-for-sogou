@@ -15,7 +15,7 @@
 
 | 版本 | 适合谁 | 有什么 |
 | --- | --- | --- |
-| [**v2.0.1-beta3**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.1-beta3) | 所有人（推荐） | iOS 皮肤深色版改用 iPhone 17 实测取色：底 `#2F2F2F` / 键 `#6D6D6F` / 字 `#FDFDFE`，其余层级按同一色阶过渡 |
+| [**v2.0.1-beta4**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.1-beta4) | 所有人（推荐） | iOS 深色底色压到深灰 `#222223`（键 `#6D6D6F` / 字 `#FDFDFE` 不变），功能键与按下态按新色阶重推 |\n| [**v2.0.1-beta3**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.1-beta3) | 存档 | iOS 皮肤深色版：键 `#6D6D6F` / 字 `#FDFDFE`，底色压到深灰 `#222223`，其余层级按同一色阶过渡 |
 | [**v2.0.1-beta2**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.1-beta2) | 存档 | 七套皮肤：iOS / 微信 / Google / **幽墨 Material** / **幽墨 Pixel** / **樱花粉** / 莫奈取色 |
 | [**v2.0.1-beta1**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.1-beta1) | 存档 | 微信皮肤重做：功能键与底色同色（微信是「无键帽」的）、候选栏改白底、键帽圆角 0.16/几乎无投影；候选栏底色从键盘底色里独立出来（`barBg`），四套皮肤各自指定 |
 | [**v2.0.0-alpha12**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha12) | 存档 | 微信/Google 按原生观感重写配色，莫奈取色掺 accent + 竖向渐变，**候选栏与顶部工具条终于跟键盘同底色** |
