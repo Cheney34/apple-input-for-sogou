@@ -102,21 +102,27 @@ public final class ThemeSkinHook {
                             if (!(res instanceof Bitmap)) return;
                             String path = param.args[1] instanceof String ? (String) param.args[1] : null;
                             if (path == null) return;
-                            // 只动「默认皮肤的键盘资源」，其它位图（表情、图标、商店预览）一律不碰
-                            if (!path.contains("theme") || !path.contains("/res/")) return;
-                            int color = IosSkin.targetColor(path, IosSkin.isDarkPath(path));
+                            // 只动「皮肤资源」，其它位图（表情、图标、商店预览）一律不碰
+                            boolean skinPath = (path.contains("theme") && path.contains("/res/"))
+                                    || path.contains("/black/") || path.contains("/white/");
+                            if (!skinPath) return;
+                            int kind = IosSkin.kindOf(path);
+                            if (kind == IosSkin.KIND_NONE) return;
+                            boolean dark = IosSkin.isDarkPath(path);
+                            int color = IosSkin.colorOf(path, dark);
                             if (color == 0) return;
-                            Bitmap tinted = IosSkin.recolor((Bitmap) res, color);
+                            Bitmap tinted = IosSkin.synth((Bitmap) res, kind, color, dark);
                             if (tinted == null) return;
                             param.setResult(tinted);
                             int n = IMG_PATCHED.incrementAndGet();
                             if (n <= LOG_LIMIT) {
-                                HookRegistry.log("H41 skin bitmap recolored: " + baseName(path)
+                                HookRegistry.log("H41 skin bitmap redrawn: " + baseName(path)
+                                        + " kind=" + kind
                                         + " -> " + String.format("#%08X", color)
                                         + " (total " + n + ")");
                             }
                         } catch (Throwable t) {
-                            HookRegistry.log("H41 recolor failed: " + t);
+                            HookRegistry.log("H41 redraw failed: " + t);
                         }
                     }
                 });

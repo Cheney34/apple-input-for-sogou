@@ -15,20 +15,21 @@
 
 | 版本 | 适合谁 | 有什么 |
 | --- | --- | --- |
-| [**v2.0.0-alpha4**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha4) | 所有人（推荐） | **改搜狗自己的默认皮肤**做 iOS 外观（不再盖自绘键盘 → 不会样式错乱）+ iOS 风格模块界面 + 旧版全部表情功能 + 即时生效的开关 |
+| [**v2.0.0-alpha5**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha5) | 所有人（推荐） | 改搜狗默认皮肤做 iOS 外观：**键帽按 iOS 圆角重绘** + 对比度按 iOS 调 + 候选栏/顶部条底色统一 + iOS 风格模块界面 + 表情功能 + 即时生效开关 |
+| [**v2.0.0-alpha4**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha4) | 存档 | 第一版改皮肤（只刷色，圆角仍沿用搜狗自己的，观感不如 alpha5） |
 | [**v2.0.0-alpha3**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha3) | 存档，不建议用 | 自绘键盘版：键盘样式会跟搜狗布局打架（卡 bug），仅作历史保留 |
 | [**v1.8**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v1.8) | 只想换 Apple 表情、要稳定 | 表情分组安装 / 隐藏内置分组 / 滑动切换 / Logo 触发词 |
 | [**v1.7**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v1.7) | 老设备 / 旧搜狗版本 | 与 v1.8 同代但更早，兼容面略宽 |
 
-### 界面长什么样（alpha2 重写 / alpha3 让开关真正生效 / alpha4 换成改皮肤）
+### 界面长什么样（alpha2 重写 / alpha3 让开关真正生效 / alpha4 换成改皮肤 / alpha5 按 iOS 规格重绘键帽）
 
 两个界面都换成 iOS 风格、全部代码自绘，不依赖 androidx / Material，跟随系统深浅色：
 
 - **模块 App**：iOS 设置页 —— 大标题、分组卡片、圆角行、右侧 `✓`/`›`、自绘开关。
   分区：状态 / 表情分组（10 组逐行勾选 + 全选）/ 操作（安装选中、安装全部、还原）/ 模块（功能开关、隐藏桌面图标、重新检测）/ 运行日志。
   原 XML 布局（`activity_main.xml`、`item_group.xml`）已删除，不再需要 `GridLayout`。
-- **输入法键盘（alpha4 起）**：**不再盖一层自绘键盘**，而是改搜狗自己默认皮肤的颜色与键帽配色 ——
-  强调色换成 iOS 蓝、候选栏去掉底色块、键帽/键盘底色按 iOS 灰白重上色。
+- **输入法键盘（alpha4 起改皮肤 / alpha5 重绘键帽）**：**不再盖一层自绘键盘**，而是改搜狗自己默认皮肤 ——
+  强调色换成 iOS 蓝、候选栏与顶部条底色跟键盘统一、**键帽按 iOS 圆角（半径=键高×0.12）重绘**并带一条底边分隔、文字色拉到纯黑/纯白。
   键盘布局、按键命中、候选栏高度、输入法 insets 全部还是搜狗自己算的，所以**不会再出现"键盘样式卡 bug"**。
   （想试原来的自绘键盘：设置页「外观 → 自绘键盘（实验）」，默认关闭。）
 > v2.0 沿用旧版包名 `com.chiron.iosemoji`、并沿用同一张调试证书（`CN=Android Debug`），所以是**同包名覆盖升级**：装上 v2.0 会直接替换 v1.7 / v1.8，LSPosed 里原有的模块条目和作用域照旧生效，不需要重新配置。想回旧版，卸载后装 v1.7 / v1.8 即可。
