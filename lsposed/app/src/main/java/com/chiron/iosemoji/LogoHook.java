@@ -162,6 +162,8 @@ final class LogoHook {
         @Override
         protected void beforeHookedMethod(MethodHookParam param) {
             try {
+                // 运行中开关：关掉「Logo 触发词」就立刻恢复原文提交
+                if (!com.chiron.iosemoji.config.ModuleConfig.logoTriggerEnabled()) return;
                 if (param.args == null || param.args.length == 0) return;
                 Object first = param.args[0];
                 if (!(first instanceof CharSequence)) return;

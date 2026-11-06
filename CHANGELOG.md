@@ -2,6 +2,49 @@
 
 本项目遵循「分析 → 验证 → 实现」的推进方式：每个版本只写**有证据支撑**的东西。
 
+## v2.0.0-alpha3 — 设置页真的能用了 + 修掉导致「连不上输入法」的构建缺陷
+
+这一版只修两个问题，都是实测可验证的真 bug。
+
+### 1. 「功能开关」页以前是假开关（已修）
+
+- **症状**：点开设置页，拨开关没有任何反馈，输入法行为也不变。
+- **原因**：旧实现只把值写进模块自己的 SharedPreferences，**从不下发到已经运行的搜狗进程**；
+  hook 侧又只在进程启动时读一次，且冷启动时用 `XSharedPreferences` 读别的 App 的私有 prefs
+  在部分系统上读不到 —— 于是开关永远是默认值。
+- **修法（三条通道）**：
+  1. **运行中即时生效**：改开关 → 写本地 prefs（冷启动用）**并且**用**有序广播**把所有键值
+     直接下发到搜狗进程（`com.chiron.iosemoji.action.CFG`），hook 侧落到内存覆盖层
+     `RuntimeConfig`，开关判断每次都读它；
+  2. **回执即反馈**：搜狗进程收到后 `setResultData(...)` 回一份状态串，设置页据此弹出
+     「已生效：iOS 键盘 → 开」或「已保存：…（搜狗进程未运行，切换输入法后生效）」；
+  3. **冷启动也能读到**：新增只读 `ContentProvider`（`content://com.chiron.iosemoji.config/config`），
+     搜狗进程启动时用它读一次开关，不再依赖跨进程 prefs 的可读性。
+- 设置页新增「连接状态」卡：搜狗进程是否在线、已装 hook 列表、**进程内真正生效的配置值**、搜狗版本。
+- 所有开关改为**双向即时可逆**：hook 常驻安装，回调里判断开关 —— 关掉立刻退回搜狗原行为
+  （例如关掉「iOS 键盘」会把注入的键盘摘走）。
+
+### 2. 修掉「模块连不上输入法」的构建缺陷（已修）
+
+- **症状**：装上新版后，模块页显示未连接、LSPosed 里看不到本模块的 hook 日志。
+- **原因**：构建脚本在缺少官方 `XposedBridgeAPI-82.jar` 时，把 `lsposed/xposed-stubs/*.java`
+  当作**源码**参与编译，桩类被打进了 `classes.dex` —— 模块包里出现了**假的**
+  `de.robv.android.xposed.*` 类（`XposedBridge`/`XposedHelpers`/`XC_MethodHook`/
+  `IXposedHookLoadPackage`），运行时会与框架注入的同名类打架，导致模块内 hook 静默失效。
+  用 `dexdump` 对比确认：修前 dex 109,680 B、含桩类；修后 107,320 B、94 个类**全部**是
+  `com.chiron.iosemoji.*`，无 `de.robv` 定义。
+- **修法**：桩只编译成独立 `xposed-stubs.jar` 作 `-classpath` 用，不进 `sources.txt`；
+  d8 打包时再按 `de\robv\` 路径排除一次，双保险。
+- 同时加固 attach：搜狗是 Tinker 热修复壳（`SogouTinkerApplication`），模块可能在
+  `Application#attach` 之后才被加载，attach hook 永远不触发。现在额外用
+  `ActivityThread.currentApplication()` 主动取 Context，并按 0/300/1200/3000/8000ms 重试。
+
+### 构建产物（本机实测）
+
+- `build/alpha3/AppleInputForSogou_v2.0.0-alpha3.apk`，22,804,037 B（含 `assets/payload.zip`）
+- `package name='com.chiron.iosemoji' versionCode='22' versionName='2.0.0-alpha3'`，
+  `application-label:'Apple Input for Sogou'`，证书 SHA-256 `4fbf65ed…c207`（同包名覆盖升级）
+
 ## v2.0.0-alpha2（重构建）— 项目改名为 Apple Input for Sogou
 
 - **项目对外名称**：`Chiron iOS 输入` → **`Apple Input for Sogou`（Apple 输入法 · 搜狗版）**。

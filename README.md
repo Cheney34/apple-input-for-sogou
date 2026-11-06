@@ -8,18 +8,18 @@
 - 目标包名：`com.sohu.inputmethod.sogou.xiaomi`（同时兼容 `com.sohu.inputmethod.sogou`）
 - 目标版本：`10.32.21.202607061714`（versionCode `2147483647`，5 个 dex，arm64-v8a）
 - 目标 APK SHA-256：`90B4A1945D28427A50CC6DF8FA1FE0E29977A0053622FA7A05FBDCFF01F6B09C`
-- 模块包名：`com.chiron.iosemoji` · 版本：`2.0.0-alpha2`（versionCode 21）
+- 模块包名：`com.chiron.iosemoji` · 版本：`2.0.0-alpha3`（versionCode 22）
 - 最低支持：Android 8.0（API 26）· 只在 LSPosed / EdXposed 等 Xposed 框架下工作
 
 ## 下载哪个版本？
 
 | 版本 | 适合谁 | 有什么 |
 | --- | --- | --- |
-| [**v2.0.0-alpha2**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha2) | 想试 iOS 风格键盘的尝鲜用户 | 自绘 iOS 键盘（显示层替换）+ iOS 风格模块界面 + 旧版全部表情功能；**alpha，未上机验证** |
+| [**v2.0.0-alpha3**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha3) | 想试 iOS 风格键盘的尝鲜用户 | 自绘 iOS 键盘（显示层替换）+ iOS 风格模块界面 + 旧版全部表情功能；**alpha3 修好了设置页假开关与「模块连不上输入法」** |
 | [**v1.8**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v1.8) | 只想换 Apple 表情、要稳定 | 表情分组安装 / 隐藏内置分组 / 滑动切换 / Logo 触发词 |
 | [**v1.7**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v1.7) | 老设备 / 旧搜狗版本 | 与 v1.8 同代但更早，兼容面略宽 |
 
-### 界面长什么样（alpha2 重写）
+### 界面长什么样（alpha2 重写 / alpha3 让开关真正生效）
 
 两个界面都换成 iOS 风格、全部代码自绘，不依赖 androidx / Material，跟随系统深浅色：
 
@@ -134,8 +134,18 @@ v2.0.0-alpha2 实现的正是这一步：
 
 模块首页底部 → **「功能开关 / 兼容信息」**。
 
-开关写入模块自己的 `SharedPreferences`（文件名 `chiron_config`），
-搜狗进程内通过 `XSharedPreferences` 读取；**改动后需要重启输入法进程才生效**。
+**alpha3 起开关是即时生效的**，不用重启输入法：
+
+1. 拨开关 → 写入模块的 `SharedPreferences`（`chiron_config`，冷启动用）；
+2. 同时用**有序广播**（`com.chiron.iosemoji.action.CFG`）把全部键值下发到已运行的搜狗进程，
+   hook 侧存进内存覆盖层并立刻按新值工作；
+3. 搜狗进程回执一份状态串 → 页面弹出「已生效：iOS 键盘 → 开」；
+   若进程没起来，则提示「已保存：…（搜狗进程未运行，切换输入法后生效）」，并在你下次切换输入法时生效；
+4. 冷启动走只读 `ContentProvider`（`content://com.chiron.iosemoji.config/config`）读一次，
+   不依赖跨进程 prefs 的可读性。
+
+页面顶部「连接状态」卡会显示：搜狗进程是否在线、已装 hook 列表、**进程内真正生效的配置值**、搜狗版本。
+所有开关都是**双向可逆**的：关掉立刻退回搜狗原行为（例如关掉「iOS 键盘」会把已注入的键盘摘走）。
 
 | 键 | 默认 | 作用 |
 | --- | --- | --- |
@@ -242,7 +252,7 @@ apksigner sign --ks signing/debug.keystore --ks-key-alias androiddebugkey `
 
 本仓库 v2.0.0-alpha2 的 Release APK 就是用这套流程产出的，校验结果：
 
-- `aapt2 dump badging`：`package name='com.chiron.iosemoji' versionCode='21' versionName='2.0.0-alpha2' minSdkVersion:'26' targetSdkVersion:'35' application-label:'Apple Input for Sogou'`
+- `aapt2 dump badging`（alpha3）：`package name='com.chiron.iosemoji' versionCode='22' versionName='2.0.0-alpha3' minSdkVersion:'26' targetSdkVersion:'35' application-label:'Apple Input for Sogou'`
 - `apksigner verify`：通过；签名 `CN=Android Debug`，证书 SHA-256 `4fbf65ed205c4a25bb592673714533c5effbcd234b9c08ed1be20ad7bf53c207`
 - APK 体积 21.74 MB（其中 `assets/payload.zip` ≈ 21.6 MB 是 Apple 表情位图，仓库不提交、只进 Release 资产）
 

@@ -17,6 +17,23 @@ public final class Protocol {
     public static final String ACTION_CMD = MODULE_PKG + ".action.CMD";
     public static final String ACTION_STATUS = MODULE_PKG + ".action.STATUS";
 
+    /**
+     * 有序广播：把设置页的开关下发到搜狗进程（{@link #ACTION_CFG} 改配置，
+     * {@link #ACTION_CFG_QUERY} 只查询状态）。
+     *
+     * <p>用**有序广播**而不是普通广播，是为了能用 {@code resultReceiver} 拿到回执 ——
+     * 这正是设置页能显示"已生效 / 搜狗进程未运行"的依据。
+     */
+    public static final String ACTION_CFG = MODULE_PKG + ".action.CFG";
+    public static final String ACTION_CFG_QUERY = MODULE_PKG + ".action.QCFG";
+
+    /** 有序广播回执码：1 = 搜狗进程收到并已应用；0 = 没有接收者（进程没起来）。 */
+    public static final int RESULT_OK = 1;
+    public static final int RESULT_ERROR = -1;
+
+    /** 配置只读 ContentProvider 的 authority（冷启动读配置用）。 */
+    public static final String CFG_AUTHORITY = MODULE_PKG + ".config";
+
     public static final String EXTRA_CMD = "cmd";
     public static final String EXTRA_PHASE = "phase";
     public static final String EXTRA_CURRENT = "current";

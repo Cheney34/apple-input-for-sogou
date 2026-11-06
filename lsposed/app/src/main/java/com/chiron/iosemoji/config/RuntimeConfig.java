@@ -1,0 +1,86 @@
+package com.chiron.iosemoji.config;
+
+import android.content.Intent;
+
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * 搜狗进程内的**运行时配置覆盖层**。
+ *
+ * <p>存在的理由：SharedPreferences 跨进程读不到（或读到旧缓存）时，开关就"看着没用"。
+ * 所以模块 App 每次改开关都会把所有键值用有序广播直接下发到搜狗进程，这里存下来，
+ * {@link ModuleConfig} 优先读这里。
+ *
+ * <p>优先级：运行时覆盖 > ContentProvider 冷启动快照 > XSharedPreferences > 默认值。
+ */
+public final class RuntimeConfig {
+
+    private static final ConcurrentHashMap<String, Boolean> VALUES = new ConcurrentHashMap<>();
+
+    private RuntimeConfig() {
+    }
+
+    /** 返回 null 表示"没有覆盖，继续走后面的来源"。 */
+    public static Boolean get(String key) {
+        return VALUES.get(key);
+    }
+
+    public static void put(String key, boolean value) {
+        VALUES.put(key, value);
+    }
+
+    public static boolean hasAny() {
+        return !VALUES.isEmpty();
+    }
+
+    public static int size() {
+        return VALUES.size();
+    }
+
+    /** 用有序广播带来的 extras 覆盖全部已知键（只覆盖 intent 里确实带了的）。 */
+    public static int applyFromIntent(Intent intent) {
+        if (intent == null) return 0;
+        int n = 0;
+        for (String key : ConfigValues.KEYS) {
+            if (!intent.hasExtra(key)) continue;
+            try {
+                VALUES.put(key, intent.getBooleanExtra(key, ConfigValues.defaultValue(key)));
+                n++;
+            } catch (Throwable ignored) {
+                // 单个键解析失败不影响其它键
+            }
+        }
+        return n;
+    }
+
+    /** 当前覆盖值的可读快照：master=1 kb=1 probe=0 … */
+    public static String describe() {
+        StringBuilder sb = new StringBuilder();
+        for (String key : ConfigValues.KEYS) {
+            if (sb.length() > 0) sb.append(' ');
+            sb.append(shortName(key)).append('=').append(Boolean.TRUE.equals(VALUES.get(key)) ? '1' : '0');
+        }
+        return sb.toString();
+    }
+
+    private static String shortName(String key) {
+        switch (key) {
+            case ModuleConfig.KEY_MASTER:
+                return "master";
+            case ModuleConfig.KEY_KEYBOARD_REPLACE:
+                return "keyboard";
+            case ModuleConfig.KEY_CANDIDATE_PROBE:
+                return "probe";
+            case ModuleConfig.KEY_EMOJI_GROUPS:
+                return "groups";
+            case ModuleConfig.KEY_EMOJI_SWIPE:
+                return "swipe";
+            case ModuleConfig.KEY_LOGO_TRIGGER:
+                return "logo";
+            case ModuleConfig.KEY_DIAGNOSTICS:
+                return "diag";
+            default:
+                return key;
+        }
+    }
+}

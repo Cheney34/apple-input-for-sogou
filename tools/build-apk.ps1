@@ -112,33 +112,55 @@ if (Test-Path $xposedJar) {
     $cp = "$AndroidJar;$xposedJar"
     Write-Host '    使用真实的 XposedBridgeAPI-82.jar'
 } else {
+    # 没有官方 jar 时：先把桩编译成独立 jar 当 classpath。
+    # 关键 —— 桩**绝不能进 classes.dex**。否则模块包里会出现假的 de.robv.android.xposed.* 类，
+    # 在部分 LSPosed 版本上会让模块内的 hook 全部静默失效（现象：模块连不上输入法、开关无效）。
+    $stubs = Join-Path $Repo 'lsposed\xposed-stubs'
+    if (-not (Test-Path $stubs)) {
+        throw '既没有 XposedBridgeAPI-82.jar，也没有 lsposed/xposed-stubs，无法编译'
+    }
     Write-Host '    未找到 lsposed/app/libs/XposedBridgeAPI-82.jar，改用 xposed-stubs（仅编译用，不打包）' -ForegroundColor Yellow
+    $stubCls = Join-Path $Work 'stubs'
+    New-Item -ItemType Directory -Force -Path $stubCls | Out-Null
+    $stubSrcList = Join-Path $Work 'stub-sources.txt'
+    $stubSrcs = Get-ChildItem -Recurse -File -Filter *.java -Path $stubs | Select-Object -ExpandProperty FullName
+    [System.IO.File]::WriteAllLines($stubSrcList, $stubSrcs, (New-Object System.Text.UTF8Encoding($false)))
+    & $Javac -encoding UTF-8 -nowarn -source 17 -target 17 -classpath $AndroidJar -d $stubCls "@$stubSrcList"
+    if ($LASTEXITCODE -ne 0) { throw 'javac（Xposed 桩）失败' }
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    $stubsJar = Join-Path $Work 'xposed-stubs.jar'
+    if (Test-Path $stubsJar) { Remove-Item $stubsJar -Force }
+    $zs = [System.IO.Compression.ZipFile]::Open($stubsJar, 'Create')
+    try {
+        Get-ChildItem -Recurse -File -Path $stubCls | ForEach-Object {
+            $entry = $_.FullName.Substring($stubCls.Length).TrimStart('\').Replace('\', '/')
+            [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zs, $_.FullName, $entry) | Out-Null
+        }
+    } finally { $zs.Dispose() }
+    $cp = "$AndroidJar;$stubsJar"
 }
 $srcs = @()
 $srcs += Get-ChildItem -Recurse -File -Filter *.java -Path (Join-Path $App 'java') | Select-Object -ExpandProperty FullName
 $srcs += Get-ChildItem -Recurse -File -Filter *.java -Path $Gen | Select-Object -ExpandProperty FullName
-$stubs = Join-Path $Repo 'lsposed\xposed-stubs'
-if (Test-Path $stubs) {
-    $srcs += Get-ChildItem -Recurse -File -Filter *.java -Path $stubs | Select-Object -ExpandProperty FullName
-} elseif ((Test-Path $xposedJar) -eq $false) {
-    throw '既没有 XposedBridgeAPI-82.jar，也没有 lsposed/xposed-stubs，无法编译'
-}
 $srcList = Join-Path $Work 'sources.txt'
 [System.IO.File]::WriteAllLines($srcList, $srcs, (New-Object System.Text.UTF8Encoding($false)))  # 不能带 BOM
 & $Javac -encoding UTF-8 -nowarn -source 17 -target 17 -classpath $cp -d $Cls "@$srcList"
 if ($LASTEXITCODE -ne 0) { throw 'javac 失败' }
 
-# 4) d8
+# 4) d8（只吃模块自己的 class：de/robv/** 一律排除，防止桩混进 dex）
 Step "d8"
 $classesZip = Join-Path $Work 'classes.zip'
 Add-Type -AssemblyName System.IO.Compression.FileSystem
+if (Test-Path $classesZip) { Remove-Item $classesZip -Force }
 $zip = [System.IO.Compression.ZipFile]::Open($classesZip, 'Create')
 Push-Location $Cls
 try {
-    Get-ChildItem -Recurse -File | ForEach-Object {
-        $entry = $_.FullName.Substring($Cls.Length).TrimStart('\').Replace('\', '/')
-        [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $_.FullName, $entry) | Out-Null
-    }
+    Get-ChildItem -Recurse -File -Path $Cls |
+        Where-Object { $_.FullName -notlike '*\de\robv\*' } |
+        ForEach-Object {
+            $entry = $_.FullName.Substring($Cls.Length).TrimStart('\').Replace('\', '/')
+            [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $_.FullName, $entry) | Out-Null
+        }
 } finally { $zip.Dispose(); Pop-Location }
 $dex = Join-Path $DexDir 'classes.dex'
 & cmd /c "`"$d8`" --release --lib `"$AndroidJar`" --min-api 26 --output `"$DexDir`" `"$classesZip`""

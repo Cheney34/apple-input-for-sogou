@@ -2,6 +2,7 @@ package com.chiron.iosemoji.hook;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.chiron.iosemoji.compat.VersionProfile;
@@ -47,7 +48,16 @@ public final class SetKeyboardViewHook {
                             protected void afterHookedMethod(MethodHookParam param) {
                                 try {
                                     if (!VersionProfile.allowUiReplacement()) return;
-                                    if (!ModuleConfig.keyboardReplaceEnabled()) return;
+                                    if (!ModuleConfig.keyboardReplaceEnabled()) {
+                                        // 运行中被关掉：把我们注入的键盘摘走，立刻回到搜狗原键盘
+                                        View existing = KeyboardFactory.peek();
+                                        if (existing != null
+                                                && existing.getParent() instanceof ViewGroup) {
+                                            ((ViewGroup) existing.getParent()).removeView(existing);
+                                            HookRegistry.log("H02 removed Apple keyboard (config off)");
+                                        }
+                                        return;
+                                    }
                                     Object container = param.thisObject;
                                     if (container == null) return;
                                     Object arg = param.args[0];

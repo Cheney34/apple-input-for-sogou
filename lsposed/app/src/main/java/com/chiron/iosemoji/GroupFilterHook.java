@@ -83,6 +83,10 @@ final class GroupFilterHook {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) {
                     try {
+                        // 运行中开关：关掉就立刻恢复显示搜狗自带的「组合 / 拼装」分组
+                        if (!com.chiron.iosemoji.config.ModuleConfig.emojiGroupFilterEnabled()) {
+                            return;
+                        }
                         Object result = param.getResult();
                         if (!(result instanceof String[])) return;
                         Object self = param.thisObject;
@@ -113,6 +117,9 @@ final class GroupFilterHook {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) {
                             try {
+                                if (!com.chiron.iosemoji.config.ModuleConfig.emojiGroupFilterEnabled()) {
+                                    return;
+                                }
                                 Object dst = param.args.length > 2 ? param.args[2] : null;
                                 if (!(dst instanceof String)) return;
                                 if (isBlockedTarget((String) dst)) {

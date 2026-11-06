@@ -106,6 +106,8 @@ final class GestureHook {
     }
 
     private static void unlock(Object pager) {
+        // 运行中开关：关掉「分组滑动」就立刻退回搜狗的原始限制，不需要重启输入法
+        if (!com.chiron.iosemoji.config.ModuleConfig.emojiSwipeEnabled()) return;
         try {
             XposedHelpers.setBooleanField(pager, "slide", true);
         } catch (Throwable t) {
@@ -116,7 +118,16 @@ final class GestureHook {
     private static void hookIntroAnimation(ClassLoader cl) {
         try {
             XposedHelpers.findAndHookMethod(CLS_VIEW, cl,
-                    "showSlideAnimation", XC_MethodReplacement.DO_NOTHING);
+                    "showSlideAnimation", new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) {
+                            // 开关关闭时保持搜狗原样（开场动画照旧）
+                            if (!com.chiron.iosemoji.config.ModuleConfig.emojiSwipeEnabled()) {
+                                return;
+                            }
+                            param.setResult(null);
+                        }
+                    });
             XposedBridge.log(TAG + ": intro animation skipped");
         } catch (Throwable t) {
             XposedBridge.log(TAG + ": intro hook failed: " + t);

@@ -11,6 +11,7 @@ import com.chiron.iosemoji.config.ModuleConfig;
 import com.chiron.iosemoji.core.HookState;
 import com.chiron.iosemoji.diagnostics.ViewTreeDumper;
 import com.chiron.iosemoji.hook.CandidateProbeHook;
+import com.chiron.iosemoji.hook.ConfigBridge;
 import com.chiron.iosemoji.hook.HookRegistry;
 import com.chiron.iosemoji.hook.KeyboardRootHook;
 import com.chiron.iosemoji.hook.SetKeyboardViewHook;
@@ -64,63 +65,120 @@ public class HookEntry implements IXposedHookLoadPackage {
         // ---- 旧的 v1.8 功能（表情/分组/Logo）----
         installLegacyHooks(lpparam.classLoader);
 
-        // ---- 等 Context ----
+        // ---- 等 Context：主路径 hook Application#attach ----
         try {
             XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class,
                     new XC_MethodHook() {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) {
-                            try {
-                                Object arg = param.args[0];
-                                if (!(arg instanceof Context)) return;
-                                final Context ctx = (Context) arg;
-                                if (!Protocol.isTarget(ctx.getPackageName())) return;
-                                if (!ATTACHED.compareAndSet(false, true)) return;
-
-                                HookState.setContext(ctx);
-                                HookState.setVersionName(readVersionName(ctx));
-                                ModuleConfig.reload();
-                                HookRegistry.log("attached: " + VersionProfile.describe()
-                                        + " config: kb=" + ModuleConfig.keyboardReplaceEnabled()
-                                        + " emoji=" + ModuleConfig.emojiGroupFilterEnabled());
-
-                                // 版本已确定，重新尝试键盘 hook（Registry 幂等，失败过的会重试）
-                                tryInstallKeyboardHooks(ctx.getClassLoader());
-
-                                installLegacyHooks(ctx.getClassLoader());
-                                scheduleLegacyHooks(ctx);
-
-                                try {
-                                    EmojiService.register(ctx);
-                                } catch (Throwable t) {
-                                    HookRegistry.log(t);
-                                }
-
-                                if (ModuleConfig.diagnosticsEnabled()) {
-                                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            ViewTreeDumper.dumpInputView();
-                                        }
-                                    }, 3000L);
-                                }
-                            } catch (Throwable t) {
-                                HookRegistry.log("attach failed");
-                                HookRegistry.log(t);
-                            }
+                            Object arg = param.args[0];
+                            if (!(arg instanceof Context)) return;
+                            onAttached((Context) arg);
                         }
                     });
         } catch (Throwable t) {
             HookRegistry.log("hook Application#attach failed");
             HookRegistry.log(t);
         }
+
+        // ---- 兜底：搜狗是 Tinker 热修复壳（SogouTinkerApplication），
+        //      模块有可能在 Application 已经 attach 完之后才被加载，那样 attach hook 永远不触发 ——
+        //      表现就是"模块连不上输入法"。这里主动向 ActivityThread 要一次 Application，
+        //      再错开几个时间点重试。 ----
+        scheduleAttachFallback(lpparam.classLoader);
     }
 
-    private static void tryInstallKeyboardHooks(ClassLoader cl) {
-        if (!ModuleConfig.keyboardReplaceEnabled()) {
-            HookRegistry.log("keyboard replace disabled by config");
-            return;
+    private static void scheduleAttachFallback(final ClassLoader cl) {
+        try {
+            Handler handler = new Handler(Looper.getMainLooper());
+            for (final long delay : new long[]{0L, 300L, 1200L, 3000L, 8000L}) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (ATTACHED.get()) return;
+                        Context ctx = currentApplication(cl);
+                        if (ctx == null) return;
+                        HookRegistry.log("attach fallback: context from ActivityThread");
+                        onAttached(ctx);
+                    }
+                }, delay);
+            }
+        } catch (Throwable t) {
+            HookRegistry.log("scheduleAttachFallback failed");
+            HookRegistry.log(t);
         }
+    }
+
+    private static Context currentApplication(ClassLoader cl) {
+        try {
+            Class<?> activityThread = XposedHelpers.findClass("android.app.ActivityThread", cl);
+            Object app = XposedHelpers.callStaticMethod(activityThread, "currentApplication");
+            return app instanceof Context ? (Context) app : null;
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    /** 真正的 attach 后初始化：两条路径（attach hook / ActivityThread 兜底）都汇聚到这里。 */
+    private static void onAttached(final Context ctx) {
+        try {
+            if (ctx == null) return;
+            if (!Protocol.isTarget(ctx.getPackageName())) return;
+            if (!ATTACHED.compareAndSet(false, true)) return;
+
+            HookState.setContext(ctx);
+            HookState.setVersionName(readVersionName(ctx));
+            ModuleConfig.reload();
+
+            // 配置通道：ContentProvider 冷启动读 + 有序广播实时下发（含回执）
+            try {
+                ConfigBridge.setOnConfigChanged(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 开关变化后补装/重试：各 install() 自身幂等
+                        tryInstallKeyboardHooks(ctx.getClassLoader());
+                        installLegacyHooks(ctx.getClassLoader());
+                    }
+                });
+                ConfigBridge.install(ctx);
+            } catch (Throwable t) {
+                HookRegistry.log(t);
+            }
+
+            HookRegistry.log("attached: " + VersionProfile.describe()
+                    + " | cfg " + ConfigBridge.summary());
+
+            // 版本已确定，重新尝试键盘 hook（Registry 幂等，失败过的会重试）
+            tryInstallKeyboardHooks(ctx.getClassLoader());
+
+            installLegacyHooks(ctx.getClassLoader());
+            scheduleLegacyHooks(ctx);
+
+            try {
+                EmojiService.register(ctx);
+            } catch (Throwable t) {
+                HookRegistry.log(t);
+            }
+
+            if (ModuleConfig.diagnosticsEnabled()) {
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ViewTreeDumper.dumpInputView();
+                    }
+                }, 3000L);
+            }
+        } catch (Throwable t) {
+            HookRegistry.log("attach failed");
+            HookRegistry.log(t);
+        }
+    }
+
+    /**
+     * 键盘 hook **总是尝试安装**，是否真的替换由 {@link ModuleConfig} 在每次调用时判断 ——
+     * 这样设置页关掉「iOS 键盘」立刻退回搜狗原键盘，重新打开也不用重启输入法。
+     */
+    private static void tryInstallKeyboardHooks(ClassLoader cl) {
         if (!VersionProfile.allowUiReplacement() && !"unknown".equals(HookState.versionName())) {
             HookRegistry.log("unsupported version, keyboard hooks skipped: "
                     + VersionProfile.describe());
@@ -138,27 +196,25 @@ public class HookEntry implements IXposedHookLoadPackage {
         }
     }
 
+    /**
+     * 三个既有功能（滑动 / 分组过滤 / Logo 触发词）**总是安装**，开关在回调里实时判断，
+     * 因此设置页改动即时生效、双向可逆（关掉就是搜狗原行为）。
+     */
     private static void installLegacyHooks(ClassLoader cl) {
-        if (ModuleConfig.emojiSwipeEnabled()) {
-            try {
-                GestureHook.install(cl);
-            } catch (Throwable t) {
-                HookRegistry.log(t);
-            }
+        try {
+            GestureHook.install(cl);
+        } catch (Throwable t) {
+            HookRegistry.log(t);
         }
-        if (ModuleConfig.emojiGroupFilterEnabled()) {
-            try {
-                GroupFilterHook.install(cl);
-            } catch (Throwable t) {
-                HookRegistry.log(t);
-            }
+        try {
+            GroupFilterHook.install(cl);
+        } catch (Throwable t) {
+            HookRegistry.log(t);
         }
-        if (ModuleConfig.logoTriggerEnabled()) {
-            try {
-                LogoHook.install();
-            } catch (Throwable t) {
-                HookRegistry.log(t);
-            }
+        try {
+            LogoHook.install();
+        } catch (Throwable t) {
+            HookRegistry.log(t);
         }
     }
 

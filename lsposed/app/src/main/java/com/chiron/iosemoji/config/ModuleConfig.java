@@ -72,7 +72,10 @@ public final class ModuleConfig {
     }
 
     private static boolean getBoolean(String key, boolean def) {
-        // reload 很便宜，但为了避免每次按键都读盘，仅在拿到实例时读一次内存值
+        // 优先级 1：运行中由设置页通过有序广播下发的覆盖值（改开关即时生效）
+        Boolean live = RuntimeConfig.get(key);
+        if (live != null) return live;
+        // 优先级 2：XSharedPreferences（进程启动早期 ContentProvider 还没回来的兜底）
         try {
             XSharedPreferences p = prefs();
             if (p == null) return def;
