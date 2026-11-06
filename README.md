@@ -28,7 +28,8 @@ OPPO 定制版把整个主题模块用 `-repackageclasses '` 塞进了默认包�
 
 | 版本 | 适合谁 | 有什么 |
 | --- | --- | --- |
-| [**v2.0.2-beta1**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.2-beta1) | 所有人（推荐） | 多定制版支持：**OPPO 定制版（`com.sohu.inputmethod.sogouoem`）也能改皮肤**（该版类名不同 → 新增 `Targets` 映射表）；小米版行为不变 |
+| [**v2.0.2-beta2**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.2-beta2) | 所有人（推荐） | 修好 **OPPO 定制版皮肤不生效**：位图入口不再写死 `common.j#f` 一个签名，改为按方法名 `f/g/j/k/d/e` 全挂（该版走 `nm1#j`/`#k`/`#e`），并支持 `BitmapDrawable` 返回；新增 `skinse=` / `seen=` 诊断行 |
+| [**v2.0.2-beta1**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.2-beta1) | 存档 | 多定制版支持：**OPPO 定制版（`com.sohu.inputmethod.sogouoem`）也能改皮肤**（该版类名不同 → 新增 `Targets` 映射表）；小米版行为不变 |
 | [**v2.0.1-beta4**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.1-beta4) | 存档 | iOS 深色底色压到深灰 `#222223`（键 `#6D6D6F` / 字 `#FDFDFE` 不变），功能键与按下态按新色阶重推 |
 | [**v2.0.1-beta3**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.1-beta3) | 存档 | iOS 皮肤深色版：键 `#6D6D6F` / 字 `#FDFDFE`，底色压到深灰 `#222223`，其余层级按同一色阶过渡 |
 | [**v2.0.1-beta2**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.1-beta2) | 存档 | 七套皮肤：iOS / 微信 / Google / **幽墨 Material** / **幽墨 Pixel** / **樱花粉** / 莫奈取色 |

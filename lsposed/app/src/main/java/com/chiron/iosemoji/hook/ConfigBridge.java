@@ -138,6 +138,8 @@ public final class ConfigBridge {
         sb.append(';').append(ThemeSkinHook.stateFields());
         String unmatched = ThemeSkinHook.unmatchedNames();
         if (unmatched.length() > 0) sb.append(";skip=").append(unmatched);
+        String seen = ThemeSkinHook.seenNames();
+        if (seen.length() > 0) sb.append(";seen=").append(seen);
         return sb.toString();
     }
 

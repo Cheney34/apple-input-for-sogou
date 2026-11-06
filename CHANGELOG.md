@@ -2,6 +2,46 @@
 
 本项目遵循「分析 → 验证 → 实现」的推进方式：每个版本只写**有证据支撑**的东西。
 
+## v2.0.2-beta2 — 修好 OPPO 定制版「皮肤完全不生效」
+
+### 用户反馈
+> 我试了一下 oppo 的定制版，它是用不了我那个皮肤的。你看一下它是不是路径不一样的。
+
+### 先排除「路径不一样」
+解包 OPPO 的 APK 逐项核对，**资源路径与小米版完全一致**：
+
+| 资源 | OPPO | 小米 |
+| --- | --- | --- |
+| `assets/theme/thememanifest.ini` | 296 B | 296 B |
+| `assets/theme/file_name_mapping_1080.ini` | 146,736 B | 119,390 B |
+| `assets/theme/theme_default/theme.ini` | 759 B | 同结构 |
+| `theme_default/1080/{layout,port,land,res}` | 有 | 有 |
+| 键帽 png 名（`key.png`/`key_qwerty.png`/`key_func.png`/…） | 一致 | 一致 |
+
+（几何值有差异但不在本次问题范围内：OPPO `py_9.ini` 是 `H=0.58333`、`PADDINGS=0,0,0,0`、`ROW1 H_OFFSET=0.175`。）
+
+### 真因：位图入口的方法名/重载不同
+- 小米版位图统一走 `com.sogou.theme.common.j#f(Context,String,boolean,boolean)`，所以旧 H41 只挂了这一个固定签名。
+- OPPO 定制版这一套被塞进默认包，类是 `defpackage.nm1`，常用的是**带缓存**的 `k(...)` 与 **Drawable** 的 `e(...)`，名字与参数个数都不同。
+- 结果：H41 在 OPPO 上**一次都没触发** → 皮肤整套不生效（ini 那条线 H40 是好的，所以「配置能连、开关能点，但键盘没变」）。
+
+### 改法
+1. H41 不再写死签名：`GETTER_NAMES = {f, g, j, k, d, e}` 逐个 `XposedBridge.hookAllMethods(cls, name, …)`，命中哪个算哪个（`H41 bitmap getters hooked on defpackage.nm1: N/6`）。
+2. 结果类型兼容 **Bitmap / BitmapDrawable**（Drawable 用 `new BitmapDrawable(res, tinted)` 包回去，不改变返回类型）。
+3. 参数不按位置猜：`pickPath()` 挑「含 `/` 或以 `.png/.ini/.webp` 结尾」的 String，`pickContext()` 挑 Context，缺了就用 `HookState.context()`。
+4. 诊断补两块：`skinse=`（见到但没处理的资源数）+ `seen=`（`原因:文件名` 列表，最多 15 条），设置页「连接状态」卡直接可看。
+5. 删掉重复的 H43（`g/k` 已由 H41 统一挂，避免重复计数）。
+
+### 构建验证
+- `AppleInputForSogou_v2.0.2-beta2.apk` = 22,750,789 B，`versionCode=37`、`versionName=2.0.2-beta2`、`application-label='Apple Input for Sogou'`。
+- 证书 `CN=Android Debug`，SHA-256 `4fbf65ed205c4a25bb592673714533c5effbcd234b9c08ed1be20ad7bf53c207`（与 v1.7/v1.8 一致 ⇒ 可覆盖升级）。
+- `classes.dex` 146,180 B，116 个类全部 `Lcom/chiron/iosemoji/*`，`de/robv` 定义 0；dex 内含 `skinse`、`seen=`、`bitmap getters hooked on `、`defpackage.nm1`、`defpackage.yy1`。
+
+### 装完请回报（OPPO 上）
+日志 TAG `AppleInputForSogou`：
+- `H41 bitmap getters hooked on defpackage.nm1: N/6`（N=0 说明入口名还没猜对）
+- `H40 skin ini patched: …`（有这行说明 ini 线正常）
+- 设置页「连接状态」里的 `skini= / skimg= / skinse= / seen=` 四个数
 ## v2.0.2-beta1 — 多定制版支持：OPPO 定制版也能改皮肤
 
 小米版一直是适配目标，用户这次给了 **OPPO 定制版**（`com.sohu.inputmethod.sogouoem`，

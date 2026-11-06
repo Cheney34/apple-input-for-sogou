@@ -58,6 +58,9 @@ public final class ThemeSkinHook {
     private static final AtomicInteger PARSER_CALLS = new AtomicInteger();
     private static final AtomicInteger IMG_BYPASS = new AtomicInteger();
     /** 见过但没认出来的皮肤图名（最多留 12 个，供用户贴日志定位）。 */
+    /** 见到但没处理的资源（带原因 tag），用于「到底走到了哪一步」的诊断。 */
+    private static final ConcurrentLinkedQueue<String> SEEN = new ConcurrentLinkedQueue<>();
+    private static final int SEEN_MAX = 15;
     private static final ConcurrentLinkedQueue<String> UNMATCHED = new ConcurrentLinkedQueue<>();
     private static final int UNMATCHED_MAX = 12;
     private static final int LOG_LIMIT = 20;
@@ -87,7 +90,6 @@ public final class ThemeSkinHook {
         if (t.themeParserClass != null) {
             HookRegistry.install("H42_theme_ini_parser", cl, ThemeSkinHook::hookIniParser);
         }
-        HookRegistry.install("H43_theme_bitmap_cached", cl, ThemeSkinHook::hookBitmapCached);
     }
 
     // ── H40：ini 段值改写 ─────────────────────────────────────────────────
@@ -148,91 +150,138 @@ public final class ThemeSkinHook {
 
     // ── H41：皮肤位图重绘 ─────────────────────────────────────────────────
 
+    /**
+     * 位图入口的候选方法名（不同定制版不同）：
+     * 小米版 {@code common.j#f(...)} / 带缓存 {@code #g(...)} / Drawable {@code #d(...)}；
+     * OPPO 定制版 {@code nm1#j(...)} / 带缓存 {@code #k(...)} / Drawable {@code #e(...)}。
+     * 用 {@code hookAllMethods}（只按方法名）逐个挂，命中哪个算哪个 ——
+     * 因为各版参数个数不一样，写死签名会在另一版上静默失配。
+     */
+    private static final String[] GETTER_NAMES = {"f", "g", "j", "k", "d", "e"};
+
     private static void hookBitmap(ClassLoader cl) {
         final Targets t = sTargets;
-        XposedHelpers.findAndHookMethod(t.bitmapClass, cl, t.bitmapMethod,
-                Context.class, String.class, boolean.class, boolean.class,
-                new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) {
-                        try {
-                            IMG_CALLS.incrementAndGet();
-                            if (!ModuleConfig.themeSkinEnabled()) return;
-                            Object res = param.getResult();
-                            if (!(res instanceof Bitmap)) return;
-                            String path = param.args[1] instanceof String ? (String) param.args[1] : null;
-                            if (path == null) return;
-                            if (!isSkinPath(path)) return;
-                            int kind = IosSkin.kindOf(path);
-                            if (kind == IosSkin.KIND_NONE) {
-                                // alpha9：删掉「看着像键帽就当键帽」的兜底。
-                                // 图标是「透明底 + 单色字形」，亮度分布很均匀，任何形状启发式
-                                // 都会把它判成键帽然后刷成一块纯色方块 —— 用户看到的
-                                // 「设置齿轮图标」「语言/地区旗帜图标」变方块就是这么来的。
-                                if (IosSkin.isProtected(path)) IMG_PROTECTED.incrementAndGet();
-                                else remember(path);
-                                return;
-                            }
-                            Context ctx = param.args[0] instanceof Context ? (Context) param.args[0] : null;
-                            SkinPreset preset = preset(ctx, path);
-                            int color = IosSkin.colorOfKind(path, kind, preset);
-                            if (color == 0) {
-                                remember(path);
-                                return;
-                            }
-                            Bitmap tinted = IosSkin.synth((Bitmap) res, kind, color, preset);
-                            if (tinted == null) {
-                                // 原图内含图标/文字（例如 ⌫、⏎），保留搜狗原样
-                                IMG_KEPT.incrementAndGet();
-                                return;
-                            }
-                            param.setResult(tinted);
-                            int n = IMG_REDRAWN.incrementAndGet();
-                            if (n <= LOG_LIMIT) {
-                                HookRegistry.log("H41 skin bitmap redrawn: " + baseName(path)
-                                        + " kind=" + kind
-                                        + " preset=" + preset.id
-                                        + " -> " + String.format("#%08X", color)
-                                        + " (total " + n + ")");
-                            }
-                        } catch (Throwable t) {
-                            HookRegistry.log("H41 redraw failed: " + t);
-                        }
-                    }
-                });
-    }
-
-    /**
-     * H43：带缓存的位图入口 {@code common.j#g(...)} —— 只计数。
-     *
-     * <p>如果 g 的调用很多而 f 很少，说明命中缓存、我们没机会重画（换预设后要靠
-     * {@link #dropCaches()} 清缓存）。纯粹是诊断信号，不改任何东西。
-     */
-    private static void hookBitmapCached(ClassLoader cl) {
         try {
-            final Targets t = sTargets;
             Class<?> cls = XposedHelpers.findClass(t.bitmapClass, cl);
-            // 小米版带缓存取法是 g(...)，OPPO 定制版是 k(...)；两个都试，纯计数用。
-            boolean hooked = false;
-            for (String name : new String[]{"g", "k"}) {
+            int hooked = 0;
+            for (String name : GETTER_NAMES) {
                 try {
                     de.robv.android.xposed.XposedBridge.hookAllMethods(cls, name, new XC_MethodHook() {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) {
-                            IMG_BYPASS.incrementAndGet();
+                            onBitmapResult(param);
                         }
                     });
-                    hooked = true;
+                    hooked++;
                 } catch (Throwable ignored) {
-                    // 这个方法名在这个版本不存在，试下一个
+                    // 该名字在这一版不存在，换下一个
                 }
             }
-            if (!hooked) HookRegistry.log("H43: no cached getter found on " + t.bitmapClass);
-        } catch (Throwable t) {
-            HookRegistry.log("H43 install skipped: " + t);
+            HookRegistry.log("H41 bitmap getters hooked on " + t.bitmapClass + ": " + hooked + "/" + GETTER_NAMES.length);
+        } catch (Throwable t2) {
+            HookRegistry.log("H41 install failed: " + t2);
         }
     }
 
+    private static void onBitmapResult(XC_MethodHook.MethodHookParam param) {
+        try {
+            IMG_CALLS.incrementAndGet();
+            Object res = param.getResult();
+            Bitmap src = asBitmap(res);
+            if (src == null) return;
+            String path = pickPath(param);
+            if (path == null) return;
+            if (!isSkinPath(path)) {
+                // 诊断：把「被路径过滤掉」的图名列出来，避免「什么都没发生」这种无信息状态
+                seen("skip-path", path);
+                return;
+            }
+            if (!ModuleConfig.themeSkinEnabled()) return;
+            int kind = IosSkin.kindOf(path);
+            if (kind == IosSkin.KIND_NONE) {
+                // 删掉「看着像键帽就当键帽」的兜底：图标是「透明底 + 单色字形」，
+                // 任何形状启发式都会把图标刷成纯色方块（设置齿轮、语言旗帜就是这么坏的）。
+                seen("unknown", path);
+                if (IosSkin.isProtected(path)) IMG_PROTECTED.incrementAndGet();
+                else remember(path);
+                return;
+            }
+            Context ctx = pickContext(param);
+            SkinPreset preset = preset(ctx, path);
+            int color = IosSkin.colorOfKind(path, kind, preset);
+            if (color == 0) {
+                remember(path);
+                return;
+            }
+            Bitmap tinted = IosSkin.synth(src, kind, color, preset);
+            if (tinted == null) {
+                // 原图内含图标/文字（⌫、⏎ 等），保留搜狗原样
+                IMG_KEPT.incrementAndGet();
+                return;
+            }
+            if (res instanceof Bitmap) {
+                param.setResult(tinted);
+            } else {
+                param.setResult(wrapDrawable(ctx, res, tinted));
+            }
+            int n = IMG_REDRAWN.incrementAndGet();
+            if (n <= LOG_LIMIT) {
+                HookRegistry.log("H41 skin bitmap redrawn: " + baseName(path)
+                        + " kind=" + kind
+                        + " preset=" + preset.id
+                        + " -> " + String.format("#%08X", color)
+                        + " (total " + n + ")");
+            }
+        } catch (Throwable t) {
+            HookRegistry.log("H41 redraw failed: " + t);
+        }
+    }
+
+    /** 结果可能是 Bitmap，也可能是 BitmapDrawable —— 统一取成 Bitmap 处理。 */
+    private static Bitmap asBitmap(Object res) {
+        if (res instanceof Bitmap) return (Bitmap) res;
+        if (res instanceof android.graphics.drawable.BitmapDrawable) {
+            return ((android.graphics.drawable.BitmapDrawable) res).getBitmap();
+        }
+        return null;
+    }
+
+    /** 原来是 Drawable 的返回 Drawable，别把类型换掉（调用方会 {@code findViewById} 式强转）。 */
+    private static Object wrapDrawable(Context ctx, Object original, Bitmap tinted) {
+        if (ctx == null) ctx = HookState.context();
+        if (ctx == null) return tinted;
+        return new android.graphics.drawable.BitmapDrawable(ctx.getResources(), tinted);
+    }
+
+    /** 从参数里挑出资源路径：第一个「含 / 或以图片/ini 结尾」的 String。 */
+    private static String pickPath(XC_MethodHook.MethodHookParam param) {
+        if (param.args == null) return null;
+        for (Object a : param.args) {
+            if (!(a instanceof String)) continue;
+            String s = (String) a;
+            if (s.indexOf('/') >= 0 || s.endsWith(".png") || s.endsWith(".ini") || s.endsWith(".webp")) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    /** 从参数里挑出 Context（可选）。 */
+    private static Context pickContext(XC_MethodHook.MethodHookParam param) {
+        if (param.args != null) {
+            for (Object a : param.args) {
+                if (a instanceof Context) return (Context) a;
+            }
+        }
+        return HookState.context();
+    }
+
+    /** 诊断：记录「见到但没处理」的图名（最多 15 个），配合 tag 说明原因。 */
+    private static void seen(String tag, String path) {
+        if (SEEN.size() >= SEEN_MAX) return;
+        String line = tag + ":" + baseName(path);
+        if (!SEEN.contains(line)) SEEN.add(line);
+    }
     private static void remember(String path) {
         if (UNMATCHED.size() >= UNMATCHED_MAX) return;
         String n = baseName(path);
@@ -339,7 +388,19 @@ public final class ThemeSkinHook {
                 + ";skinc=" + IMG_BYPASS.get()
                 + ";skink=" + IMG_KEPT.get()
                 + ";skinp=" + IMG_PROTECTED.get()
-                + ";skint=" + IosSkin.contrastFixes();
+                + ";skint=" + IosSkin.contrastFixes()
+                + ";skinse=" + SEEN.size();
+    }
+
+    /** 见到但没处理的名字（带原因 tag），诊断用。 */
+    public static String seenNames() {
+        if (SEEN.isEmpty()) return "";
+        StringBuilder sb = new StringBuilder();
+        for (String s : SEEN) {
+            if (sb.length() > 0) sb.append(',');
+            sb.append(s);
+        }
+        return sb.toString();
     }
 
     /** 没识别出来的图名（诊断用，最多 12 个）。 */
