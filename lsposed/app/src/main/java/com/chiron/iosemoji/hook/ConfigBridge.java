@@ -114,6 +114,10 @@ public final class ConfigBridge {
         sb.append(";hooks=").append(HookRegistry.installedIds());
         sb.append(';').append(RuntimeConfig.describe());
         sb.append(";sg=").append(sogouVersion(ctx));
+        // 皮肤改动是否真的落到了搜狗的皮肤资源上 —— 这行是"改没改到"的唯一判据
+        sb.append(';').append(ThemeSkinHook.stateFields());
+        String unmatched = ThemeSkinHook.unmatchedNames();
+        if (unmatched.length() > 0) sb.append(";skip=").append(unmatched);
         return sb.toString();
     }
 

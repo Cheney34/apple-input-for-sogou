@@ -121,7 +121,12 @@ public class SettingsActivity extends Activity {
         card.addView(labelRow("已装 hook", hooksText));
 
         effectiveText = IosUi.text(this, "—", 13f, IosUi.label2(this), false);
-        card.addView(labelRow("进程内生效值", effectiveText));
+        effectiveText.setTextIsSelectable(true);
+        effectiveText.setOnLongClickListener(v -> {
+            copyToClipboard("ChironSkinState", effectiveText.getText().toString());
+            return true;
+        });
+        card.addView(labelRow("皮肤 / 生效值", effectiveText));
 
         requestHint = IosUi.text(this, "开关改动会立刻下发；若显示未连接，切换一下输入法再回来即可。",
                 13f, IosUi.label2(this), false);
@@ -335,6 +340,12 @@ public class SettingsActivity extends Activity {
         String source = null;
         String hooks = null;
         String sg = null;
+        String skinPreset = null;
+        String skinIni = null;
+        String skinImg = null;
+        String skinParser = null;
+        String skinCached = null;
+        String skinSkip = null;
         StringBuilder eff = new StringBuilder();
         for (String part : raw.split(";")) {
             int eq = part.indexOf('=');
@@ -354,6 +365,24 @@ public class SettingsActivity extends Activity {
                 case "sg":
                     sg = v;
                     break;
+                case "skin":
+                    skinPreset = v;
+                    break;
+                case "skini":
+                    skinIni = v;
+                    break;
+                case "skimg":
+                    skinImg = v;
+                    break;
+                case "skinq":
+                    skinParser = v;
+                    break;
+                case "skinc":
+                    skinCached = v;
+                    break;
+                case "skip":
+                    skinSkip = v;
+                    break;
                 default:
                     if (eff.length() > 0) eff.append(' ');
                     eff.append(k).append('=').append("1".equals(v) ? "开" : "关");
@@ -362,7 +391,18 @@ public class SettingsActivity extends Activity {
         statusText.setText("已连接" + (source != null ? "（配置来源 " + source + "）" : ""));
         statusText.setTextColor(IosUi.GREEN);
         hooksText.setText(hooks == null || hooks.length() == 0 ? "—" : hooks);
-        effectiveText.setText(eff.length() == 0 ? "—" : eff.toString());
+        // 皮肤一行的读法：ini=调用/改动，img=解码/重画；img 右侧是 0 就说明"读到了但没认出来"
+        StringBuilder skinLine = new StringBuilder();
+        skinLine.append("皮肤=").append(skinPreset == null ? "ios" : skinPreset);
+        if (skinIni != null) skinLine.append("  ini=").append(skinIni);
+        if (skinImg != null) skinLine.append("  图=").append(skinImg);
+        if (skinParser != null) skinLine.append("  解析=").append(skinParser);
+        if (skinCached != null) skinLine.append("  缓存=").append(skinCached);
+        if (eff.length() > 0) skinLine.append('\n').append(eff);
+        if (skinSkip != null && skinSkip.length() > 0) {
+            skinLine.append("\n没认出来的图：").append(skinSkip);
+        }
+        effectiveText.setText(skinLine.toString());
         requestHint.setText("搜狗版本 " + (sg == null ? "unknown" : sg)
                 + " · 模块 " + (version == null ? "unknown" : version));
     }
@@ -422,5 +462,18 @@ public class SettingsActivity extends Activity {
 
     private void toast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    /** 长按状态文本即可复制，方便把「皮肤改到没改到」的原样数字贴出来。 */
+    private void copyToClipboard(String label, String text) {
+        try {
+            android.content.ClipboardManager cm =
+                    (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            if (cm == null) return;
+            cm.setPrimaryClip(android.content.ClipData.newPlainText(label, text));
+            toast("已复制诊断信息");
+        } catch (Throwable t) {
+            toast("复制失败：" + t);
+        }
     }
 }

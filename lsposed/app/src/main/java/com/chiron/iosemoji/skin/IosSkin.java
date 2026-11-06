@@ -167,6 +167,23 @@ public final class IosSkin {
         return slash >= 0 ? path.substring(slash + 1) : path;
     }
 
+    /**
+     * 「名字没在清单里，但看着就是键帽」的兜底判断。
+     *
+     * <p>搜狗不同皮肤版本（尤其第三方皮肤）给键帽图起的名字并不统一，例如
+     * {@code btn_key_normal.png} / {@code keyboard_key_alpha.png} / {@code skey_bg.png}。
+     * 这类图如果不兜底，就会「图片明明被读到了却一张都没改」——表现就是用户说的
+     * 「圆角一点没变」。所以这里放宽到「文件名里带 key / btn / skey」即视为键帽，
+     * 真正的改动效果仍由 {@link #synth} 按不透明包围盒重画，不会破坏原图尺寸。
+     */
+    public static boolean looksLikeKey(String fileName) {
+        if (fileName == null) return false;
+        String n = baseName(fileName).toLowerCase();
+        if (!n.endsWith(".png") && !n.endsWith(".webp")) return false;
+        if (n.startsWith("popup") || n.startsWith("bg_popup")) return false;
+        return n.contains("key") || n.startsWith("btn_") || n.startsWith("skey");
+    }
+
     /** 该图片是否属于「功能键」配色（比字母键更灰 / 更淡）。 */
     public static boolean isFuncKey(String fileName) {
         if (fileName == null) return false;
@@ -183,8 +200,18 @@ public final class IosSkin {
 
     /** 该位图应当填的目标颜色；{@code KIND_NONE} 时返回 0。 */
     public static int colorOf(String fileName, SkinPreset p) {
+        return colorOfKind(fileName, kindOf(fileName), p);
+    }
+
+    /**
+     * 按**已判定**的 kind 取目标颜色。
+     *
+     * <p>为什么要多这个方法：{@code ThemeSkinHook} 里可能用 {@link #looksLikeKey} 把名字不认识的图
+     * 兜底判成 {@code KIND_KEY}；如果这里再调一次 {@link #kindOf} 就会得到 {@code KIND_NONE} 并返回 0，
+     * 那些图就永远改不上（alpha6 的真 bug：键帽读到了却一张没重画）。
+     */
+    public static int colorOfKind(String fileName, int kind, SkinPreset p) {
         if (p == null) return 0;
-        int kind = kindOf(fileName);
         if (kind == KIND_NONE) return 0;
         boolean pressed = isPressed(fileName);
         boolean func = isFuncKey(fileName);
