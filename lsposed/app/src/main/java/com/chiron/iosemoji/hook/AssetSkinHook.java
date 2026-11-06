@@ -107,7 +107,7 @@ public final class AssetSkinHook {
 
             Object result = param.getResult();
             if (!(result instanceof InputStream)) return;
-            if (!ModuleConfig.themeSkinEnabled()) return;
+            if (!ModuleConfig.resourceSkinEnabled()) return;
 
             // 铁律 1：第三方皮肤一个字都不改
             if (!isDefaultTheme(path)) {
@@ -343,18 +343,20 @@ public final class AssetSkinHook {
     /**
      * 铁律 1：只有**内置默认皮肤**才改。
      * 第三方皮肤（用户下载的 .ssf/主题包）解包后落在这几类目录里，一律放过：
-     * {@code sogou_custom}、{@code /themes/}、{@code .theme/}、{@code theme_custom}、
+     * {@code sogou_custom}、{@code theme_custom}、{@code /themes/}、{@code .ssf}、{@code theme_custom}、
      * {@code unPackThemeTmp}、{@code phoneTheme.ini}。
      */
     public static boolean isDefaultTheme(String path) {
         if (path == null) return false;
         String p = path.toLowerCase();
-        if (p.contains("sogou_custom") || p.contains("/themes/") || p.contains(".theme/")
-                || p.contains("theme_custom") || p.contains("unpackthemetmp")
-                || p.contains("phonetheme") || p.endsWith(".ssf")) {
+        // 主题包本身、用户下载的第三方皮肤目录：一个字都不改
+        if (p.endsWith(".ssf") || p.contains(".ssf/")) return false;
+        if (p.contains("sogou_custom") || p.contains("theme_custom") || p.contains("/themes/")) {
             return false;
         }
-        return p.contains("theme_default") || p.startsWith("theme/");
+        if (p.contains("phonetheme")) return false;
+        // 其余只要是「主题资源」(assets/theme/… 或缓存的 .theme/、unPackThemeTmp 解包目录) 就认作默认。
+        return isThemeAsset(path);
     }
 
     private static boolean isIni(String path) {

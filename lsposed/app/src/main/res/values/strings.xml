@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Apple Input for Sogou</string>
     <string name="tagline">LSPosed 模块 · 搜狗负责输入，Apple 负责体验</string>
-    <string name="version_label">v2.0.2-beta4</string>
+    <string name="version_label">v2.0.2-beta5</string>
 
     <string name="confirm_restore">把被替换过的分组恢复成搜狗自带的原始表情？</string>
     <string name="restore_ok">确定还原</string>
