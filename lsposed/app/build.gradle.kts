@@ -3,15 +3,15 @@ plugins {
 }
 
 android {
-    namespace = "com.chiron.iosinput"
+    namespace = "com.chiron.iosemoji"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.chiron.iosinput"
+        applicationId = "com.chiron.iosemoji"
         minSdk = 26
         targetSdk = 35
-        versionCode = 20
-        versionName = "2.0.0-alpha1"
+        versionCode = 21
+        versionName = "2.0.0-alpha2"
         // 只针对 arm64 的搜狗包做验证；模块本身是纯 Java，不引入 native
         resourceConfigurations += listOf("zh", "en")
     }

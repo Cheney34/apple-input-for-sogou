@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="bg">#0E0F13</color>
-    <color name="card">#17181E</color>
-    <color name="card_alt">#1F2129</color>
-    <color name="card_sel">#2A2418</color>
-    <color name="stroke">#2A2C35</color>
-    <color name="text">#F3F4F8</color>
-    <color name="dim">#8C8E9B</color>
-    <color name="accent">#FFC24B</color>
-    <color name="accent_ink">#201603</color>
-    <color name="ok">#3DD68C</color>
-    <color name="warn">#FF6B6B</color>
+    <!-- 浅色（默认）：iOS 分组列表 -->
+    <color name="bg">#F2F2F7</color>
+    <color name="card">#FFFFFF</color>
+    <color name="card_alt">#F7F7FA</color>
+    <color name="card_sel">#EAF3FF</color>
+    <color name="stroke">#E5E5EA</color>
+    <color name="text">#000000</color>
+    <color name="dim">#6C6C70</color>
+    <color name="accent">#007AFF</color>
+    <color name="accent_ink">#FFFFFF</color>
+    <color name="ok">#34C759</color>
+    <color name="warn">#FF3B30</color>
 </resources>
