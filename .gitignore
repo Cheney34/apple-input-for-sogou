@@ -1,3 +1,5 @@
+# 本地构建工作目录（tools/build-apk.ps1 生成）
+/build/
 # Gradle / Android 构建产物
 lsposed/.gradle/
 lsposed/build/
