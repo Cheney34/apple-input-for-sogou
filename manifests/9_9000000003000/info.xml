@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<expList version="1.0">
+  <exppkg type="activities" name="activities" chineseName="活动" id="9">
+    <exp name="21227" other="[jack-o-lantern]" pinyin="" unified="1F383_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21228" other="[Christmas tree]" pinyin="" unified="1F384_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21229" other="[fireworks]" pinyin="" unified="1F386_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21230" other="[sparkler]" pinyin="" unified="1F387_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21231" other="[firecracker]" pinyin="" unified="1F9E8_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21232" other="[sparkles]" pinyin="" unified="2728_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21233" other="[balloon]" pinyin="" unified="1F388_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21234" other="[party popper]" pinyin="" unified="1F389_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21235" other="[confetti ball]" pinyin="" unified="1F38A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21236" other="[tanabata tree]" pinyin="" unified="1F38B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21237" other="[pine decoration]" pinyin="" unified="1F38D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21238" other="[Japanese dolls]" pinyin="" unified="1F38E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21239" other="[carp streamer]" pinyin="" unified="1F38F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21240" other="[wind chime]" pinyin="" unified="1F390_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21241" other="[moon viewing ceremony]" pinyin="" unified="1F391_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21242" other="[red envelope]" pinyin="" unified="1F9E7_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21243" other="[ribbon]" pinyin="" unified="1F380_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21244" other="[wrapped gift]" pinyin="" unified="1F381_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21245" other="[reminder ribbon]" pinyin="" unified="1F397_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21246" other="[admission tickets]" pinyin="" unified="1F39F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21247" other="[ticket]" pinyin="" unified="1F3AB_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21248" other="[military medal]" pinyin="" unified="1F396_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21249" other="[trophy]" pinyin="" unified="1F3C6_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21250" other="[sports medal]" pinyin="" unified="1F3C5_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21251" other="[1st place medal]" pinyin="" unified="1F947_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21252" other="[2nd place medal]" pinyin="" unified="1F948_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21253" other="[3rd place medal]" pinyin="" unified="1F949_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21254" other="[soccer ball]" pinyin="" unified="26BD_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21255" other="[baseball]" pinyin="" unified="26BE_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21256" other="[softball]" pinyin="" unified="1F94E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21257" other="[basketball]" pinyin="" unified="1F3C0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21258" other="[volleyball]" pinyin="" unified="1F3D0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21259" other="[american football]" pinyin="" unified="1F3C8_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21260" other="[rugby football]" pinyin="" unified="1F3C9_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21261" other="[tennis]" pinyin="" unified="1F3BE_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21262" other="[flying disc]" pinyin="" unified="1F94F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21263" other="[bowling]" pinyin="" unified="1F3B3_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21264" other="[cricket game]" pinyin="" unified="1F3CF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21265" other="[field hockey]" pinyin="" unified="1F3D1_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21266" other="[ice hockey]" pinyin="" unified="1F3D2_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21267" other="[lacrosse]" pinyin="" unified="1F94D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21268" other="[ping pong]" pinyin="" unified="1F3D3_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21269" other="[badminton]" pinyin="" unified="1F3F8_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21270" other="[boxing glove]" pinyin="" unified="1F94A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21271" other="[martial arts uniform]" pinyin="" unified="1F94B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21272" other="[goal net]" pinyin="" unified="1F945_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21273" other="[flag in hole]" pinyin="" unified="26F3_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21274" other="[ice skate]" pinyin="" unified="26F8_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21275" other="[fishing pole]" pinyin="" unified="1F3A3_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21276" other="[diving mask]" pinyin="" unified="1F93F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21277" other="[running shirt]" pinyin="" unified="1F3BD_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21278" other="[skis]" pinyin="" unified="1F3BF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21279" other="[sled]" pinyin="" unified="1F6F7_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21280" other="[curling stone]" pinyin="" unified="1F94C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21281" other="[bullseye]" pinyin="" unified="1F3AF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21282" other="[yo-yo]" pinyin="" unified="1FA80_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21283" other="[kite]" pinyin="" unified="1FA81_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21284" other="[water pistol]" pinyin="" unified="1F52B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21285" other="[pool 8 ball]" pinyin="" unified="1F3B1_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21286" other="[crystal ball]" pinyin="" unified="1F52E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21287" other="[magic wand]" pinyin="" unified="1FA84_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21288" other="[video game]" pinyin="" unified="1F3AE_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21289" other="[joystick]" pinyin="" unified="1F579_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21290" other="[slot machine]" pinyin="" unified="1F3B0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21291" other="[game die]" pinyin="" unified="1F3B2_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21292" other="[puzzle piece]" pinyin="" unified="1F9E9_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21293" other="[teddy bear]" pinyin="" unified="1F9F8_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21294" other="[piñata]" pinyin="" unified="1FA85_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21295" other="[mirror ball]" pinyin="" unified="1FAA9_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21296" other="[nesting dolls]" pinyin="" unified="1FA86_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21297" other="[spade suit]" pinyin="" unified="2660_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21298" other="[heart suit]" pinyin="" unified="2665_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21299" other="[diamond suit]" pinyin="" unified="2666_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21300" other="[club suit]" pinyin="" unified="2663_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21301" other="[chess pawn]" pinyin="" unified="265F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21302" other="[joker]" pinyin="" unified="1F0CF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21303" other="[mahjong red dragon]" pinyin="" unified="1F004_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21304" other="[flower playing cards]" pinyin="" unified="1F3B4_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21305" other="[performing arts]" pinyin="" unified="1F3AD_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21306" other="[framed picture]" pinyin="" unified="1F5BC_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21307" other="[artist palette]" pinyin="" unified="1F3A8_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21308" other="[thread]" pinyin="" unified="1F9F5_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21309" other="[sewing needle]" pinyin="" unified="1FAA1_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21310" other="[yarn]" pinyin="" unified="1F9F6_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21311" other="[knot]" pinyin="" unified="1FAA2_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+  </exppkg>
+</expList>

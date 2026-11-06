@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Chiron iOS 输入</string>
+    <string name="tagline">LSPosed 模块 · 搜狗负责输入，Chiron 负责体验</string>
+    <string name="version_label">v2.0.0-alpha1</string>
+    <string name="btn_features">功能开关 / 兼容信息</string>
+
+    <string name="status_checking">正在检测 Hook 连接…</string>
+    <string name="status_idle">等待连接。在 LSPosed 里启用本模块、勾选「搜狗输入法」作用域，切到输入法打一次字再回来。</string>
+
+    <string name="section_groups">表情包分区</string>
+    <string name="section_module">模块</string>
+    <string name="section_log">运行日志</string>
+    <string name="select_all">全选</string>
+    <string name="select_none">全不选</string>
+
+    <string name="btn_install">安装选中的分组</string>
+    <string name="btn_all">全部安装</string>
+    <string name="btn_restore">还原</string>
+    <string name="btn_ping">检查 Hook 连接</string>
+
+    <string name="hide_icon">隐藏桌面图标</string>
+    <string name="hide_icon_desc">关闭后从桌面移除入口，仍可从 LSPosed 或系统「应用信息 → 打开」进入。</string>
+
+    <string name="confirm_restore">把被替换过的分组恢复成搜狗自带的原始表情？</string>
+    <string name="restore_ok">确定还原</string>
+    <string name="cancel">取消</string>
+
+    <string name="xposed_desc">让搜狗输入法用上 iOS 风格的键盘与表情面板：输入引擎、词库、候选与上屏仍由搜狗完成，模块只替换显示层。目标版本 10.32.21.202607061714（小米定制版）。</string>
+
+    <string-array name="xposed_scope">
+        <item>com.sohu.inputmethod.sogou.xiaomi</item>
+        <item>com.sohu.inputmethod.sogou</item>
+    </string-array>
+</resources>

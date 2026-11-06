@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<expList version="1.0">
+  <exppkg type="animals_nature" name="animals_nature" chineseName="动物与自然" id="6">
+    <exp name="20719" other="[monkey face]" pinyin="" unified="1F435_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20720" other="[monkey]" pinyin="" unified="1F412_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20721" other="[gorilla]" pinyin="" unified="1F98D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20722" other="[orangutan]" pinyin="" unified="1F9A7_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20723" other="[dog face]" pinyin="" unified="1F436_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20724" other="[dog]" pinyin="" unified="1F415_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20725" other="[guide dog]" pinyin="" unified="1F9AE_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20726" other="[service dog]" pinyin="" unified="1F415_200D_1F9BA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20727" other="[poodle]" pinyin="" unified="1F429_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20728" other="[wolf]" pinyin="" unified="1F43A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20729" other="[fox]" pinyin="" unified="1F98A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20730" other="[raccoon]" pinyin="" unified="1F99D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20731" other="[cat face]" pinyin="" unified="1F431_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20732" other="[cat]" pinyin="" unified="1F408_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20733" other="[black cat]" pinyin="" unified="1F408_200D_2B1B" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20734" other="[lion]" pinyin="" unified="1F981_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20735" other="[tiger face]" pinyin="" unified="1F42F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20736" other="[tiger]" pinyin="" unified="1F405_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20737" other="[leopard]" pinyin="" unified="1F406_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20738" other="[horse face]" pinyin="" unified="1F434_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20739" other="[moose]" pinyin="" unified="1FACE_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20740" other="[donkey]" pinyin="" unified="1FACF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20741" other="[horse]" pinyin="" unified="1F40E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20742" other="[unicorn]" pinyin="" unified="1F984_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20743" other="[zebra]" pinyin="" unified="1F993_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20744" other="[deer]" pinyin="" unified="1F98C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20745" other="[bison]" pinyin="" unified="1F9AC_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20746" other="[cow face]" pinyin="" unified="1F42E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20747" other="[ox]" pinyin="" unified="1F402_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20748" other="[water buffalo]" pinyin="" unified="1F403_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20749" other="[cow]" pinyin="" unified="1F404_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20750" other="[pig face]" pinyin="" unified="1F437_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20751" other="[pig]" pinyin="" unified="1F416_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20752" other="[boar]" pinyin="" unified="1F417_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20753" other="[pig nose]" pinyin="" unified="1F43D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20754" other="[ram]" pinyin="" unified="1F40F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20755" other="[ewe]" pinyin="" unified="1F411_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20756" other="[goat]" pinyin="" unified="1F410_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20757" other="[camel]" pinyin="" unified="1F42A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20758" other="[two-hump camel]" pinyin="" unified="1F42B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20759" other="[llama]" pinyin="" unified="1F999_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20760" other="[giraffe]" pinyin="" unified="1F992_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20761" other="[elephant]" pinyin="" unified="1F418_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20762" other="[mammoth]" pinyin="" unified="1F9A3_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20763" other="[rhinoceros]" pinyin="" unified="1F98F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20764" other="[hippopotamus]" pinyin="" unified="1F99B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20765" other="[mouse face]" pinyin="" unified="1F42D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20766" other="[mouse]" pinyin="" unified="1F401_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20767" other="[rat]" pinyin="" unified="1F400_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20768" other="[hamster]" pinyin="" unified="1F439_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20769" other="[rabbit face]" pinyin="" unified="1F430_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20770" other="[rabbit]" pinyin="" unified="1F407_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20771" other="[chipmunk]" pinyin="" unified="1F43F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20772" other="[beaver]" pinyin="" unified="1F9AB_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20773" other="[hedgehog]" pinyin="" unified="1F994_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20774" other="[bat]" pinyin="" unified="1F987_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20775" other="[bear]" pinyin="" unified="1F43B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20776" other="[polar bear]" pinyin="" unified="1F43B_200D_2744_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20777" other="[koala]" pinyin="" unified="1F428_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20778" other="[panda]" pinyin="" unified="1F43C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20779" other="[sloth]" pinyin="" unified="1F9A5_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20780" other="[otter]" pinyin="" unified="1F9A6_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20781" other="[skunk]" pinyin="" unified="1F9A8_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20782" other="[kangaroo]" pinyin="" unified="1F998_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20783" other="[badger]" pinyin="" unified="1F9A1_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20784" other="[paw prints]" pinyin="" unified="1F43E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20785" other="[turkey]" pinyin="" unified="1F983_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20786" other="[chicken]" pinyin="" unified="1F414_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20787" other="[rooster]" pinyin="" unified="1F413_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20788" other="[hatching chick]" pinyin="" unified="1F423_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20789" other="[baby chick]" pinyin="" unified="1F424_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20790" other="[front-facing baby chick]" pinyin="" unified="1F425_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20791" other="[bird]" pinyin="" unified="1F426_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20792" other="[penguin]" pinyin="" unified="1F427_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20793" other="[dove]" pinyin="" unified="1F54A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20794" other="[eagle]" pinyin="" unified="1F985_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20795" other="[duck]" pinyin="" unified="1F986_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20796" other="[swan]" pinyin="" unified="1F9A2_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20797" other="[owl]" pinyin="" unified="1F989_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20798" other="[dodo]" pinyin="" unified="1F9A4_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20799" other="[feather]" pinyin="" unified="1FAB6_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20800" other="[flamingo]" pinyin="" unified="1F9A9_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20801" other="[peacock]" pinyin="" unified="1F99A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20802" other="[parrot]" pinyin="" unified="1F99C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20803" other="[wing]" pinyin="" unified="1FABD_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20804" other="[black bird]" pinyin="" unified="1F426_200D_2B1B" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20805" other="[goose]" pinyin="" unified="1FABF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20806" other="[phoenix]" pinyin="" unified="1F426_200D_1F525" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20807" other="[frog]" pinyin="" unified="1F438_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20808" other="[crocodile]" pinyin="" unified="1F40A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20809" other="[turtle]" pinyin="" unified="1F422_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20810" other="[lizard]" pinyin="" unified="1F98E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20811" other="[snake]" pinyin="" unified="1F40D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20812" other="[dragon face]" pinyin="" unified="1F432_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20813" other="[dragon]" pinyin="" unified="1F409_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20814" other="[sauropod]" pinyin="" unified="1F995_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20815" other="[T-Rex]" pinyin="" unified="1F996_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20816" other="[spouting whale]" pinyin="" unified="1F433_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20817" other="[whale]" pinyin="" unified="1F40B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20818" other="[dolphin]" pinyin="" unified="1F42C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20819" other="[seal]" pinyin="" unified="1F9AD_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20820" other="[fish]" pinyin="" unified="1F41F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20821" other="[tropical fish]" pinyin="" unified="1F420_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20822" other="[blowfish]" pinyin="" unified="1F421_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20823" other="[shark]" pinyin="" unified="1F988_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20824" other="[octopus]" pinyin="" unified="1F419_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20825" other="[spiral shell]" pinyin="" unified="1F41A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20826" other="[coral]" pinyin="" unified="1FAB8_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20827" other="[jellyfish]" pinyin="" unified="1FABC_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20828" other="[crab]" pinyin="" unified="1F980_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20829" other="[lobster]" pinyin="" unified="1F99E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20830" other="[shrimp]" pinyin="" unified="1F990_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20831" other="[squid]" pinyin="" unified="1F991_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20832" other="[oyster]" pinyin="" unified="1F9AA_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20833" other="[snail]" pinyin="" unified="1F40C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20834" other="[butterfly]" pinyin="" unified="1F98B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20835" other="[bug]" pinyin="" unified="1F41B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20836" other="[ant]" pinyin="" unified="1F41C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20837" other="[honeybee]" pinyin="" unified="1F41D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20838" other="[beetle]" pinyin="" unified="1FAB2_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20839" other="[lady beetle]" pinyin="" unified="1F41E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20840" other="[cricket]" pinyin="" unified="1F997_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20841" other="[cockroach]" pinyin="" unified="1FAB3_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20842" other="[spider]" pinyin="" unified="1F577_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20843" other="[spider web]" pinyin="" unified="1F578_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20844" other="[scorpion]" pinyin="" unified="1F982_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20845" other="[mosquito]" pinyin="" unified="1F99F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20846" other="[fly]" pinyin="" unified="1FAB0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20847" other="[worm]" pinyin="" unified="1FAB1_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20848" other="[microbe]" pinyin="" unified="1F9A0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20849" other="[bouquet]" pinyin="" unified="1F490_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20850" other="[cherry blossom]" pinyin="" unified="1F338_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20851" other="[white flower]" pinyin="" unified="1F4AE_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20852" other="[lotus]" pinyin="" unified="1FAB7_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20853" other="[rosette]" pinyin="" unified="1F3F5_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20854" other="[rose]" pinyin="" unified="1F339_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20855" other="[wilted flower]" pinyin="" unified="1F940_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20856" other="[hibiscus]" pinyin="" unified="1F33A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20857" other="[sunflower]" pinyin="" unified="1F33B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20858" other="[blossom]" pinyin="" unified="1F33C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20859" other="[tulip]" pinyin="" unified="1F337_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20860" other="[hyacinth]" pinyin="" unified="1FABB_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20861" other="[seedling]" pinyin="" unified="1F331_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20862" other="[potted plant]" pinyin="" unified="1FAB4_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20863" other="[evergreen tree]" pinyin="" unified="1F332_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20864" other="[deciduous tree]" pinyin="" unified="1F333_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20865" other="[palm tree]" pinyin="" unified="1F334_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20866" other="[cactus]" pinyin="" unified="1F335_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20867" other="[sheaf of rice]" pinyin="" unified="1F33E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20868" other="[herb]" pinyin="" unified="1F33F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20869" other="[shamrock]" pinyin="" unified="2618_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20870" other="[four leaf clover]" pinyin="" unified="1F340_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20871" other="[maple leaf]" pinyin="" unified="1F341_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20872" other="[fallen leaf]" pinyin="" unified="1F342_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20873" other="[leaf fluttering in wind]" pinyin="" unified="1F343_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20874" other="[empty nest]" pinyin="" unified="1FAB9_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20875" other="[nest with eggs]" pinyin="" unified="1FABA_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20876" other="[mushroom]" pinyin="" unified="1F344_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20877" other="[leafless tree]" pinyin="" unified="1FABE_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+  </exppkg>
+</expList>

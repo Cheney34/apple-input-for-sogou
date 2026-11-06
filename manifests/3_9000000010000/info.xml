@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<expList version="1.0">
+  <exppkg type="smileys_emotion" name="smileys_emotion" chineseName="笑脸" id="3">
+    <exp name="20000" other="[grinning face]" pinyin="" unified="1F600_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20001" other="[grinning face with big eyes]" pinyin="" unified="1F603_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20002" other="[grinning face with smiling eyes]" pinyin="" unified="1F604_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20003" other="[beaming face with smiling eyes]" pinyin="" unified="1F601_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20004" other="[grinning squinting face]" pinyin="" unified="1F606_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20005" other="[grinning face with sweat]" pinyin="" unified="1F605_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20006" other="[rolling on the floor laughing]" pinyin="" unified="1F923_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20007" other="[face with tears of joy]" pinyin="" unified="1F602_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20008" other="[slightly smiling face]" pinyin="" unified="1F642_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20009" other="[upside-down face]" pinyin="" unified="1F643_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20010" other="[melting face]" pinyin="" unified="1FAE0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20011" other="[winking face]" pinyin="" unified="1F609_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20012" other="[smiling face with smiling eyes]" pinyin="" unified="1F60A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20013" other="[smiling face with halo]" pinyin="" unified="1F607_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20014" other="[smiling face with hearts]" pinyin="" unified="1F970_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20015" other="[smiling face with heart-eyes]" pinyin="" unified="1F60D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20016" other="[star-struck]" pinyin="" unified="1F929_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20017" other="[face blowing a kiss]" pinyin="" unified="1F618_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20018" other="[kissing face]" pinyin="" unified="1F617_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20019" other="[smiling face]" pinyin="" unified="263A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20020" other="[kissing face with closed eyes]" pinyin="" unified="1F61A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20021" other="[kissing face with smiling eyes]" pinyin="" unified="1F619_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20022" other="[smiling face with tear]" pinyin="" unified="1F972_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20023" other="[face savoring food]" pinyin="" unified="1F60B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20024" other="[face with tongue]" pinyin="" unified="1F61B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20025" other="[winking face with tongue]" pinyin="" unified="1F61C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20026" other="[zany face]" pinyin="" unified="1F92A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20027" other="[squinting face with tongue]" pinyin="" unified="1F61D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20028" other="[money-mouth face]" pinyin="" unified="1F911_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20029" other="[smiling face with open hands]" pinyin="" unified="1F917_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20030" other="[face with hand over mouth]" pinyin="" unified="1F92D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20031" other="[face with open eyes and hand over mouth]" pinyin="" unified="1FAE2_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20032" other="[face with peeking eye]" pinyin="" unified="1FAE3_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20033" other="[shushing face]" pinyin="" unified="1F92B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20034" other="[thinking face]" pinyin="" unified="1F914_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20035" other="[saluting face]" pinyin="" unified="1FAE1_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20036" other="[zipper-mouth face]" pinyin="" unified="1F910_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20037" other="[face with raised eyebrow]" pinyin="" unified="1F928_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20038" other="[neutral face]" pinyin="" unified="1F610_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20039" other="[expressionless face]" pinyin="" unified="1F611_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20040" other="[face without mouth]" pinyin="" unified="1F636_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20041" other="[dotted line face]" pinyin="" unified="1FAE5_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20042" other="[face in clouds]" pinyin="" unified="1F636_200D_1F32B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20043" other="[smirking face]" pinyin="" unified="1F60F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20044" other="[unamused face]" pinyin="" unified="1F612_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20045" other="[face with rolling eyes]" pinyin="" unified="1F644_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20046" other="[grimacing face]" pinyin="" unified="1F62C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20047" other="[face exhaling]" pinyin="" unified="1F62E_200D_1F4A8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20048" other="[lying face]" pinyin="" unified="1F925_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20049" other="[shaking face]" pinyin="" unified="1FAE8_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20050" other="[head shaking horizontally]" pinyin="" unified="1F642_200D_2194_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20051" other="[head shaking vertically]" pinyin="" unified="1F642_200D_2195_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20052" other="[relieved face]" pinyin="" unified="1F60C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20053" other="[pensive face]" pinyin="" unified="1F614_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20054" other="[sleepy face]" pinyin="" unified="1F62A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20055" other="[drooling face]" pinyin="" unified="1F924_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20056" other="[sleeping face]" pinyin="" unified="1F634_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20057" other="[face with bags under eyes]" pinyin="" unified="1FAE9_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20058" other="[face with medical mask]" pinyin="" unified="1F637_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20059" other="[face with thermometer]" pinyin="" unified="1F912_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20060" other="[face with head-bandage]" pinyin="" unified="1F915_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20061" other="[nauseated face]" pinyin="" unified="1F922_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20062" other="[face vomiting]" pinyin="" unified="1F92E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20063" other="[sneezing face]" pinyin="" unified="1F927_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20064" other="[hot face]" pinyin="" unified="1F975_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20065" other="[cold face]" pinyin="" unified="1F976_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20066" other="[woozy face]" pinyin="" unified="1F974_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20067" other="[face with crossed-out eyes]" pinyin="" unified="1F635_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20068" other="[face with spiral eyes]" pinyin="" unified="1F635_200D_1F4AB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20069" other="[exploding head]" pinyin="" unified="1F92F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20070" other="[cowboy hat face]" pinyin="" unified="1F920_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20071" other="[partying face]" pinyin="" unified="1F973_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20072" other="[disguised face]" pinyin="" unified="1F978_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20073" other="[smiling face with sunglasses]" pinyin="" unified="1F60E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20074" other="[nerd face]" pinyin="" unified="1F913_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20075" other="[face with monocle]" pinyin="" unified="1F9D0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20076" other="[confused face]" pinyin="" unified="1F615_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20077" other="[face with diagonal mouth]" pinyin="" unified="1FAE4_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20078" other="[worried face]" pinyin="" unified="1F61F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20079" other="[slightly frowning face]" pinyin="" unified="1F641_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20080" other="[frowning face]" pinyin="" unified="2639_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20081" other="[face with open mouth]" pinyin="" unified="1F62E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20082" other="[hushed face]" pinyin="" unified="1F62F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20083" other="[astonished face]" pinyin="" unified="1F632_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20084" other="[flushed face]" pinyin="" unified="1F633_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20085" other="[pleading face]" pinyin="" unified="1F97A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20086" other="[face holding back tears]" pinyin="" unified="1F979_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20087" other="[frowning face with open mouth]" pinyin="" unified="1F626_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20088" other="[anguished face]" pinyin="" unified="1F627_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20089" other="[fearful face]" pinyin="" unified="1F628_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20090" other="[anxious face with sweat]" pinyin="" unified="1F630_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20091" other="[sad but relieved face]" pinyin="" unified="1F625_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20092" other="[crying face]" pinyin="" unified="1F622_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20093" other="[loudly crying face]" pinyin="" unified="1F62D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20094" other="[face screaming in fear]" pinyin="" unified="1F631_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20095" other="[confounded face]" pinyin="" unified="1F616_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20096" other="[persevering face]" pinyin="" unified="1F623_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20097" other="[disappointed face]" pinyin="" unified="1F61E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20098" other="[downcast face with sweat]" pinyin="" unified="1F613_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20099" other="[weary face]" pinyin="" unified="1F629_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20100" other="[tired face]" pinyin="" unified="1F62B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20101" other="[yawning face]" pinyin="" unified="1F971_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20102" other="[face with steam from nose]" pinyin="" unified="1F624_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20103" other="[enraged face]" pinyin="" unified="1F621_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20104" other="[angry face]" pinyin="" unified="1F620_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20105" other="[face with symbols on mouth]" pinyin="" unified="1F92C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20106" other="[smiling face with horns]" pinyin="" unified="1F608_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20107" other="[angry face with horns]" pinyin="" unified="1F47F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20108" other="[skull]" pinyin="" unified="1F480_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20109" other="[skull and crossbones]" pinyin="" unified="2620_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20110" other="[pile of poo]" pinyin="" unified="1F4A9_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20111" other="[clown face]" pinyin="" unified="1F921_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20112" other="[ogre]" pinyin="" unified="1F479_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20113" other="[goblin]" pinyin="" unified="1F47A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20114" other="[ghost]" pinyin="" unified="1F47B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20115" other="[alien]" pinyin="" unified="1F47D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20116" other="[alien monster]" pinyin="" unified="1F47E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20117" other="[robot]" pinyin="" unified="1F916_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20118" other="[grinning cat]" pinyin="" unified="1F63A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20119" other="[grinning cat with smiling eyes]" pinyin="" unified="1F638_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20120" other="[cat with tears of joy]" pinyin="" unified="1F639_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20121" other="[smiling cat with heart-eyes]" pinyin="" unified="1F63B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20122" other="[cat with wry smile]" pinyin="" unified="1F63C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20123" other="[kissing cat]" pinyin="" unified="1F63D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20124" other="[weary cat]" pinyin="" unified="1F640_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20125" other="[crying cat]" pinyin="" unified="1F63F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20126" other="[pouting cat]" pinyin="" unified="1F63E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20127" other="[see-no-evil monkey]" pinyin="" unified="1F648_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20128" other="[hear-no-evil monkey]" pinyin="" unified="1F649_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20129" other="[speak-no-evil monkey]" pinyin="" unified="1F64A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20130" other="[love letter]" pinyin="" unified="1F48C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20131" other="[heart with arrow]" pinyin="" unified="1F498_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20132" other="[heart with ribbon]" pinyin="" unified="1F49D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20133" other="[sparkling heart]" pinyin="" unified="1F496_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20134" other="[growing heart]" pinyin="" unified="1F497_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20135" other="[beating heart]" pinyin="" unified="1F493_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20136" other="[revolving hearts]" pinyin="" unified="1F49E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20137" other="[two hearts]" pinyin="" unified="1F495_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20138" other="[heart decoration]" pinyin="" unified="1F49F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20139" other="[heart exclamation]" pinyin="" unified="2763_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20140" other="[broken heart]" pinyin="" unified="1F494_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20141" other="[heart on fire]" pinyin="" unified="2764_FE0F_200D_1F525" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20142" other="[mending heart]" pinyin="" unified="2764_FE0F_200D_1FA79" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20143" other="[red heart]" pinyin="" unified="2764_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20144" other="[pink heart]" pinyin="" unified="1FA77_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20145" other="[orange heart]" pinyin="" unified="1F9E1_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20146" other="[yellow heart]" pinyin="" unified="1F49B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20147" other="[green heart]" pinyin="" unified="1F49A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20148" other="[blue heart]" pinyin="" unified="1F499_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20149" other="[light blue heart]" pinyin="" unified="1FA75_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20150" other="[purple heart]" pinyin="" unified="1F49C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20151" other="[brown heart]" pinyin="" unified="1F90E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20152" other="[black heart]" pinyin="" unified="1F5A4_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20153" other="[grey heart]" pinyin="" unified="1FA76_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20154" other="[white heart]" pinyin="" unified="1F90D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20155" other="[kiss mark]" pinyin="" unified="1F48B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20156" other="[hundred points]" pinyin="" unified="1F4AF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20157" other="[anger symbol]" pinyin="" unified="1F4A2_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20158" other="[collision]" pinyin="" unified="1F4A5_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20159" other="[dizzy]" pinyin="" unified="1F4AB_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20160" other="[sweat droplets]" pinyin="" unified="1F4A6_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20161" other="[dashing away]" pinyin="" unified="1F4A8_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20162" other="[hole]" pinyin="" unified="1F573_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20163" other="[speech balloon]" pinyin="" unified="1F4AC_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20164" other="[eye in speech bubble]" pinyin="" unified="1F441_FE0F_200D_1F5E8_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20165" other="[left speech bubble]" pinyin="" unified="1F5E8_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20166" other="[right anger bubble]" pinyin="" unified="1F5EF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20167" other="[thought balloon]" pinyin="" unified="1F4AD_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20168" other="[ZZZ]" pinyin="" unified="1F4A4_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+  </exppkg>
+</expList>

@@ -1,0 +1,255 @@
+# Chiron iOS 输入（Chiron iOS Input）
+
+> **搜狗负责输入，Chiron 负责体验。**
+>
+> 一个针对「小米定制版搜狗输入法」的 LSPosed 模块：保留搜狗的输入引擎、词库、候选生成与上屏逻辑，
+> 只把**键盘、候选栏、表情面板**的显示层与交互换成 iOS 风格。
+
+- 目标包名：`com.sohu.inputmethod.sogou.xiaomi`（同时兼容 `com.sohu.inputmethod.sogou`）
+- 目标版本：`10.32.21.202607061714`（versionCode `2147483647`，5 个 dex，arm64-v8a）
+- 目标 APK SHA-256：`90B4A1945D28427A50CC6DF8FA1FE0E29977A0053622FA7A05FBDCFF01F6B09C`
+- 模块包名：`com.chiron.iosinput` · 版本：`2.0.0-alpha1`（versionCode 20）
+- 最低支持：Android 8.0（API 26）· 只在 LSPosed / EdXposed 等 Xposed 框架下工作
+
+---
+
+## 0. 当前状态（请先读这段）
+
+| 项目 | 状态 |
+| --- | --- |
+| 静态分析（反编译 + DEX 级取证） | ✅ 完成，产物见 [`docs/`](docs/) |
+| 四条核心功能的可行性结论 | ✅ 完成 —— [`docs/FEASIBILITY.md`](docs/FEASIBILITY.md) |
+| hook 点清单（30 个，含 DEX 验证描述符） | ✅ 完成 —— [`docs/HOOK_POINTS.md`](docs/HOOK_POINTS.md) |
+| MVP 方案与测试用例 | ✅ 完成 —— [`docs/MVP_PROPOSAL.md`](docs/MVP_PROPOSAL.md) |
+| 模块源码（键盘显示层替换 + 诊断 + 旧表情功能） | ⚠️ 已写完，**未编译、未真机验证** |
+| 候选栏 iOS 化 / 长按符号 / 表情面板 iOS 化 | ⏳ 未实现（Phase 4–6） |
+
+**关键的诚实声明**：本仓库的开发环境**没有 Android SDK / Gradle / 一台真机**，
+所以代码是「按 DEX 验证过的描述符逐行写出来的」，尚未经过编译与运行验证。
+所有类名、方法签名、参数字典均可在 `docs/` 的证据表中查到出处（文件 + 行号），
+未确认的项目一律标注为 `UNKNOWN`，而不是猜一个看起来合理的名字。
+
+---
+
+## 1. 它到底改了什么
+
+搜狗输入法（小米定制版）的输入视图不是普通的 View 树，而是三层结构：
+
+```
+InputMethodService.setInputView(…)
+└─ StyleConstraintLayout            ← com.sogou.core.ui.window.b#g() 创建
+   ├─ WindowBackgroundLayout        ← 皮肤背景
+   └─ NormalIMERootContainer        ← 槽位容器（按 z-index 存子 View）
+      ├─ z=2  IMEInputCandidateViewContainer   候选栏（虚拟组件树，自绘）
+      ├─ z=3  KeyboardRootComponentView        键盘（虚拟组件树，自绘）
+      ├─ z=6  KeyboardHeaderContainer          顶部工具条
+      └─ …                                      z=0/4/5/7…1000 共 18 个槽位
+```
+
+证据：[`docs/VIEW_HIERARCHY.md`](docs/VIEW_HIERARCHY.md)、[`docs/CLASS_MAP.md`](docs/CLASS_MAP.md)。
+
+由此得到本模块的两个关键判断：
+
+1. **没有 `onCreateInputView`**。整个 APK 的 5 个 dex 里都不存在这个方法名，
+   搜狗的输入视图是「算好了再 `setInputView()` 推上去」。
+   → 那些「hook `onCreateInputView` 换键盘」的教程对这个包**完全无效**。
+2. **键盘只是一个槽位里的一个 View**。`NormalIMERootContainer#setKeyboardView(View)`
+   把任意 `View` 放进 z=3 的槽位；键盘真正的实现是一个「虚拟组件树」
+   （`RootComponentView` + 组件自绘），**没有 per-key View**。
+
+所以「换皮肤」最省事、最不容易炸的做法是：
+**把 z=3 槽位里的那个 View 换成我们自己的 View**，其余（候选、工具条、背景、insets）全部保持搜狗原样。
+
+v2.0.0-alpha1 实现的正是这一步：
+
+| Hook | 目标 | 说明 |
+| --- | --- | --- |
+| `H01` | `com.sogou.lib.bu.ui.component.keyboard.d#getRootView()` | 返回我们的键盘 View（覆盖所有 `getRootView()` 调用点） |
+| `H02` | `com.sohu.inputmethod.ui.frame.NormalIMERootContainer#setKeyboardView(View)` | 兜底：方法执行后再把我们的 View 塞进 z=3 |
+| `H04` | `com.sohu.inputmethod.sogou.r2#Z7 / #N7` 等 | 只读诊断：打印候选列表推送情况 |
+| `H09` | `com.sogou.core.ui.a#u(View)` | 预留（默认不启用） |
+
+键盘上的按键**不自己造字**，而是回到搜狗自己的输入通道：
+
+```
+按键 → TextInjector
+   → com.sohu.inputmethod.input.i.m().l().onText(chars, 0)     // 主路径
+   → com.sohu.inputmethod.input.i.m().l().onKey(-5, {-5}, false, 0, 0)  // 退格
+   → 兜底：b0.f0().t0().getSogouInputConnection().commitText(...)       // 原始 IC
+```
+
+也就是说：**英文/数字/空格/退格/回车走的是搜狗自己的 `InputLogic`**，
+中文联想、词库、云输入这些一概没动（中文拼音输入在 Phase 3 接入搜狗候选后开放）。
+
+---
+
+## 2. 安装
+
+1. 手机已 Root，并安装 **LSPosed**（Magisk / KernelSU 模块形式）。
+2. 安装本模块 APK（`com.chiron.iosinput`）。
+3. 打开 LSPosed → 模块 → **启用 Chiron iOS 输入**。
+4. 作用域勾选：`搜狗输入法`（小米定制版，包名 `com.sohu.inputmethod.sogou.xiaomi`）。
+   如果你装的是通用版，勾 `com.sohu.inputmethod.sogou`。
+5. 强行停止一次搜狗输入法（或切换一次输入法），让新进程加载 hook。
+6. 打开任意输入框，检查：
+   - 键盘是否变成 Chiron 样式；
+   - LSPosed 日志里是否有 `ChironIOSInput` 开头的输出。
+
+> 出问题想立刻恢复：在 LSPosed 里关掉模块 → 强行停止搜狗 → 切回输入法，即回到原版。
+> 模块**从不修改搜狗 APK**，也不写系统分区。
+
+---
+
+## 3. 功能开关
+
+模块首页底部 → **「功能开关 / 兼容信息」**。
+
+开关写入模块自己的 `SharedPreferences`（文件名 `chiron_config`），
+搜狗进程内通过 `XSharedPreferences` 读取；**改动后需要重启输入法进程才生效**。
+
+| 键 | 默认 | 作用 |
+| --- | --- | --- |
+| `master_enabled` | 开 | 总开关，关掉后模块在搜狗进程内不做任何事 |
+| `keyboard_replace_enabled` | 开 | iOS 键盘显示层替换（H01/H02） |
+| `emoji_group_filter_enabled` | 开 | 隐藏搜狗自带「组合」「拼装」分组 |
+| `emoji_swipe_enabled` | 开 | 表情面板左右滑动切分组 |
+| `logo_trigger_enabled` | 关 | 触发词替换为 Apple  Logo |
+| `candidate_probe_enabled` | 关 | 候选数据只读探针（日志量大） |
+| `diagnostics_enabled` | 关 | 启动 3 秒后 dump 一次输入视图树 |
+
+---
+
+## 4. 兼容与降级
+
+模块内建版本门控（[`compat/VersionProfile.java`](lsposed/app/src/main/java/com/chiron/iosinput/compat/VersionProfile.java)）：
+
+- 版本名命中白名单（当前只有 `10.32.21.202607061714`）→ `Mode.FULL`，允许 UI 替换；
+- 其它版本 → `Mode.DIAGNOSTIC_ONLY`，**只打日志、不改任何界面**；
+- 任何一个 hook 安装失败 → 该功能静默不生效，搜狗原行为保持不变；
+- 所有 hook 都走 `HookRegistry`：幂等（装过就不重复装）、异常吞掉并记录、不向搜狗进程抛。
+
+**已知限制（alpha）**：我们的键盘 View 还没有实现 `com.sohu.inputmethod.sogou.s0` 接口，
+所以 `setKeyboardView()` 里对 `instanceof s0` 的判断会走「非 s0」分支（顶边规则略有差异）；
+`getKeyboardView()` 的调用方会把我们的 View 当成「已经在位的键盘视图」。
+Phase 3 会用空实现补上 `s0` 来消除这两点差异。
+
+---
+
+## 5. 构建
+
+### 5.1 前置
+
+1. **Android Studio**（Jellyfish / AGP 8.7+）或本机 Gradle 8.9+；
+2. **`XposedBridgeAPI-82.jar`** 放到 `lsposed/app/libs/`（**未随仓库提交**，获取方式见
+   [`lsposed/app/libs/README.md`](lsposed/app/libs/README.md)）；
+3. （可选）表情包素材：`assets/payload.zip` 需由你自己本机的 Apple emoji 位图生成，
+   见 [`tools/make_payload.py`](tools/make_payload.py)。**不含 payload.zip 也能编译**，
+   只是「安装表情分组」功能会在运行时提示失败。
+
+### 5.2 命令
+
+```bash
+# 生成表情包资源（可选）
+python3 tools/make_payload.py --src /path/to/apple_emoji_png \
+        --out lsposed/app/src/main/assets/payload.zip
+
+# 构建
+cd lsposed
+./gradlew :app:assembleDebug        # 或用 Android Studio 直接 Run
+# 产物：lsposed/app/build/outputs/apk/debug/app-debug.apk
+```
+
+签名配置指向仓库里的调试签名 [`signing/debug.keystore`](signing/README.md)
+（alias `androiddebugkey`，密码 `android`）——**同包名升级必须用同一签名**。
+
+> 未在本机验证：作者环境没有 Android SDK，`gradlew` 也没有随仓库提交 wrapper jar。
+> 首次用 Android Studio 打开工程时会自动补齐 wrapper 与 SDK 组件。
+
+---
+
+## 6. 目录结构
+
+```
+.
+├── docs/                       # 静态分析产物（全部 DEX/源码取证，含行号与证据等级）
+│   ├── APK_OVERVIEW.md         # ① APK 总体信息、签名、dex、native、主题包结构
+│   ├── CLASS_MAP.md            # ② 输入法核心类结构（5 类 IMS 链、delegate、单例入口）
+│   ├── VIEW_HIERARCHY.md       # ③ 键盘视图层级（三层窗口、18 个 z 槽位、替换缝隙）
+│   ├── EVENT_CALLBACK_MAP.md   # ④ 按键事件链路（触摸 → 15 跳到 commitText）
+│   ├── INPUT_ENGINE_MAP.md     # ⑤ 候选数据流（JNI → 引擎 → model → 候选条）
+│   ├── EMOJI_PANEL_MAP.md      # ⑥ 表情面板结构、数据模型与替换点
+│   ├── FEASIBILITY.md          # ⑦ 四条核心功能可行性报告
+│   ├── HOOK_POINTS.md          # ⑧ 推荐 hook 点（H01–H30，含 DEX 描述符）
+│   ├── MVP_PROPOSAL.md         # 最小可行方案 + TC 用例
+│   └── MIGRATION.md            # 本仓库如何从 chiron-apple-emoji 拆分出来
+├── lsposed/                    # Android Studio 工程（模块本体）
+│   └── app/src/main/java/com/chiron/iosinput/
+│       ├── HookEntry.java          # LSPosed 入口
+│       ├── MainActivity.java       # 表情分组安装界面（沿用 v1.8）
+│       ├── SettingsActivity.java   # 功能开关 / 兼容信息
+│       ├── core/                   # HookState（Context/版本）
+│       ├── config/                 # ModuleConfig（XSharedPreferences）
+│       ├── compat/                 # VersionProfile（版本门控）
+│       ├── hook/                   # HookRegistry / H01 / H02 / 探针 / TextInjector
+│       ├── keyboard/               # ChironKeyboardView / KeyboardFactory
+│       ├── diagnostics/            # ViewTreeDumper
+│       └── (v1.8 既有) EmojiService / GestureHook / GroupFilterHook / Groups / LogoHook / Protocol
+├── manifests/                  # 10 份搜狗表情分组 info.xml（纯文本，无版权素材）
+├── tools/                      # make_payload.py（生成表情位图包）、make_icons.py
+├── signing/                    # 调试签名（详见 README）
+└── LICENSE                     # MIT
+```
+
+---
+
+## 7. 它的边界
+
+**做**：
+- 替换 z=3 键盘槽位的显示层；
+- 通过搜狗自己的 `InputLogic` / `InputConnection` 注入按键文本；
+- 隐藏、筛选搜狗自带表情分组，改变表情面板的滑动行为；
+- 输出详尽日志，方便定位问题。
+
+**不做**：
+- 不重打包搜狗 APK，不改它的任何文件；
+- 不实现输入引擎、不做词库、不做拼音解析（这些继续由 `libsogouime.so` 负责）；
+- 不 hook `onCreateInputView`（不存在）、不反射扫描搜狗类（AspectJ 织入太多，会误伤）；
+- 不监听用户输入内容用于上传/统计。
+
+---
+
+## 8. 免责声明
+
+本项目仅用于**个人学习与自用美化**。使用它需要 Root 与 Xposed 框架，
+存在导致输入法崩溃、系统不稳定、数据丢失的风险，**后果自负**。
+请勿用于绕过任何付费/授权机制。搜狗输入法、Apple Emoji 的商标与素材版权归各自权利人所有；
+本仓库不包含任何 Apple 彩色 emoji 位图（`payload.zip` 由使用者本机生成）。
+
+## 9. 与 chiron-apple-emoji 的关系
+
+本仓库是从 [`Cheney34/chiron-apple-emoji`](https://github.com/Cheney34/chiron-apple-emoji)
+的 `lsposed-sogou/` 目录**拆分**出来的独立项目：
+
+- 保留：表情分组安装器、分组过滤、滑动解锁、Logo 触发词（v1.8 已验证的功能）；
+- 改变：包名 `com.chiron.iosemoji` → `com.chiron.iosinput`，模块名、入口类、构建方式（脚本 → Gradle）；
+- 新增：iOS 键盘显示层替换、配置开关、版本门控、诊断工具、全套静态分析文档。
+
+两者**没有运行时依赖**，可以分别安装/卸载（注意：同时安装时两个模块都会 hook 搜狗进程，
+建议只启用其中一个）。迁移细节见 [`docs/MIGRATION.md`](docs/MIGRATION.md)。
+
+## 10. 路线图
+
+| 阶段 | 内容 | 状态 |
+| --- | --- | --- |
+| Phase 0 | APK 静态分析（类结构/视图/事件/候选/表情） | ✅ |
+| Phase 1 | 运行时验证（视图树、调用链、insets） | ⏳ 需要真机日志 |
+| Phase 2 | 最小注入：z=3 槽位换成自绘键盘 | 🟡 代码已写，待验证 |
+| Phase 3 | 键盘 UI 完整化（`s0` 空壳、长按浮标、空格拖动光标） | ⏳ |
+| Phase 4 | 候选栏 iOS 化（自绘 `r2` 替代 / `data.b` 过滤） | ⏳ |
+| Phase 5 | 长按符号、中英切换、大小写态 | ⏳ |
+| Phase 6 | 表情面板 iOS 化（重排 + 最近使用 + 搜索） | ⏳ |
+| Phase 7 | 兼容矩阵、发布、CI | ⏳ |
+
+## License
+
+MIT，见 [LICENSE](LICENSE)。

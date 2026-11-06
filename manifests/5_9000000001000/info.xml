@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<expList version="1.0">
+  <exppkg type="component" name="component" chineseName="组件" id="5">
+    <exp name="20714" other="[light skin tone]" pinyin="" unified="1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20715" other="[medium-light skin tone]" pinyin="" unified="1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20716" other="[medium skin tone]" pinyin="" unified="1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20717" other="[medium-dark skin tone]" pinyin="" unified="1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20718" other="[dark skin tone]" pinyin="" unified="1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+  </exppkg>
+</expList>

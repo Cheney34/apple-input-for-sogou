@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<expList version="1.0">
+  <exppkg type="food_drink" name="food_drink" chineseName="食物与饮品" id="7">
+    <exp name="20878" other="[grapes]" pinyin="" unified="1F347_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20879" other="[melon]" pinyin="" unified="1F348_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20880" other="[watermelon]" pinyin="" unified="1F349_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20881" other="[tangerine]" pinyin="" unified="1F34A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20882" other="[lemon]" pinyin="" unified="1F34B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20883" other="[lime]" pinyin="" unified="1F34B_200D_1F7E9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20884" other="[banana]" pinyin="" unified="1F34C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20885" other="[pineapple]" pinyin="" unified="1F34D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20886" other="[mango]" pinyin="" unified="1F96D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20887" other="[red apple]" pinyin="" unified="1F34E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20888" other="[green apple]" pinyin="" unified="1F34F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20889" other="[pear]" pinyin="" unified="1F350_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20890" other="[peach]" pinyin="" unified="1F351_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20891" other="[cherries]" pinyin="" unified="1F352_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20892" other="[strawberry]" pinyin="" unified="1F353_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20893" other="[blueberries]" pinyin="" unified="1FAD0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20894" other="[kiwi fruit]" pinyin="" unified="1F95D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20895" other="[tomato]" pinyin="" unified="1F345_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20896" other="[olive]" pinyin="" unified="1FAD2_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20897" other="[coconut]" pinyin="" unified="1F965_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20898" other="[avocado]" pinyin="" unified="1F951_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20899" other="[eggplant]" pinyin="" unified="1F346_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20900" other="[potato]" pinyin="" unified="1F954_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20901" other="[carrot]" pinyin="" unified="1F955_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20902" other="[ear of corn]" pinyin="" unified="1F33D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20903" other="[hot pepper]" pinyin="" unified="1F336_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20904" other="[bell pepper]" pinyin="" unified="1FAD1_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20905" other="[cucumber]" pinyin="" unified="1F952_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20906" other="[leafy green]" pinyin="" unified="1F96C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20907" other="[broccoli]" pinyin="" unified="1F966_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20908" other="[garlic]" pinyin="" unified="1F9C4_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20909" other="[onion]" pinyin="" unified="1F9C5_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20910" other="[peanuts]" pinyin="" unified="1F95C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20911" other="[beans]" pinyin="" unified="1FAD8_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20912" other="[chestnut]" pinyin="" unified="1F330_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20913" other="[ginger root]" pinyin="" unified="1FADA_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20914" other="[pea pod]" pinyin="" unified="1FADB_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20915" other="[brown mushroom]" pinyin="" unified="1F344_200D_1F7EB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20916" other="[root vegetable]" pinyin="" unified="1FADC_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20917" other="[bread]" pinyin="" unified="1F35E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20918" other="[croissant]" pinyin="" unified="1F950_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20919" other="[baguette bread]" pinyin="" unified="1F956_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20920" other="[flatbread]" pinyin="" unified="1FAD3_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20921" other="[pretzel]" pinyin="" unified="1F968_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20922" other="[bagel]" pinyin="" unified="1F96F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20923" other="[pancakes]" pinyin="" unified="1F95E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20924" other="[waffle]" pinyin="" unified="1F9C7_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20925" other="[cheese wedge]" pinyin="" unified="1F9C0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20926" other="[meat on bone]" pinyin="" unified="1F356_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20927" other="[poultry leg]" pinyin="" unified="1F357_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20928" other="[cut of meat]" pinyin="" unified="1F969_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20929" other="[bacon]" pinyin="" unified="1F953_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20930" other="[hamburger]" pinyin="" unified="1F354_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20931" other="[french fries]" pinyin="" unified="1F35F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20932" other="[pizza]" pinyin="" unified="1F355_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20933" other="[hot dog]" pinyin="" unified="1F32D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20934" other="[sandwich]" pinyin="" unified="1F96A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20935" other="[taco]" pinyin="" unified="1F32E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20936" other="[burrito]" pinyin="" unified="1F32F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20937" other="[tamale]" pinyin="" unified="1FAD4_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20938" other="[stuffed flatbread]" pinyin="" unified="1F959_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20939" other="[falafel]" pinyin="" unified="1F9C6_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20940" other="[egg]" pinyin="" unified="1F95A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20941" other="[cooking]" pinyin="" unified="1F373_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20942" other="[shallow pan of food]" pinyin="" unified="1F958_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20943" other="[pot of food]" pinyin="" unified="1F372_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20944" other="[fondue]" pinyin="" unified="1FAD5_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20945" other="[bowl with spoon]" pinyin="" unified="1F963_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20946" other="[green salad]" pinyin="" unified="1F957_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20947" other="[popcorn]" pinyin="" unified="1F37F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20948" other="[butter]" pinyin="" unified="1F9C8_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20949" other="[salt]" pinyin="" unified="1F9C2_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20950" other="[canned food]" pinyin="" unified="1F96B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20951" other="[bento box]" pinyin="" unified="1F371_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20952" other="[rice cracker]" pinyin="" unified="1F358_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20953" other="[rice ball]" pinyin="" unified="1F359_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20954" other="[cooked rice]" pinyin="" unified="1F35A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20955" other="[curry rice]" pinyin="" unified="1F35B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20956" other="[steaming bowl]" pinyin="" unified="1F35C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20957" other="[spaghetti]" pinyin="" unified="1F35D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20958" other="[roasted sweet potato]" pinyin="" unified="1F360_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20959" other="[oden]" pinyin="" unified="1F362_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20960" other="[sushi]" pinyin="" unified="1F363_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20961" other="[fried shrimp]" pinyin="" unified="1F364_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20962" other="[fish cake with swirl]" pinyin="" unified="1F365_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20963" other="[moon cake]" pinyin="" unified="1F96E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20964" other="[dango]" pinyin="" unified="1F361_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20965" other="[dumpling]" pinyin="" unified="1F95F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20966" other="[fortune cookie]" pinyin="" unified="1F960_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20967" other="[takeout box]" pinyin="" unified="1F961_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20968" other="[soft ice cream]" pinyin="" unified="1F366_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20969" other="[shaved ice]" pinyin="" unified="1F367_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20970" other="[ice cream]" pinyin="" unified="1F368_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20971" other="[doughnut]" pinyin="" unified="1F369_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20972" other="[cookie]" pinyin="" unified="1F36A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20973" other="[birthday cake]" pinyin="" unified="1F382_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20974" other="[shortcake]" pinyin="" unified="1F370_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20975" other="[cupcake]" pinyin="" unified="1F9C1_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20976" other="[pie]" pinyin="" unified="1F967_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20977" other="[chocolate bar]" pinyin="" unified="1F36B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20978" other="[candy]" pinyin="" unified="1F36C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20979" other="[lollipop]" pinyin="" unified="1F36D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20980" other="[custard]" pinyin="" unified="1F36E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20981" other="[honey pot]" pinyin="" unified="1F36F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20982" other="[baby bottle]" pinyin="" unified="1F37C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20983" other="[glass of milk]" pinyin="" unified="1F95B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20984" other="[hot beverage]" pinyin="" unified="2615_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20985" other="[teapot]" pinyin="" unified="1FAD6_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20986" other="[teacup without handle]" pinyin="" unified="1F375_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20987" other="[sake]" pinyin="" unified="1F376_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20988" other="[bottle with popping cork]" pinyin="" unified="1F37E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20989" other="[wine glass]" pinyin="" unified="1F377_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20990" other="[cocktail glass]" pinyin="" unified="1F378_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20991" other="[tropical drink]" pinyin="" unified="1F379_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20992" other="[beer mug]" pinyin="" unified="1F37A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20993" other="[clinking beer mugs]" pinyin="" unified="1F37B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20994" other="[clinking glasses]" pinyin="" unified="1F942_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20995" other="[tumbler glass]" pinyin="" unified="1F943_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20996" other="[pouring liquid]" pinyin="" unified="1FAD7_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20997" other="[cup with straw]" pinyin="" unified="1F964_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20998" other="[bubble tea]" pinyin="" unified="1F9CB_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20999" other="[beverage box]" pinyin="" unified="1F9C3_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21000" other="[mate]" pinyin="" unified="1F9C9_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21001" other="[ice]" pinyin="" unified="1F9CA_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21002" other="[chopsticks]" pinyin="" unified="1F962_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21003" other="[fork and knife with plate]" pinyin="" unified="1F37D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21004" other="[fork and knife]" pinyin="" unified="1F374_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21005" other="[spoon]" pinyin="" unified="1F944_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21006" other="[kitchen knife]" pinyin="" unified="1F52A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21007" other="[jar]" pinyin="" unified="1FAD9_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21008" other="[amphora]" pinyin="" unified="1F3FA_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+  </exppkg>
+</expList>

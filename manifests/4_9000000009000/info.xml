@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="utf-8"?>
+<expList version="1.0">
+  <exppkg type="people_body" name="people_body" chineseName="人物" id="4">
+    <exp name="20169" other="[waving hand]" pinyin="" unified="1F44B_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20170" other="[raised back of hand]" pinyin="" unified="1F91A_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20171" other="[hand with fingers splayed]" pinyin="" unified="1F590_FE0F" softbank="" supportSkin="1" FE0F="1" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20172" other="[raised hand]" pinyin="" unified="270B_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20173" other="[vulcan salute]" pinyin="" unified="1F596_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20174" other="[rightwards hand]" pinyin="" unified="1FAF1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20175" other="[leftwards hand]" pinyin="" unified="1FAF2_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20176" other="[palm down hand]" pinyin="" unified="1FAF3_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20177" other="[palm up hand]" pinyin="" unified="1FAF4_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20178" other="[leftwards pushing hand]" pinyin="" unified="1FAF7_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20179" other="[rightwards pushing hand]" pinyin="" unified="1FAF8_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20180" other="[OK hand]" pinyin="" unified="1F44C_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20181" other="[pinched fingers]" pinyin="" unified="1F90C_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20182" other="[pinching hand]" pinyin="" unified="1F90F_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20183" other="[victory hand]" pinyin="" unified="270C_FE0F" softbank="" supportSkin="1" FE0F="1" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20184" other="[crossed fingers]" pinyin="" unified="1F91E_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20185" other="[hand with index finger and thumb crossed]" pinyin="" unified="1FAF0_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20186" other="[love-you gesture]" pinyin="" unified="1F91F_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20187" other="[sign of the horns]" pinyin="" unified="1F918_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20188" other="[call me hand]" pinyin="" unified="1F919_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20189" other="[backhand index pointing left]" pinyin="" unified="1F448_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20190" other="[backhand index pointing right]" pinyin="" unified="1F449_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20191" other="[backhand index pointing up]" pinyin="" unified="1F446_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20192" other="[middle finger]" pinyin="" unified="1F595_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20193" other="[backhand index pointing down]" pinyin="" unified="1F447_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20194" other="[index pointing up]" pinyin="" unified="261D_FE0F" softbank="" supportSkin="1" FE0F="1" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20195" other="[index pointing at the viewer]" pinyin="" unified="1FAF5_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20196" other="[thumbs up]" pinyin="" unified="1F44D_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20197" other="[thumbs down]" pinyin="" unified="1F44E_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20198" other="[raised fist]" pinyin="" unified="270A_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20199" other="[oncoming fist]" pinyin="" unified="1F44A_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20200" other="[left-facing fist]" pinyin="" unified="1F91B_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20201" other="[right-facing fist]" pinyin="" unified="1F91C_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20202" other="[clapping hands]" pinyin="" unified="1F44F_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20203" other="[raising hands]" pinyin="" unified="1F64C_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20204" other="[heart hands]" pinyin="" unified="1FAF6_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20205" other="[open hands]" pinyin="" unified="1F450_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20206" other="[palms up together]" pinyin="" unified="1F932_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20207" other="[handshake]" pinyin="" unified="1F91D_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20208" other="[handshake]" pinyin="" unified="1FAF1_1F3FB_200D_1FAF2_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20209" other="[handshake]" pinyin="" unified="1FAF1_1F3FB_200D_1FAF2_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20210" other="[handshake]" pinyin="" unified="1FAF1_1F3FB_200D_1FAF2_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20211" other="[handshake]" pinyin="" unified="1FAF1_1F3FB_200D_1FAF2_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20212" other="[handshake]" pinyin="" unified="1FAF1_1F3FC_200D_1FAF2_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20213" other="[handshake]" pinyin="" unified="1FAF1_1F3FC_200D_1FAF2_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20214" other="[handshake]" pinyin="" unified="1FAF1_1F3FC_200D_1FAF2_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20215" other="[handshake]" pinyin="" unified="1FAF1_1F3FC_200D_1FAF2_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20216" other="[handshake]" pinyin="" unified="1FAF1_1F3FD_200D_1FAF2_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20217" other="[handshake]" pinyin="" unified="1FAF1_1F3FD_200D_1FAF2_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20218" other="[handshake]" pinyin="" unified="1FAF1_1F3FD_200D_1FAF2_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20219" other="[handshake]" pinyin="" unified="1FAF1_1F3FD_200D_1FAF2_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20220" other="[handshake]" pinyin="" unified="1FAF1_1F3FE_200D_1FAF2_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20221" other="[handshake]" pinyin="" unified="1FAF1_1F3FE_200D_1FAF2_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20222" other="[handshake]" pinyin="" unified="1FAF1_1F3FE_200D_1FAF2_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20223" other="[handshake]" pinyin="" unified="1FAF1_1F3FE_200D_1FAF2_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20224" other="[handshake]" pinyin="" unified="1FAF1_1F3FF_200D_1FAF2_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20225" other="[handshake]" pinyin="" unified="1FAF1_1F3FF_200D_1FAF2_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20226" other="[handshake]" pinyin="" unified="1FAF1_1F3FF_200D_1FAF2_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20227" other="[handshake]" pinyin="" unified="1FAF1_1F3FF_200D_1FAF2_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20228" other="[folded hands]" pinyin="" unified="1F64F_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20229" other="[writing hand]" pinyin="" unified="270D_FE0F" softbank="" supportSkin="1" FE0F="1" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20230" other="[nail polish]" pinyin="" unified="1F485_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20231" other="[selfie]" pinyin="" unified="1F933_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20232" other="[flexed biceps]" pinyin="" unified="1F4AA_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20233" other="[mechanical arm]" pinyin="" unified="1F9BE_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20234" other="[mechanical leg]" pinyin="" unified="1F9BF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20235" other="[leg]" pinyin="" unified="1F9B5_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20236" other="[foot]" pinyin="" unified="1F9B6_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20237" other="[ear]" pinyin="" unified="1F442_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20238" other="[ear with hearing aid]" pinyin="" unified="1F9BB_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20239" other="[nose]" pinyin="" unified="1F443_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20240" other="[brain]" pinyin="" unified="1F9E0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20241" other="[anatomical heart]" pinyin="" unified="1FAC0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20242" other="[lungs]" pinyin="" unified="1FAC1_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20243" other="[tooth]" pinyin="" unified="1F9B7_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20244" other="[bone]" pinyin="" unified="1F9B4_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20245" other="[eyes]" pinyin="" unified="1F440_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20246" other="[eye]" pinyin="" unified="1F441_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20247" other="[tongue]" pinyin="" unified="1F445_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20248" other="[mouth]" pinyin="" unified="1F444_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20249" other="[biting lip]" pinyin="" unified="1FAE6_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20250" other="[baby]" pinyin="" unified="1F476_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20251" other="[child]" pinyin="" unified="1F9D2_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20252" other="[boy]" pinyin="" unified="1F466_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20253" other="[girl]" pinyin="" unified="1F467_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20254" other="[person]" pinyin="" unified="1F9D1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20255" other="[person: blond hair]" pinyin="" unified="1F471_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20256" other="[man]" pinyin="" unified="1F468_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20257" other="[person: beard]" pinyin="" unified="1F9D4_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20258" other="[man: beard]" pinyin="" unified="1F9D4_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20259" other="[woman: beard]" pinyin="" unified="1F9D4_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20260" other="[man: red hair]" pinyin="" unified="1F468_200D_1F9B0" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20261" other="[man: curly hair]" pinyin="" unified="1F468_200D_1F9B1" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20262" other="[man: white hair]" pinyin="" unified="1F468_200D_1F9B3" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20263" other="[man: bald]" pinyin="" unified="1F468_200D_1F9B2" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20264" other="[woman]" pinyin="" unified="1F469_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20265" other="[woman: red hair]" pinyin="" unified="1F469_200D_1F9B0" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20266" other="[person: red hair]" pinyin="" unified="1F9D1_200D_1F9B0" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20267" other="[woman: curly hair]" pinyin="" unified="1F469_200D_1F9B1" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20268" other="[person: curly hair]" pinyin="" unified="1F9D1_200D_1F9B1" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20269" other="[woman: white hair]" pinyin="" unified="1F469_200D_1F9B3" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20270" other="[person: white hair]" pinyin="" unified="1F9D1_200D_1F9B3" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20271" other="[woman: bald]" pinyin="" unified="1F469_200D_1F9B2" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20272" other="[person: bald]" pinyin="" unified="1F9D1_200D_1F9B2" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20273" other="[woman: blond hair]" pinyin="" unified="1F471_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20274" other="[man: blond hair]" pinyin="" unified="1F471_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20275" other="[older person]" pinyin="" unified="1F9D3_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20276" other="[old man]" pinyin="" unified="1F474_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20277" other="[old woman]" pinyin="" unified="1F475_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20278" other="[person frowning]" pinyin="" unified="1F64D_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20279" other="[man frowning]" pinyin="" unified="1F64D_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20280" other="[woman frowning]" pinyin="" unified="1F64D_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20281" other="[person pouting]" pinyin="" unified="1F64E_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20282" other="[man pouting]" pinyin="" unified="1F64E_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20283" other="[woman pouting]" pinyin="" unified="1F64E_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20284" other="[person gesturing NO]" pinyin="" unified="1F645_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20285" other="[man gesturing NO]" pinyin="" unified="1F645_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20286" other="[woman gesturing NO]" pinyin="" unified="1F645_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20287" other="[person gesturing OK]" pinyin="" unified="1F646_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20288" other="[man gesturing OK]" pinyin="" unified="1F646_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20289" other="[woman gesturing OK]" pinyin="" unified="1F646_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20290" other="[person tipping hand]" pinyin="" unified="1F481_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20291" other="[man tipping hand]" pinyin="" unified="1F481_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20292" other="[woman tipping hand]" pinyin="" unified="1F481_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20293" other="[person raising hand]" pinyin="" unified="1F64B_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20294" other="[man raising hand]" pinyin="" unified="1F64B_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20295" other="[woman raising hand]" pinyin="" unified="1F64B_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20296" other="[deaf person]" pinyin="" unified="1F9CF_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20297" other="[deaf man]" pinyin="" unified="1F9CF_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20298" other="[deaf woman]" pinyin="" unified="1F9CF_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20299" other="[person bowing]" pinyin="" unified="1F647_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20300" other="[man bowing]" pinyin="" unified="1F647_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20301" other="[woman bowing]" pinyin="" unified="1F647_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20302" other="[person facepalming]" pinyin="" unified="1F926_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20303" other="[man facepalming]" pinyin="" unified="1F926_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20304" other="[woman facepalming]" pinyin="" unified="1F926_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20305" other="[person shrugging]" pinyin="" unified="1F937_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20306" other="[man shrugging]" pinyin="" unified="1F937_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20307" other="[woman shrugging]" pinyin="" unified="1F937_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20308" other="[health worker]" pinyin="" unified="1F9D1_200D_2695_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20309" other="[man health worker]" pinyin="" unified="1F468_200D_2695_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20310" other="[woman health worker]" pinyin="" unified="1F469_200D_2695_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20311" other="[student]" pinyin="" unified="1F9D1_200D_1F393" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20312" other="[man student]" pinyin="" unified="1F468_200D_1F393" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20313" other="[woman student]" pinyin="" unified="1F469_200D_1F393" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20314" other="[teacher]" pinyin="" unified="1F9D1_200D_1F3EB" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20315" other="[man teacher]" pinyin="" unified="1F468_200D_1F3EB" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20316" other="[woman teacher]" pinyin="" unified="1F469_200D_1F3EB" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20317" other="[judge]" pinyin="" unified="1F9D1_200D_2696_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20318" other="[man judge]" pinyin="" unified="1F468_200D_2696_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20319" other="[woman judge]" pinyin="" unified="1F469_200D_2696_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20320" other="[farmer]" pinyin="" unified="1F9D1_200D_1F33E" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20321" other="[man farmer]" pinyin="" unified="1F468_200D_1F33E" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20322" other="[woman farmer]" pinyin="" unified="1F469_200D_1F33E" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20323" other="[cook]" pinyin="" unified="1F9D1_200D_1F373" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20324" other="[man cook]" pinyin="" unified="1F468_200D_1F373" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20325" other="[woman cook]" pinyin="" unified="1F469_200D_1F373" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20326" other="[mechanic]" pinyin="" unified="1F9D1_200D_1F527" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20327" other="[man mechanic]" pinyin="" unified="1F468_200D_1F527" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20328" other="[woman mechanic]" pinyin="" unified="1F469_200D_1F527" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20329" other="[factory worker]" pinyin="" unified="1F9D1_200D_1F3ED" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20330" other="[man factory worker]" pinyin="" unified="1F468_200D_1F3ED" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20331" other="[woman factory worker]" pinyin="" unified="1F469_200D_1F3ED" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20332" other="[office worker]" pinyin="" unified="1F9D1_200D_1F4BC" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20333" other="[man office worker]" pinyin="" unified="1F468_200D_1F4BC" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20334" other="[woman office worker]" pinyin="" unified="1F469_200D_1F4BC" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20335" other="[scientist]" pinyin="" unified="1F9D1_200D_1F52C" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20336" other="[man scientist]" pinyin="" unified="1F468_200D_1F52C" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20337" other="[woman scientist]" pinyin="" unified="1F469_200D_1F52C" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20338" other="[technologist]" pinyin="" unified="1F9D1_200D_1F4BB" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20339" other="[man technologist]" pinyin="" unified="1F468_200D_1F4BB" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20340" other="[woman technologist]" pinyin="" unified="1F469_200D_1F4BB" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20341" other="[singer]" pinyin="" unified="1F9D1_200D_1F3A4" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20342" other="[man singer]" pinyin="" unified="1F468_200D_1F3A4" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20343" other="[woman singer]" pinyin="" unified="1F469_200D_1F3A4" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20344" other="[artist]" pinyin="" unified="1F9D1_200D_1F3A8" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20345" other="[man artist]" pinyin="" unified="1F468_200D_1F3A8" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20346" other="[woman artist]" pinyin="" unified="1F469_200D_1F3A8" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20347" other="[pilot]" pinyin="" unified="1F9D1_200D_2708_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20348" other="[man pilot]" pinyin="" unified="1F468_200D_2708_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20349" other="[woman pilot]" pinyin="" unified="1F469_200D_2708_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20350" other="[astronaut]" pinyin="" unified="1F9D1_200D_1F680" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20351" other="[man astronaut]" pinyin="" unified="1F468_200D_1F680" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20352" other="[woman astronaut]" pinyin="" unified="1F469_200D_1F680" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20353" other="[firefighter]" pinyin="" unified="1F9D1_200D_1F692" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20354" other="[man firefighter]" pinyin="" unified="1F468_200D_1F692" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20355" other="[woman firefighter]" pinyin="" unified="1F469_200D_1F692" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20356" other="[police officer]" pinyin="" unified="1F46E_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20357" other="[man police officer]" pinyin="" unified="1F46E_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20358" other="[woman police officer]" pinyin="" unified="1F46E_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20359" other="[detective]" pinyin="" unified="1F575_FE0F" softbank="" supportSkin="1" FE0F="1" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20360" other="[man detective]" pinyin="" unified="1F575_FE0F_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="1" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20361" other="[woman detective]" pinyin="" unified="1F575_FE0F_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="1" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20362" other="[guard]" pinyin="" unified="1F482_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20363" other="[man guard]" pinyin="" unified="1F482_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20364" other="[woman guard]" pinyin="" unified="1F482_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20365" other="[ninja]" pinyin="" unified="1F977_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20366" other="[construction worker]" pinyin="" unified="1F477_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20367" other="[man construction worker]" pinyin="" unified="1F477_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20368" other="[woman construction worker]" pinyin="" unified="1F477_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20369" other="[person with crown]" pinyin="" unified="1FAC5_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20370" other="[prince]" pinyin="" unified="1F934_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20371" other="[princess]" pinyin="" unified="1F478_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20372" other="[person wearing turban]" pinyin="" unified="1F473_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20373" other="[man wearing turban]" pinyin="" unified="1F473_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20374" other="[woman wearing turban]" pinyin="" unified="1F473_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20375" other="[person with skullcap]" pinyin="" unified="1F472_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20376" other="[woman with headscarf]" pinyin="" unified="1F9D5_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20377" other="[person in tuxedo]" pinyin="" unified="1F935_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20378" other="[man in tuxedo]" pinyin="" unified="1F935_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20379" other="[woman in tuxedo]" pinyin="" unified="1F935_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20380" other="[person with veil]" pinyin="" unified="1F470_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20381" other="[man with veil]" pinyin="" unified="1F470_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20382" other="[woman with veil]" pinyin="" unified="1F470_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20383" other="[pregnant woman]" pinyin="" unified="1F930_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20384" other="[pregnant man]" pinyin="" unified="1FAC3_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20385" other="[pregnant person]" pinyin="" unified="1FAC4_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20386" other="[breast-feeding]" pinyin="" unified="1F931_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20387" other="[woman feeding baby]" pinyin="" unified="1F469_200D_1F37C" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20388" other="[man feeding baby]" pinyin="" unified="1F468_200D_1F37C" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20389" other="[person feeding baby]" pinyin="" unified="1F9D1_200D_1F37C" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20390" other="[baby angel]" pinyin="" unified="1F47C_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20391" other="[Santa Claus]" pinyin="" unified="1F385_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20392" other="[Mrs. Claus]" pinyin="" unified="1F936_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20393" other="[Mx Claus]" pinyin="" unified="1F9D1_200D_1F384" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20394" other="[superhero]" pinyin="" unified="1F9B8_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20395" other="[man superhero]" pinyin="" unified="1F9B8_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20396" other="[woman superhero]" pinyin="" unified="1F9B8_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20397" other="[supervillain]" pinyin="" unified="1F9B9_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20398" other="[man supervillain]" pinyin="" unified="1F9B9_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20399" other="[woman supervillain]" pinyin="" unified="1F9B9_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20400" other="[mage]" pinyin="" unified="1F9D9_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20401" other="[man mage]" pinyin="" unified="1F9D9_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20402" other="[woman mage]" pinyin="" unified="1F9D9_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20403" other="[fairy]" pinyin="" unified="1F9DA_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20404" other="[man fairy]" pinyin="" unified="1F9DA_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20405" other="[woman fairy]" pinyin="" unified="1F9DA_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20406" other="[vampire]" pinyin="" unified="1F9DB_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20407" other="[man vampire]" pinyin="" unified="1F9DB_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20408" other="[woman vampire]" pinyin="" unified="1F9DB_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20409" other="[merperson]" pinyin="" unified="1F9DC_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20410" other="[merman]" pinyin="" unified="1F9DC_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20411" other="[mermaid]" pinyin="" unified="1F9DC_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20412" other="[elf]" pinyin="" unified="1F9DD_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20413" other="[man elf]" pinyin="" unified="1F9DD_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20414" other="[woman elf]" pinyin="" unified="1F9DD_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20415" other="[genie]" pinyin="" unified="1F9DE_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20416" other="[man genie]" pinyin="" unified="1F9DE_200D_2642_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20417" other="[woman genie]" pinyin="" unified="1F9DE_200D_2640_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20418" other="[zombie]" pinyin="" unified="1F9DF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20419" other="[man zombie]" pinyin="" unified="1F9DF_200D_2642_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20420" other="[woman zombie]" pinyin="" unified="1F9DF_200D_2640_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20421" other="[troll]" pinyin="" unified="1F9CC_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20422" other="[person getting massage]" pinyin="" unified="1F486_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20423" other="[man getting massage]" pinyin="" unified="1F486_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20424" other="[woman getting massage]" pinyin="" unified="1F486_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20425" other="[person getting haircut]" pinyin="" unified="1F487_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20426" other="[man getting haircut]" pinyin="" unified="1F487_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20427" other="[woman getting haircut]" pinyin="" unified="1F487_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20428" other="[person walking]" pinyin="" unified="1F6B6_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20429" other="[man walking]" pinyin="" unified="1F6B6_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20430" other="[woman walking]" pinyin="" unified="1F6B6_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20431" other="[person walking facing right]" pinyin="" unified="1F6B6_200D_27A1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20432" other="[woman walking facing right]" pinyin="" unified="1F6B6_200D_2640_FE0F_200D_27A1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20433" other="[man walking facing right]" pinyin="" unified="1F6B6_200D_2642_FE0F_200D_27A1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20434" other="[person standing]" pinyin="" unified="1F9CD_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20435" other="[man standing]" pinyin="" unified="1F9CD_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20436" other="[woman standing]" pinyin="" unified="1F9CD_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20437" other="[person kneeling]" pinyin="" unified="1F9CE_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20438" other="[man kneeling]" pinyin="" unified="1F9CE_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20439" other="[woman kneeling]" pinyin="" unified="1F9CE_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20440" other="[person kneeling facing right]" pinyin="" unified="1F9CE_200D_27A1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20441" other="[woman kneeling facing right]" pinyin="" unified="1F9CE_200D_2640_FE0F_200D_27A1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20442" other="[man kneeling facing right]" pinyin="" unified="1F9CE_200D_2642_FE0F_200D_27A1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20443" other="[person with white cane]" pinyin="" unified="1F9D1_200D_1F9AF" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20444" other="[person with white cane facing right]" pinyin="" unified="1F9D1_200D_1F9AF_200D_27A1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20445" other="[man with white cane]" pinyin="" unified="1F468_200D_1F9AF" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20446" other="[man with white cane facing right]" pinyin="" unified="1F468_200D_1F9AF_200D_27A1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20447" other="[woman with white cane]" pinyin="" unified="1F469_200D_1F9AF" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20448" other="[woman with white cane facing right]" pinyin="" unified="1F469_200D_1F9AF_200D_27A1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20449" other="[person in motorized wheelchair]" pinyin="" unified="1F9D1_200D_1F9BC" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20450" other="[person in motorized wheelchair facing right]" pinyin="" unified="1F9D1_200D_1F9BC_200D_27A1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20451" other="[man in motorized wheelchair]" pinyin="" unified="1F468_200D_1F9BC" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20452" other="[man in motorized wheelchair facing right]" pinyin="" unified="1F468_200D_1F9BC_200D_27A1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20453" other="[woman in motorized wheelchair]" pinyin="" unified="1F469_200D_1F9BC" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20454" other="[woman in motorized wheelchair facing right]" pinyin="" unified="1F469_200D_1F9BC_200D_27A1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20455" other="[person in manual wheelchair]" pinyin="" unified="1F9D1_200D_1F9BD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20456" other="[person in manual wheelchair]" pinyin="" unified="1F9D1_1F3FB_200D_1F9BD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20457" other="[person in manual wheelchair]" pinyin="" unified="1F9D1_1F3FC_200D_1F9BD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20458" other="[person in manual wheelchair]" pinyin="" unified="1F9D1_1F3FD_200D_1F9BD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20459" other="[person in manual wheelchair]" pinyin="" unified="1F9D1_1F3FF_200D_1F9BD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20460" other="[person in manual wheelchair facing right]" pinyin="" unified="1F9D1_200D_1F9BD_200D_27A1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20461" other="[man in manual wheelchair]" pinyin="" unified="1F468_200D_1F9BD" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20462" other="[man in manual wheelchair facing right]" pinyin="" unified="1F468_200D_1F9BD_200D_27A1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20463" other="[woman in manual wheelchair]" pinyin="" unified="1F469_200D_1F9BD" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20464" other="[woman in manual wheelchair facing right]" pinyin="" unified="1F469_200D_1F9BD_200D_27A1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20465" other="[person running]" pinyin="" unified="1F3C3_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20466" other="[man running]" pinyin="" unified="1F3C3_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20467" other="[woman running]" pinyin="" unified="1F3C3_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20468" other="[person running facing right]" pinyin="" unified="1F3C3_200D_27A1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20469" other="[woman running facing right]" pinyin="" unified="1F3C3_200D_2640_FE0F_200D_27A1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20470" other="[man running facing right]" pinyin="" unified="1F3C3_200D_2642_FE0F_200D_27A1_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20471" other="[woman dancing]" pinyin="" unified="1F483_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20472" other="[man dancing]" pinyin="" unified="1F57A_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20473" other="[person in suit levitating]" pinyin="" unified="1F574_FE0F" softbank="" supportSkin="1" FE0F="1" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20474" other="[people with bunny ears]" pinyin="" unified="1F46F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20475" other="[men with bunny ears]" pinyin="" unified="1F46F_200D_2642_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20476" other="[women with bunny ears]" pinyin="" unified="1F46F_200D_2640_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20477" other="[person in steamy room]" pinyin="" unified="1F9D6_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20478" other="[man in steamy room]" pinyin="" unified="1F9D6_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20479" other="[woman in steamy room]" pinyin="" unified="1F9D6_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20480" other="[person climbing]" pinyin="" unified="1F9D7_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20481" other="[man climbing]" pinyin="" unified="1F9D7_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20482" other="[woman climbing]" pinyin="" unified="1F9D7_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20483" other="[person fencing]" pinyin="" unified="1F93A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20484" other="[horse racing]" pinyin="" unified="1F3C7_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20485" other="[skier]" pinyin="" unified="26F7_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20486" other="[snowboarder]" pinyin="" unified="1F3C2_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20487" other="[person golfing]" pinyin="" unified="1F3CC_FE0F" softbank="" supportSkin="1" FE0F="1" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20488" other="[man golfing]" pinyin="" unified="1F3CC_FE0F_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="1" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20489" other="[woman golfing]" pinyin="" unified="1F3CC_FE0F_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="1" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20490" other="[person surfing]" pinyin="" unified="1F3C4_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20491" other="[man surfing]" pinyin="" unified="1F3C4_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20492" other="[woman surfing]" pinyin="" unified="1F3C4_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20493" other="[person rowing boat]" pinyin="" unified="1F6A3_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20494" other="[man rowing boat]" pinyin="" unified="1F6A3_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20495" other="[woman rowing boat]" pinyin="" unified="1F6A3_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20496" other="[person swimming]" pinyin="" unified="1F3CA_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20497" other="[man swimming]" pinyin="" unified="1F3CA_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20498" other="[woman swimming]" pinyin="" unified="1F3CA_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20499" other="[person bouncing ball]" pinyin="" unified="26F9_FE0F" softbank="" supportSkin="1" FE0F="1" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20500" other="[man bouncing ball]" pinyin="" unified="26F9_FE0F_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="1" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20501" other="[woman bouncing ball]" pinyin="" unified="26F9_FE0F_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="1" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20502" other="[person lifting weights]" pinyin="" unified="1F3CB_FE0F" softbank="" supportSkin="1" FE0F="1" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20503" other="[man lifting weights]" pinyin="" unified="1F3CB_FE0F_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="1" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20504" other="[woman lifting weights]" pinyin="" unified="1F3CB_FE0F_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="1" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20505" other="[person biking]" pinyin="" unified="1F6B4_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20506" other="[man biking]" pinyin="" unified="1F6B4_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20507" other="[woman biking]" pinyin="" unified="1F6B4_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20508" other="[person mountain biking]" pinyin="" unified="1F6B5_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20509" other="[man mountain biking]" pinyin="" unified="1F6B5_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20510" other="[woman mountain biking]" pinyin="" unified="1F6B5_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20511" other="[person cartwheeling]" pinyin="" unified="1F938_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20512" other="[man cartwheeling]" pinyin="" unified="1F938_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20513" other="[woman cartwheeling]" pinyin="" unified="1F938_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20514" other="[people wrestling]" pinyin="" unified="1F93C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20515" other="[men wrestling]" pinyin="" unified="1F93C_200D_2642_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20516" other="[women wrestling]" pinyin="" unified="1F93C_200D_2640_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20517" other="[person playing water polo]" pinyin="" unified="1F93D_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20518" other="[man playing water polo]" pinyin="" unified="1F93D_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20519" other="[woman playing water polo]" pinyin="" unified="1F93D_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20520" other="[person playing handball]" pinyin="" unified="1F93E_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20521" other="[man playing handball]" pinyin="" unified="1F93E_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20522" other="[woman playing handball]" pinyin="" unified="1F93E_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20523" other="[person juggling]" pinyin="" unified="1F939_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20524" other="[man juggling]" pinyin="" unified="1F939_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20525" other="[woman juggling]" pinyin="" unified="1F939_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20526" other="[person in lotus position]" pinyin="" unified="1F9D8_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20527" other="[man in lotus position]" pinyin="" unified="1F9D8_200D_2642_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20528" other="[woman in lotus position]" pinyin="" unified="1F9D8_200D_2640_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20529" other="[person taking bath]" pinyin="" unified="1F6C0_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20530" other="[person in bed]" pinyin="" unified="1F6CC_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20531" other="[people holding hands]" pinyin="" unified="1F9D1_200D_1F91D_200D_1F9D1" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20532" other="[people holding hands]" pinyin="" unified="1F9D1_1F3FB_200D_1F91D_200D_1F9D1_1F3FB" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20533" other="[people holding hands]" pinyin="" unified="1F9D1_1F3FB_200D_1F91D_200D_1F9D1_1F3FC" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20534" other="[people holding hands]" pinyin="" unified="1F9D1_1F3FB_200D_1F91D_200D_1F9D1_1F3FD" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20535" other="[people holding hands]" pinyin="" unified="1F9D1_1F3FB_200D_1F91D_200D_1F9D1_1F3FE" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20536" other="[people holding hands]" pinyin="" unified="1F9D1_1F3FB_200D_1F91D_200D_1F9D1_1F3FF" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20537" other="[women holding hands]" pinyin="" unified="1F46D_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20538" other="[women holding hands]" pinyin="" unified="1F469_1F3FB_200D_1F91D_200D_1F469_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20539" other="[women holding hands]" pinyin="" unified="1F469_1F3FB_200D_1F91D_200D_1F469_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20540" other="[women holding hands]" pinyin="" unified="1F469_1F3FB_200D_1F91D_200D_1F469_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20541" other="[women holding hands]" pinyin="" unified="1F469_1F3FB_200D_1F91D_200D_1F469_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20542" other="[women holding hands]" pinyin="" unified="1F469_1F3FC_200D_1F91D_200D_1F469_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20543" other="[women holding hands]" pinyin="" unified="1F469_1F3FC_200D_1F91D_200D_1F469_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20544" other="[women holding hands]" pinyin="" unified="1F469_1F3FC_200D_1F91D_200D_1F469_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20545" other="[women holding hands]" pinyin="" unified="1F469_1F3FC_200D_1F91D_200D_1F469_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20546" other="[women holding hands]" pinyin="" unified="1F469_1F3FD_200D_1F91D_200D_1F469_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20547" other="[women holding hands]" pinyin="" unified="1F469_1F3FD_200D_1F91D_200D_1F469_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20548" other="[women holding hands]" pinyin="" unified="1F469_1F3FD_200D_1F91D_200D_1F469_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20549" other="[women holding hands]" pinyin="" unified="1F469_1F3FD_200D_1F91D_200D_1F469_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20550" other="[women holding hands]" pinyin="" unified="1F469_1F3FE_200D_1F91D_200D_1F469_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20551" other="[women holding hands]" pinyin="" unified="1F469_1F3FE_200D_1F91D_200D_1F469_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20552" other="[women holding hands]" pinyin="" unified="1F469_1F3FE_200D_1F91D_200D_1F469_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20553" other="[women holding hands]" pinyin="" unified="1F469_1F3FE_200D_1F91D_200D_1F469_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20554" other="[women holding hands]" pinyin="" unified="1F469_1F3FF_200D_1F91D_200D_1F469_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20555" other="[women holding hands]" pinyin="" unified="1F469_1F3FF_200D_1F91D_200D_1F469_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20556" other="[women holding hands]" pinyin="" unified="1F469_1F3FF_200D_1F91D_200D_1F469_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20557" other="[women holding hands]" pinyin="" unified="1F469_1F3FF_200D_1F91D_200D_1F469_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20558" other="[woman and man holding hands]" pinyin="" unified="1F46B_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20559" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FB_200D_1F91D_200D_1F468_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20560" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FB_200D_1F91D_200D_1F468_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20561" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FB_200D_1F91D_200D_1F468_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20562" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FB_200D_1F91D_200D_1F468_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20563" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FC_200D_1F91D_200D_1F468_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20564" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FC_200D_1F91D_200D_1F468_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20565" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FC_200D_1F91D_200D_1F468_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20566" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FC_200D_1F91D_200D_1F468_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20567" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FD_200D_1F91D_200D_1F468_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20568" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FD_200D_1F91D_200D_1F468_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20569" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FD_200D_1F91D_200D_1F468_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20570" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FD_200D_1F91D_200D_1F468_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20571" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FE_200D_1F91D_200D_1F468_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20572" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FE_200D_1F91D_200D_1F468_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20573" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FE_200D_1F91D_200D_1F468_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20574" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FE_200D_1F91D_200D_1F468_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20575" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FF_200D_1F91D_200D_1F468_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20576" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FF_200D_1F91D_200D_1F468_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20577" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FF_200D_1F91D_200D_1F468_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20578" other="[woman and man holding hands]" pinyin="" unified="1F469_1F3FF_200D_1F91D_200D_1F468_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20579" other="[men holding hands]" pinyin="" unified="1F46C_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20580" other="[men holding hands]" pinyin="" unified="1F468_1F3FB_200D_1F91D_200D_1F468_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20581" other="[men holding hands]" pinyin="" unified="1F468_1F3FB_200D_1F91D_200D_1F468_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20582" other="[men holding hands]" pinyin="" unified="1F468_1F3FB_200D_1F91D_200D_1F468_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20583" other="[men holding hands]" pinyin="" unified="1F468_1F3FB_200D_1F91D_200D_1F468_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20584" other="[men holding hands]" pinyin="" unified="1F468_1F3FC_200D_1F91D_200D_1F468_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20585" other="[men holding hands]" pinyin="" unified="1F468_1F3FC_200D_1F91D_200D_1F468_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20586" other="[men holding hands]" pinyin="" unified="1F468_1F3FC_200D_1F91D_200D_1F468_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20587" other="[men holding hands]" pinyin="" unified="1F468_1F3FC_200D_1F91D_200D_1F468_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20588" other="[men holding hands]" pinyin="" unified="1F468_1F3FD_200D_1F91D_200D_1F468_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20589" other="[men holding hands]" pinyin="" unified="1F468_1F3FD_200D_1F91D_200D_1F468_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20590" other="[men holding hands]" pinyin="" unified="1F468_1F3FD_200D_1F91D_200D_1F468_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20591" other="[men holding hands]" pinyin="" unified="1F468_1F3FD_200D_1F91D_200D_1F468_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20592" other="[men holding hands]" pinyin="" unified="1F468_1F3FE_200D_1F91D_200D_1F468_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20593" other="[men holding hands]" pinyin="" unified="1F468_1F3FE_200D_1F91D_200D_1F468_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20594" other="[men holding hands]" pinyin="" unified="1F468_1F3FE_200D_1F91D_200D_1F468_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20595" other="[men holding hands]" pinyin="" unified="1F468_1F3FE_200D_1F91D_200D_1F468_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20596" other="[men holding hands]" pinyin="" unified="1F468_1F3FF_200D_1F91D_200D_1F468_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20597" other="[men holding hands]" pinyin="" unified="1F468_1F3FF_200D_1F91D_200D_1F468_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20598" other="[men holding hands]" pinyin="" unified="1F468_1F3FF_200D_1F91D_200D_1F468_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20599" other="[men holding hands]" pinyin="" unified="1F468_1F3FF_200D_1F91D_200D_1F468_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20600" other="[kiss]" pinyin="" unified="1F48F_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20601" other="[kiss]" pinyin="" unified="1F9D1_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20602" other="[kiss]" pinyin="" unified="1F9D1_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20603" other="[kiss]" pinyin="" unified="1F9D1_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20604" other="[kiss]" pinyin="" unified="1F9D1_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20605" other="[kiss]" pinyin="" unified="1F9D1_1F3FC_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20606" other="[kiss]" pinyin="" unified="1F9D1_1F3FC_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20607" other="[kiss]" pinyin="" unified="1F9D1_1F3FC_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20608" other="[kiss]" pinyin="" unified="1F9D1_1F3FC_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20609" other="[kiss]" pinyin="" unified="1F9D1_1F3FD_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20610" other="[kiss]" pinyin="" unified="1F9D1_1F3FD_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20611" other="[kiss]" pinyin="" unified="1F9D1_1F3FD_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20612" other="[kiss]" pinyin="" unified="1F9D1_1F3FD_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20613" other="[kiss]" pinyin="" unified="1F9D1_1F3FE_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20614" other="[kiss]" pinyin="" unified="1F9D1_1F3FE_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20615" other="[kiss]" pinyin="" unified="1F9D1_1F3FE_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20616" other="[kiss]" pinyin="" unified="1F9D1_1F3FE_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20617" other="[kiss]" pinyin="" unified="1F9D1_1F3FF_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20618" other="[kiss]" pinyin="" unified="1F9D1_1F3FF_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20619" other="[kiss]" pinyin="" unified="1F9D1_1F3FF_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20620" other="[kiss]" pinyin="" unified="1F9D1_1F3FF_200D_2764_FE0F_200D_1F48B_200D_1F9D1_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20621" other="[kiss: woman, man]" pinyin="" unified="1F469_200D_2764_FE0F_200D_1F48B_200D_1F468" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20622" other="[kiss: woman, man]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F468_1F3FB" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20623" other="[kiss: woman, man]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F468_1F3FC" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20624" other="[kiss: woman, man]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F468_1F3FD" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20625" other="[kiss: woman, man]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F468_1F3FE" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20626" other="[kiss: woman, man]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F468_1F3FF" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20627" other="[kiss: man, man]" pinyin="" unified="1F468_200D_2764_FE0F_200D_1F48B_200D_1F468" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20628" other="[kiss: man, man]" pinyin="" unified="1F468_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F468_1F3FB" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20629" other="[kiss: man, man]" pinyin="" unified="1F468_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F468_1F3FC" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20630" other="[kiss: man, man]" pinyin="" unified="1F468_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F468_1F3FD" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20631" other="[kiss: man, man]" pinyin="" unified="1F468_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F468_1F3FE" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20632" other="[kiss: man, man]" pinyin="" unified="1F468_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F468_1F3FF" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20633" other="[kiss: woman, woman]" pinyin="" unified="1F469_200D_2764_FE0F_200D_1F48B_200D_1F469" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20634" other="[kiss: woman, woman]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F469_1F3FB" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20635" other="[kiss: woman, woman]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F469_1F3FC" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20636" other="[kiss: woman, woman]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F469_1F3FD" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20637" other="[kiss: woman, woman]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F469_1F3FE" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20638" other="[kiss: woman, woman]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F48B_200D_1F469_1F3FF" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20639" other="[couple with heart]" pinyin="" unified="1F491_FE0F" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20640" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FB_200D_2764_FE0F_200D_1F9D1_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20641" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FB_200D_2764_FE0F_200D_1F9D1_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20642" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FB_200D_2764_FE0F_200D_1F9D1_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20643" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FB_200D_2764_FE0F_200D_1F9D1_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20644" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FC_200D_2764_FE0F_200D_1F9D1_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20645" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FC_200D_2764_FE0F_200D_1F9D1_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20646" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FC_200D_2764_FE0F_200D_1F9D1_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20647" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FC_200D_2764_FE0F_200D_1F9D1_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20648" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FD_200D_2764_FE0F_200D_1F9D1_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20649" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FD_200D_2764_FE0F_200D_1F9D1_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20650" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FD_200D_2764_FE0F_200D_1F9D1_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20651" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FD_200D_2764_FE0F_200D_1F9D1_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20652" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FE_200D_2764_FE0F_200D_1F9D1_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20653" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FE_200D_2764_FE0F_200D_1F9D1_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20654" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FE_200D_2764_FE0F_200D_1F9D1_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20655" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FE_200D_2764_FE0F_200D_1F9D1_1F3FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20656" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FF_200D_2764_FE0F_200D_1F9D1_1F3FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20657" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FF_200D_2764_FE0F_200D_1F9D1_1F3FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20658" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FF_200D_2764_FE0F_200D_1F9D1_1F3FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20659" other="[couple with heart]" pinyin="" unified="1F9D1_1F3FF_200D_2764_FE0F_200D_1F9D1_1F3FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20660" other="[couple with heart: woman, man]" pinyin="" unified="1F469_200D_2764_FE0F_200D_1F468" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20661" other="[couple with heart: woman, man]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F468_1F3FB" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20662" other="[couple with heart: woman, man]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F468_1F3FC" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20663" other="[couple with heart: woman, man]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F468_1F3FD" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20664" other="[couple with heart: woman, man]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F468_1F3FE" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20665" other="[couple with heart: woman, man]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F468_1F3FF" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20666" other="[couple with heart: man, man]" pinyin="" unified="1F468_200D_2764_FE0F_200D_1F468" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20667" other="[couple with heart: man, man]" pinyin="" unified="1F468_1F3FB_200D_2764_FE0F_200D_1F468_1F3FB" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20668" other="[couple with heart: man, man]" pinyin="" unified="1F468_1F3FB_200D_2764_FE0F_200D_1F468_1F3FC" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20669" other="[couple with heart: man, man]" pinyin="" unified="1F468_1F3FB_200D_2764_FE0F_200D_1F468_1F3FD" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20670" other="[couple with heart: man, man]" pinyin="" unified="1F468_1F3FB_200D_2764_FE0F_200D_1F468_1F3FE" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20671" other="[couple with heart: man, man]" pinyin="" unified="1F468_1F3FB_200D_2764_FE0F_200D_1F468_1F3FF" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20672" other="[couple with heart: woman, woman]" pinyin="" unified="1F469_200D_2764_FE0F_200D_1F469" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20673" other="[couple with heart: woman, woman]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F469_1F3FB" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20674" other="[couple with heart: woman, woman]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F469_1F3FC" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20675" other="[couple with heart: woman, woman]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F469_1F3FD" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20676" other="[couple with heart: woman, woman]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F469_1F3FE" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20677" other="[couple with heart: woman, woman]" pinyin="" unified="1F469_1F3FB_200D_2764_FE0F_200D_1F469_1F3FF" softbank="" supportSkin="1" FE0F="0" currentColor="0" hasSelectedColor="1"/>
+    <exp name="20678" other="[family: man, woman, boy]" pinyin="" unified="1F468_200D_1F469_200D_1F466" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20679" other="[family: man, woman, girl]" pinyin="" unified="1F468_200D_1F469_200D_1F467" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20680" other="[family: man, woman, girl, boy]" pinyin="" unified="1F468_200D_1F469_200D_1F467_200D_1F466" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20681" other="[family: man, woman, boy, boy]" pinyin="" unified="1F468_200D_1F469_200D_1F466_200D_1F466" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20682" other="[family: man, woman, girl, girl]" pinyin="" unified="1F468_200D_1F469_200D_1F467_200D_1F467" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20683" other="[family: man, man, boy]" pinyin="" unified="1F468_200D_1F468_200D_1F466" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20684" other="[family: man, man, girl]" pinyin="" unified="1F468_200D_1F468_200D_1F467" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20685" other="[family: man, man, girl, boy]" pinyin="" unified="1F468_200D_1F468_200D_1F467_200D_1F466" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20686" other="[family: man, man, boy, boy]" pinyin="" unified="1F468_200D_1F468_200D_1F466_200D_1F466" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20687" other="[family: man, man, girl, girl]" pinyin="" unified="1F468_200D_1F468_200D_1F467_200D_1F467" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20688" other="[family: woman, woman, boy]" pinyin="" unified="1F469_200D_1F469_200D_1F466" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20689" other="[family: woman, woman, girl]" pinyin="" unified="1F469_200D_1F469_200D_1F467" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20690" other="[family: woman, woman, girl, boy]" pinyin="" unified="1F469_200D_1F469_200D_1F467_200D_1F466" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20691" other="[family: woman, woman, boy, boy]" pinyin="" unified="1F469_200D_1F469_200D_1F466_200D_1F466" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20692" other="[family: woman, woman, girl, girl]" pinyin="" unified="1F469_200D_1F469_200D_1F467_200D_1F467" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20693" other="[family: man, boy]" pinyin="" unified="1F468_200D_1F466" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20694" other="[family: man, boy, boy]" pinyin="" unified="1F468_200D_1F466_200D_1F466" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20695" other="[family: man, girl]" pinyin="" unified="1F468_200D_1F467" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20696" other="[family: man, girl, boy]" pinyin="" unified="1F468_200D_1F467_200D_1F466" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20697" other="[family: man, girl, girl]" pinyin="" unified="1F468_200D_1F467_200D_1F467" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20698" other="[family: woman, boy]" pinyin="" unified="1F469_200D_1F466" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20699" other="[family: woman, boy, boy]" pinyin="" unified="1F469_200D_1F466_200D_1F466" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20700" other="[family: woman, girl]" pinyin="" unified="1F469_200D_1F467" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20701" other="[family: woman, girl, boy]" pinyin="" unified="1F469_200D_1F467_200D_1F466" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20702" other="[family: woman, girl, girl]" pinyin="" unified="1F469_200D_1F467_200D_1F467" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20703" other="[speaking head]" pinyin="" unified="1F5E3_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20704" other="[bust in silhouette]" pinyin="" unified="1F464_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20705" other="[busts in silhouette]" pinyin="" unified="1F465_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20706" other="[people hugging]" pinyin="" unified="1FAC2_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20707" other="[family]" pinyin="" unified="1F46A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20708" other="[family: adult, adult, child]" pinyin="" unified="1F9D1_200D_1F9D1_200D_1F9D2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20709" other="[family: adult, adult, child, child]" pinyin="" unified="1F9D1_200D_1F9D1_200D_1F9D2_200D_1F9D2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20710" other="[family: adult, child]" pinyin="" unified="1F9D1_200D_1F9D2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20711" other="[family: adult, child, child]" pinyin="" unified="1F9D1_200D_1F9D2_200D_1F9D2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20712" other="[footprints]" pinyin="" unified="1F463_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="20713" other="[fingerprint]" pinyin="" unified="1FAC6_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+  </exppkg>
+</expList>

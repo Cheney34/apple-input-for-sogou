@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<expList version="1.0">
+  <exppkg type="symbols" name="symbols" chineseName="符号" id="11">
+    <exp name="21576" other="[ATM sign]" pinyin="" unified="1F3E7_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21577" other="[litter in bin sign]" pinyin="" unified="1F6AE_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21578" other="[potable water]" pinyin="" unified="1F6B0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21579" other="[wheelchair symbol]" pinyin="" unified="267F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21580" other="[men’s room]" pinyin="" unified="1F6B9_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21581" other="[women’s room]" pinyin="" unified="1F6BA_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21582" other="[restroom]" pinyin="" unified="1F6BB_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21583" other="[baby symbol]" pinyin="" unified="1F6BC_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21584" other="[water closet]" pinyin="" unified="1F6BE_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21585" other="[passport control]" pinyin="" unified="1F6C2_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21586" other="[customs]" pinyin="" unified="1F6C3_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21587" other="[baggage claim]" pinyin="" unified="1F6C4_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21588" other="[left luggage]" pinyin="" unified="1F6C5_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21589" other="[warning]" pinyin="" unified="26A0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21590" other="[children crossing]" pinyin="" unified="1F6B8_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21591" other="[no entry]" pinyin="" unified="26D4_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21592" other="[prohibited]" pinyin="" unified="1F6AB_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21593" other="[no bicycles]" pinyin="" unified="1F6B3_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21594" other="[no smoking]" pinyin="" unified="1F6AD_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21595" other="[no littering]" pinyin="" unified="1F6AF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21596" other="[non-potable water]" pinyin="" unified="1F6B1_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21597" other="[no pedestrians]" pinyin="" unified="1F6B7_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21598" other="[no mobile phones]" pinyin="" unified="1F4F5_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21599" other="[no one under eighteen]" pinyin="" unified="1F51E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21600" other="[radioactive]" pinyin="" unified="2622_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21601" other="[biohazard]" pinyin="" unified="2623_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21602" other="[up arrow]" pinyin="" unified="2B06_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21603" other="[up-right arrow]" pinyin="" unified="2197_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21604" other="[right arrow]" pinyin="" unified="27A1_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21605" other="[down-right arrow]" pinyin="" unified="2198_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21606" other="[down arrow]" pinyin="" unified="2B07_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21607" other="[down-left arrow]" pinyin="" unified="2199_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21608" other="[left arrow]" pinyin="" unified="2B05_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21609" other="[up-left arrow]" pinyin="" unified="2196_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21610" other="[up-down arrow]" pinyin="" unified="2195_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21611" other="[left-right arrow]" pinyin="" unified="2194_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21612" other="[right arrow curving left]" pinyin="" unified="21A9_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21613" other="[left arrow curving right]" pinyin="" unified="21AA_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21614" other="[right arrow curving up]" pinyin="" unified="2934_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21615" other="[right arrow curving down]" pinyin="" unified="2935_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21616" other="[clockwise vertical arrows]" pinyin="" unified="1F503_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21617" other="[counterclockwise arrows button]" pinyin="" unified="1F504_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21618" other="[BACK arrow]" pinyin="" unified="1F519_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21619" other="[END arrow]" pinyin="" unified="1F51A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21620" other="[ON! arrow]" pinyin="" unified="1F51B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21621" other="[SOON arrow]" pinyin="" unified="1F51C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21622" other="[TOP arrow]" pinyin="" unified="1F51D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21623" other="[place of worship]" pinyin="" unified="1F6D0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21624" other="[atom symbol]" pinyin="" unified="269B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21625" other="[om]" pinyin="" unified="1F549_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21626" other="[star of David]" pinyin="" unified="2721_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21627" other="[wheel of dharma]" pinyin="" unified="2638_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21628" other="[yin yang]" pinyin="" unified="262F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21629" other="[latin cross]" pinyin="" unified="271D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21630" other="[orthodox cross]" pinyin="" unified="2626_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21631" other="[star and crescent]" pinyin="" unified="262A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21632" other="[peace symbol]" pinyin="" unified="262E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21633" other="[menorah]" pinyin="" unified="1F54E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21634" other="[dotted six-pointed star]" pinyin="" unified="1F52F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21635" other="[khanda]" pinyin="" unified="1FAAF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21636" other="[Aries]" pinyin="" unified="2648_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21637" other="[Taurus]" pinyin="" unified="2649_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21638" other="[Gemini]" pinyin="" unified="264A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21639" other="[Cancer]" pinyin="" unified="264B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21640" other="[Leo]" pinyin="" unified="264C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21641" other="[Virgo]" pinyin="" unified="264D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21642" other="[Libra]" pinyin="" unified="264E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21643" other="[Scorpio]" pinyin="" unified="264F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21644" other="[Sagittarius]" pinyin="" unified="2650_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21645" other="[Capricorn]" pinyin="" unified="2651_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21646" other="[Aquarius]" pinyin="" unified="2652_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21647" other="[Pisces]" pinyin="" unified="2653_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21648" other="[Ophiuchus]" pinyin="" unified="26CE_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21649" other="[shuffle tracks button]" pinyin="" unified="1F500_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21650" other="[repeat button]" pinyin="" unified="1F501_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21651" other="[repeat single button]" pinyin="" unified="1F502_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21652" other="[play button]" pinyin="" unified="25B6_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21653" other="[fast-forward button]" pinyin="" unified="23E9_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21654" other="[next track button]" pinyin="" unified="23ED_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21655" other="[play or pause button]" pinyin="" unified="23EF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21656" other="[reverse button]" pinyin="" unified="25C0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21657" other="[fast reverse button]" pinyin="" unified="23EA_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21658" other="[last track button]" pinyin="" unified="23EE_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21659" other="[upwards button]" pinyin="" unified="1F53C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21660" other="[fast up button]" pinyin="" unified="23EB_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21661" other="[downwards button]" pinyin="" unified="1F53D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21662" other="[fast down button]" pinyin="" unified="23EC_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21663" other="[pause button]" pinyin="" unified="23F8_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21664" other="[stop button]" pinyin="" unified="23F9_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21665" other="[record button]" pinyin="" unified="23FA_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21666" other="[eject button]" pinyin="" unified="23CF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21667" other="[cinema]" pinyin="" unified="1F3A6_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21668" other="[dim button]" pinyin="" unified="1F505_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21669" other="[bright button]" pinyin="" unified="1F506_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21670" other="[antenna bars]" pinyin="" unified="1F4F6_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21671" other="[wireless]" pinyin="" unified="1F6DC_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21672" other="[vibration mode]" pinyin="" unified="1F4F3_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21673" other="[mobile phone off]" pinyin="" unified="1F4F4_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21674" other="[transgender symbol]" pinyin="" unified="26A7_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21675" other="[multiply]" pinyin="" unified="2716_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21676" other="[plus]" pinyin="" unified="2795_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21677" other="[minus]" pinyin="" unified="2796_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21678" other="[divide]" pinyin="" unified="2797_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21679" other="[heavy equals sign]" pinyin="" unified="1F7F0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21680" other="[infinity]" pinyin="" unified="267E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21681" other="[double exclamation mark]" pinyin="" unified="203C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21682" other="[exclamation question mark]" pinyin="" unified="2049_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21683" other="[red question mark]" pinyin="" unified="2753_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21684" other="[white question mark]" pinyin="" unified="2754_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21685" other="[white exclamation mark]" pinyin="" unified="2755_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21686" other="[red exclamation mark]" pinyin="" unified="2757_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21687" other="[wavy dash]" pinyin="" unified="3030_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21688" other="[currency exchange]" pinyin="" unified="1F4B1_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21689" other="[heavy dollar sign]" pinyin="" unified="1F4B2_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21690" other="[recycling symbol]" pinyin="" unified="267B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21691" other="[fleur-de-lis]" pinyin="" unified="269C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21692" other="[trident emblem]" pinyin="" unified="1F531_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21693" other="[name badge]" pinyin="" unified="1F4DB_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21694" other="[Japanese symbol for beginner]" pinyin="" unified="1F530_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21695" other="[hollow red circle]" pinyin="" unified="2B55_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21696" other="[check mark button]" pinyin="" unified="2705_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21697" other="[check box with check]" pinyin="" unified="2611_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21698" other="[check mark]" pinyin="" unified="2714_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21699" other="[cross mark]" pinyin="" unified="274C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21700" other="[cross mark button]" pinyin="" unified="274E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21701" other="[curly loop]" pinyin="" unified="27B0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21702" other="[double curly loop]" pinyin="" unified="27BF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21703" other="[part alternation mark]" pinyin="" unified="303D_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21704" other="[eight-spoked asterisk]" pinyin="" unified="2733_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21705" other="[eight-pointed star]" pinyin="" unified="2734_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21706" other="[sparkle]" pinyin="" unified="2747_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21707" other="[copyright]" pinyin="" unified="00A9_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21708" other="[registered]" pinyin="" unified="00AE_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21709" other="[trade mark]" pinyin="" unified="2122_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21710" other="[splatter]" pinyin="" unified="1FADF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21711" other="[keycap: #]" pinyin="" unified="0023_FE0F_20E3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21712" other="[keycap: *]" pinyin="" unified="002A_FE0F_20E3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21713" other="[keycap: 0]" pinyin="" unified="0030_FE0F_20E3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21714" other="[keycap: 1]" pinyin="" unified="0031_FE0F_20E3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21715" other="[keycap: 2]" pinyin="" unified="0032_FE0F_20E3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21716" other="[keycap: 3]" pinyin="" unified="0033_FE0F_20E3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21717" other="[keycap: 4]" pinyin="" unified="0034_FE0F_20E3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21718" other="[keycap: 5]" pinyin="" unified="0035_FE0F_20E3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21719" other="[keycap: 6]" pinyin="" unified="0036_FE0F_20E3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21720" other="[keycap: 7]" pinyin="" unified="0037_FE0F_20E3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21721" other="[keycap: 8]" pinyin="" unified="0038_FE0F_20E3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21722" other="[keycap: 9]" pinyin="" unified="0039_FE0F_20E3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21723" other="[keycap: 10]" pinyin="" unified="1F51F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21724" other="[input latin uppercase]" pinyin="" unified="1F520_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21725" other="[input latin lowercase]" pinyin="" unified="1F521_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21726" other="[input numbers]" pinyin="" unified="1F522_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21727" other="[input symbols]" pinyin="" unified="1F523_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21728" other="[input latin letters]" pinyin="" unified="1F524_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21729" other="[A button (blood type)]" pinyin="" unified="1F170_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21730" other="[AB button (blood type)]" pinyin="" unified="1F18E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21731" other="[B button (blood type)]" pinyin="" unified="1F171_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21732" other="[CL button]" pinyin="" unified="1F191_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21733" other="[COOL button]" pinyin="" unified="1F192_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21734" other="[FREE button]" pinyin="" unified="1F193_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21735" other="[information]" pinyin="" unified="2139_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21736" other="[ID button]" pinyin="" unified="1F194_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21737" other="[circled M]" pinyin="" unified="24C2_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21738" other="[NEW button]" pinyin="" unified="1F195_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21739" other="[NG button]" pinyin="" unified="1F196_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21740" other="[O button (blood type)]" pinyin="" unified="1F17E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21741" other="[OK button]" pinyin="" unified="1F197_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21742" other="[P button]" pinyin="" unified="1F17F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21743" other="[SOS button]" pinyin="" unified="1F198_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21744" other="[UP! button]" pinyin="" unified="1F199_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21745" other="[VS button]" pinyin="" unified="1F19A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21746" other="[Japanese “here” button]" pinyin="" unified="1F201_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21747" other="[Japanese “service charge” button]" pinyin="" unified="1F202_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21748" other="[Japanese “monthly amount” button]" pinyin="" unified="1F237_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21749" other="[Japanese “not free of charge” button]" pinyin="" unified="1F236_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21750" other="[Japanese “reserved” button]" pinyin="" unified="1F22F_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21751" other="[Japanese “bargain” button]" pinyin="" unified="1F250_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21752" other="[Japanese “discount” button]" pinyin="" unified="1F239_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21753" other="[Japanese “free of charge” button]" pinyin="" unified="1F21A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21754" other="[Japanese “prohibited” button]" pinyin="" unified="1F232_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21755" other="[Japanese “acceptable” button]" pinyin="" unified="1F251_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21756" other="[Japanese “application” button]" pinyin="" unified="1F238_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21757" other="[Japanese “passing grade” button]" pinyin="" unified="1F234_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21758" other="[Japanese “vacancy” button]" pinyin="" unified="1F233_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21759" other="[Japanese “congratulations” button]" pinyin="" unified="3297_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21760" other="[Japanese “secret” button]" pinyin="" unified="3299_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21761" other="[Japanese “open for business” button]" pinyin="" unified="1F23A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21762" other="[Japanese “no vacancy” button]" pinyin="" unified="1F235_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21763" other="[red circle]" pinyin="" unified="1F534_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21764" other="[orange circle]" pinyin="" unified="1F7E0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21765" other="[yellow circle]" pinyin="" unified="1F7E1_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21766" other="[green circle]" pinyin="" unified="1F7E2_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21767" other="[blue circle]" pinyin="" unified="1F535_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21768" other="[purple circle]" pinyin="" unified="1F7E3_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21769" other="[brown circle]" pinyin="" unified="1F7E4_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21770" other="[black circle]" pinyin="" unified="26AB_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21771" other="[white circle]" pinyin="" unified="26AA_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21772" other="[red square]" pinyin="" unified="1F7E5_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21773" other="[orange square]" pinyin="" unified="1F7E7_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21774" other="[yellow square]" pinyin="" unified="1F7E8_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21775" other="[green square]" pinyin="" unified="1F7E9_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21776" other="[blue square]" pinyin="" unified="1F7E6_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21777" other="[purple square]" pinyin="" unified="1F7EA_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21778" other="[brown square]" pinyin="" unified="1F7EB_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21779" other="[black large square]" pinyin="" unified="2B1B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21780" other="[white large square]" pinyin="" unified="2B1C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21781" other="[black medium square]" pinyin="" unified="25FC_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21782" other="[white medium square]" pinyin="" unified="25FB_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21783" other="[black medium-small square]" pinyin="" unified="25FE_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21784" other="[white medium-small square]" pinyin="" unified="25FD_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21785" other="[black small square]" pinyin="" unified="25AA_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21786" other="[white small square]" pinyin="" unified="25AB_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21787" other="[large orange diamond]" pinyin="" unified="1F536_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21788" other="[large blue diamond]" pinyin="" unified="1F537_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21789" other="[small orange diamond]" pinyin="" unified="1F538_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21790" other="[small blue diamond]" pinyin="" unified="1F539_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21791" other="[red triangle pointed up]" pinyin="" unified="1F53A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21792" other="[red triangle pointed down]" pinyin="" unified="1F53B_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21793" other="[diamond with a dot]" pinyin="" unified="1F4A0_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21794" other="[radio button]" pinyin="" unified="1F518_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21795" other="[white square button]" pinyin="" unified="1F533_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21796" other="[black square button]" pinyin="" unified="1F532_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+  </exppkg>
+</expList>

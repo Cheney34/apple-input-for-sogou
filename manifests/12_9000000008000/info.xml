@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<expList version="1.0">
+  <exppkg type="flags" name="flags" chineseName="旗帜" id="12">
+    <exp name="21797" other="[chequered flag]" pinyin="" unified="1F3C1_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21798" other="[triangular flag]" pinyin="" unified="1F6A9_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21799" other="[crossed flags]" pinyin="" unified="1F38C_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21800" other="[black flag]" pinyin="" unified="1F3F4_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21801" other="[white flag]" pinyin="" unified="1F3F3_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21802" other="[rainbow flag]" pinyin="" unified="1F3F3_FE0F_200D_1F308" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21803" other="[transgender flag]" pinyin="" unified="1F3F3_FE0F_200D_26A7_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21804" other="[pirate flag]" pinyin="" unified="1F3F4_200D_2620_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21805" other="[flag: Ascension Island]" pinyin="" unified="1F1E6_1F1E8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21806" other="[flag: Andorra]" pinyin="" unified="1F1E6_1F1E9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21807" other="[flag: United Arab Emirates]" pinyin="" unified="1F1E6_1F1EA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21808" other="[flag: Afghanistan]" pinyin="" unified="1F1E6_1F1EB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21809" other="[flag: Antigua &amp; Barbuda]" pinyin="" unified="1F1E6_1F1EC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21810" other="[flag: Anguilla]" pinyin="" unified="1F1E6_1F1EE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21811" other="[flag: Albania]" pinyin="" unified="1F1E6_1F1F1" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21812" other="[flag: Armenia]" pinyin="" unified="1F1E6_1F1F2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21813" other="[flag: Angola]" pinyin="" unified="1F1E6_1F1F4" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21814" other="[flag: Antarctica]" pinyin="" unified="1F1E6_1F1F6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21815" other="[flag: Argentina]" pinyin="" unified="1F1E6_1F1F7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21816" other="[flag: American Samoa]" pinyin="" unified="1F1E6_1F1F8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21817" other="[flag: Austria]" pinyin="" unified="1F1E6_1F1F9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21818" other="[flag: Australia]" pinyin="" unified="1F1E6_1F1FA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21819" other="[flag: Aruba]" pinyin="" unified="1F1E6_1F1FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21820" other="[flag: Åland Islands]" pinyin="" unified="1F1E6_1F1FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21821" other="[flag: Azerbaijan]" pinyin="" unified="1F1E6_1F1FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21822" other="[flag: Bosnia &amp; Herzegovina]" pinyin="" unified="1F1E7_1F1E6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21823" other="[flag: Barbados]" pinyin="" unified="1F1E7_1F1E7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21824" other="[flag: Bangladesh]" pinyin="" unified="1F1E7_1F1E9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21825" other="[flag: Belgium]" pinyin="" unified="1F1E7_1F1EA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21826" other="[flag: Burkina Faso]" pinyin="" unified="1F1E7_1F1EB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21827" other="[flag: Bulgaria]" pinyin="" unified="1F1E7_1F1EC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21828" other="[flag: Bahrain]" pinyin="" unified="1F1E7_1F1ED" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21829" other="[flag: Burundi]" pinyin="" unified="1F1E7_1F1EE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21830" other="[flag: Benin]" pinyin="" unified="1F1E7_1F1EF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21831" other="[flag: St. Barthélemy]" pinyin="" unified="1F1E7_1F1F1" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21832" other="[flag: Bermuda]" pinyin="" unified="1F1E7_1F1F2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21833" other="[flag: Brunei]" pinyin="" unified="1F1E7_1F1F3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21834" other="[flag: Bolivia]" pinyin="" unified="1F1E7_1F1F4" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21835" other="[flag: Caribbean Netherlands]" pinyin="" unified="1F1E7_1F1F6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21836" other="[flag: Brazil]" pinyin="" unified="1F1E7_1F1F7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21837" other="[flag: Bahamas]" pinyin="" unified="1F1E7_1F1F8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21838" other="[flag: Bhutan]" pinyin="" unified="1F1E7_1F1F9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21839" other="[flag: Bouvet Island]" pinyin="" unified="1F1E7_1F1FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21840" other="[flag: Botswana]" pinyin="" unified="1F1E7_1F1FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21841" other="[flag: Belarus]" pinyin="" unified="1F1E7_1F1FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21842" other="[flag: Belize]" pinyin="" unified="1F1E7_1F1FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21843" other="[flag: Canada]" pinyin="" unified="1F1E8_1F1E6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21844" other="[flag: Cocos (Keeling) Islands]" pinyin="" unified="1F1E8_1F1E8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21845" other="[flag: Congo - Kinshasa]" pinyin="" unified="1F1E8_1F1E9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21846" other="[flag: Central African Republic]" pinyin="" unified="1F1E8_1F1EB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21847" other="[flag: Congo - Brazzaville]" pinyin="" unified="1F1E8_1F1EC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21848" other="[flag: Switzerland]" pinyin="" unified="1F1E8_1F1ED" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21849" other="[flag: Côte d’Ivoire]" pinyin="" unified="1F1E8_1F1EE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21850" other="[flag: Cook Islands]" pinyin="" unified="1F1E8_1F1F0" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21851" other="[flag: Chile]" pinyin="" unified="1F1E8_1F1F1" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21852" other="[flag: Cameroon]" pinyin="" unified="1F1E8_1F1F2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21853" other="[flag: China]" pinyin="" unified="1F1E8_1F1F3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21854" other="[flag: Colombia]" pinyin="" unified="1F1E8_1F1F4" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21855" other="[flag: Clipperton Island]" pinyin="" unified="1F1E8_1F1F5" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21856" other="[flag: Sark]" pinyin="" unified="1F1E8_1F1F6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21857" other="[flag: Costa Rica]" pinyin="" unified="1F1E8_1F1F7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21858" other="[flag: Cuba]" pinyin="" unified="1F1E8_1F1FA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21859" other="[flag: Cape Verde]" pinyin="" unified="1F1E8_1F1FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21860" other="[flag: Curaçao]" pinyin="" unified="1F1E8_1F1FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21861" other="[flag: Christmas Island]" pinyin="" unified="1F1E8_1F1FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21862" other="[flag: Cyprus]" pinyin="" unified="1F1E8_1F1FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21863" other="[flag: Czechia]" pinyin="" unified="1F1E8_1F1FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21864" other="[flag: Germany]" pinyin="" unified="1F1E9_1F1EA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21865" other="[flag: Diego Garcia]" pinyin="" unified="1F1E9_1F1EC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21866" other="[flag: Djibouti]" pinyin="" unified="1F1E9_1F1EF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21867" other="[flag: Denmark]" pinyin="" unified="1F1E9_1F1F0" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21868" other="[flag: Dominica]" pinyin="" unified="1F1E9_1F1F2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21869" other="[flag: Dominican Republic]" pinyin="" unified="1F1E9_1F1F4" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21870" other="[flag: Algeria]" pinyin="" unified="1F1E9_1F1FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21871" other="[flag: Ceuta &amp; Melilla]" pinyin="" unified="1F1EA_1F1E6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21872" other="[flag: Ecuador]" pinyin="" unified="1F1EA_1F1E8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21873" other="[flag: Estonia]" pinyin="" unified="1F1EA_1F1EA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21874" other="[flag: Egypt]" pinyin="" unified="1F1EA_1F1EC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21875" other="[flag: Western Sahara]" pinyin="" unified="1F1EA_1F1ED" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21876" other="[flag: Eritrea]" pinyin="" unified="1F1EA_1F1F7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21877" other="[flag: Spain]" pinyin="" unified="1F1EA_1F1F8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21878" other="[flag: Ethiopia]" pinyin="" unified="1F1EA_1F1F9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21879" other="[flag: European Union]" pinyin="" unified="1F1EA_1F1FA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21880" other="[flag: Finland]" pinyin="" unified="1F1EB_1F1EE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21881" other="[flag: Fiji]" pinyin="" unified="1F1EB_1F1EF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21882" other="[flag: Falkland Islands]" pinyin="" unified="1F1EB_1F1F0" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21883" other="[flag: Micronesia]" pinyin="" unified="1F1EB_1F1F2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21884" other="[flag: Faroe Islands]" pinyin="" unified="1F1EB_1F1F4" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21885" other="[flag: France]" pinyin="" unified="1F1EB_1F1F7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21886" other="[flag: Gabon]" pinyin="" unified="1F1EC_1F1E6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21887" other="[flag: United Kingdom]" pinyin="" unified="1F1EC_1F1E7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21888" other="[flag: Grenada]" pinyin="" unified="1F1EC_1F1E9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21889" other="[flag: Georgia]" pinyin="" unified="1F1EC_1F1EA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21890" other="[flag: French Guiana]" pinyin="" unified="1F1EC_1F1EB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21891" other="[flag: Guernsey]" pinyin="" unified="1F1EC_1F1EC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21892" other="[flag: Ghana]" pinyin="" unified="1F1EC_1F1ED" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21893" other="[flag: Gibraltar]" pinyin="" unified="1F1EC_1F1EE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21894" other="[flag: Greenland]" pinyin="" unified="1F1EC_1F1F1" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21895" other="[flag: Gambia]" pinyin="" unified="1F1EC_1F1F2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21896" other="[flag: Guinea]" pinyin="" unified="1F1EC_1F1F3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21897" other="[flag: Guadeloupe]" pinyin="" unified="1F1EC_1F1F5" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21898" other="[flag: Equatorial Guinea]" pinyin="" unified="1F1EC_1F1F6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21899" other="[flag: Greece]" pinyin="" unified="1F1EC_1F1F7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21900" other="[flag: South Georgia &amp; South Sandwich Islands]" pinyin="" unified="1F1EC_1F1F8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21901" other="[flag: Guatemala]" pinyin="" unified="1F1EC_1F1F9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21902" other="[flag: Guam]" pinyin="" unified="1F1EC_1F1FA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21903" other="[flag: Guinea-Bissau]" pinyin="" unified="1F1EC_1F1FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21904" other="[flag: Guyana]" pinyin="" unified="1F1EC_1F1FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21905" other="[flag: Hong Kong SAR China]" pinyin="" unified="1F1ED_1F1F0" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21906" other="[flag: Heard &amp; McDonald Islands]" pinyin="" unified="1F1ED_1F1F2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21907" other="[flag: Honduras]" pinyin="" unified="1F1ED_1F1F3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21908" other="[flag: Croatia]" pinyin="" unified="1F1ED_1F1F7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21909" other="[flag: Haiti]" pinyin="" unified="1F1ED_1F1F9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21910" other="[flag: Hungary]" pinyin="" unified="1F1ED_1F1FA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21911" other="[flag: Canary Islands]" pinyin="" unified="1F1EE_1F1E8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21912" other="[flag: Indonesia]" pinyin="" unified="1F1EE_1F1E9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21913" other="[flag: Ireland]" pinyin="" unified="1F1EE_1F1EA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21914" other="[flag: Israel]" pinyin="" unified="1F1EE_1F1F1" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21915" other="[flag: Isle of Man]" pinyin="" unified="1F1EE_1F1F2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21916" other="[flag: India]" pinyin="" unified="1F1EE_1F1F3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21917" other="[flag: British Indian Ocean Territory]" pinyin="" unified="1F1EE_1F1F4" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21918" other="[flag: Iraq]" pinyin="" unified="1F1EE_1F1F6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21919" other="[flag: Iran]" pinyin="" unified="1F1EE_1F1F7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21920" other="[flag: Iceland]" pinyin="" unified="1F1EE_1F1F8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21921" other="[flag: Italy]" pinyin="" unified="1F1EE_1F1F9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21922" other="[flag: Jersey]" pinyin="" unified="1F1EF_1F1EA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21923" other="[flag: Jamaica]" pinyin="" unified="1F1EF_1F1F2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21924" other="[flag: Jordan]" pinyin="" unified="1F1EF_1F1F4" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21925" other="[flag: Japan]" pinyin="" unified="1F1EF_1F1F5" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21926" other="[flag: Kenya]" pinyin="" unified="1F1F0_1F1EA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21927" other="[flag: Kyrgyzstan]" pinyin="" unified="1F1F0_1F1EC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21928" other="[flag: Cambodia]" pinyin="" unified="1F1F0_1F1ED" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21929" other="[flag: Kiribati]" pinyin="" unified="1F1F0_1F1EE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21930" other="[flag: Comoros]" pinyin="" unified="1F1F0_1F1F2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21931" other="[flag: St. Kitts &amp; Nevis]" pinyin="" unified="1F1F0_1F1F3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21932" other="[flag: North Korea]" pinyin="" unified="1F1F0_1F1F5" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21933" other="[flag: South Korea]" pinyin="" unified="1F1F0_1F1F7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21934" other="[flag: Kuwait]" pinyin="" unified="1F1F0_1F1FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21935" other="[flag: Cayman Islands]" pinyin="" unified="1F1F0_1F1FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21936" other="[flag: Kazakhstan]" pinyin="" unified="1F1F0_1F1FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21937" other="[flag: Laos]" pinyin="" unified="1F1F1_1F1E6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21938" other="[flag: Lebanon]" pinyin="" unified="1F1F1_1F1E7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21939" other="[flag: St. Lucia]" pinyin="" unified="1F1F1_1F1E8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21940" other="[flag: Liechtenstein]" pinyin="" unified="1F1F1_1F1EE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21941" other="[flag: Sri Lanka]" pinyin="" unified="1F1F1_1F1F0" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21942" other="[flag: Liberia]" pinyin="" unified="1F1F1_1F1F7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21943" other="[flag: Lesotho]" pinyin="" unified="1F1F1_1F1F8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21944" other="[flag: Lithuania]" pinyin="" unified="1F1F1_1F1F9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21945" other="[flag: Luxembourg]" pinyin="" unified="1F1F1_1F1FA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21946" other="[flag: Latvia]" pinyin="" unified="1F1F1_1F1FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21947" other="[flag: Libya]" pinyin="" unified="1F1F1_1F1FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21948" other="[flag: Morocco]" pinyin="" unified="1F1F2_1F1E6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21949" other="[flag: Monaco]" pinyin="" unified="1F1F2_1F1E8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21950" other="[flag: Moldova]" pinyin="" unified="1F1F2_1F1E9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21951" other="[flag: Montenegro]" pinyin="" unified="1F1F2_1F1EA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21952" other="[flag: St. Martin]" pinyin="" unified="1F1F2_1F1EB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21953" other="[flag: Madagascar]" pinyin="" unified="1F1F2_1F1EC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21954" other="[flag: Marshall Islands]" pinyin="" unified="1F1F2_1F1ED" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21955" other="[flag: North Macedonia]" pinyin="" unified="1F1F2_1F1F0" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21956" other="[flag: Mali]" pinyin="" unified="1F1F2_1F1F1" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21957" other="[flag: Myanmar (Burma)]" pinyin="" unified="1F1F2_1F1F2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21958" other="[flag: Mongolia]" pinyin="" unified="1F1F2_1F1F3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21959" other="[flag: Macao SAR China]" pinyin="" unified="1F1F2_1F1F4" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21960" other="[flag: Northern Mariana Islands]" pinyin="" unified="1F1F2_1F1F5" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21961" other="[flag: Martinique]" pinyin="" unified="1F1F2_1F1F6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21962" other="[flag: Mauritania]" pinyin="" unified="1F1F2_1F1F7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21963" other="[flag: Montserrat]" pinyin="" unified="1F1F2_1F1F8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21964" other="[flag: Malta]" pinyin="" unified="1F1F2_1F1F9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21965" other="[flag: Mauritius]" pinyin="" unified="1F1F2_1F1FA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21966" other="[flag: Maldives]" pinyin="" unified="1F1F2_1F1FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21967" other="[flag: Malawi]" pinyin="" unified="1F1F2_1F1FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21968" other="[flag: Mexico]" pinyin="" unified="1F1F2_1F1FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21969" other="[flag: Malaysia]" pinyin="" unified="1F1F2_1F1FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21970" other="[flag: Mozambique]" pinyin="" unified="1F1F2_1F1FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21971" other="[flag: Namibia]" pinyin="" unified="1F1F3_1F1E6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21972" other="[flag: New Caledonia]" pinyin="" unified="1F1F3_1F1E8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21973" other="[flag: Niger]" pinyin="" unified="1F1F3_1F1EA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21974" other="[flag: Norfolk Island]" pinyin="" unified="1F1F3_1F1EB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21975" other="[flag: Nigeria]" pinyin="" unified="1F1F3_1F1EC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21976" other="[flag: Nicaragua]" pinyin="" unified="1F1F3_1F1EE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21977" other="[flag: Netherlands]" pinyin="" unified="1F1F3_1F1F1" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21978" other="[flag: Norway]" pinyin="" unified="1F1F3_1F1F4" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21979" other="[flag: Nepal]" pinyin="" unified="1F1F3_1F1F5" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21980" other="[flag: Nauru]" pinyin="" unified="1F1F3_1F1F7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21981" other="[flag: Niue]" pinyin="" unified="1F1F3_1F1FA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21982" other="[flag: New Zealand]" pinyin="" unified="1F1F3_1F1FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21983" other="[flag: Oman]" pinyin="" unified="1F1F4_1F1F2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21984" other="[flag: Panama]" pinyin="" unified="1F1F5_1F1E6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21985" other="[flag: Peru]" pinyin="" unified="1F1F5_1F1EA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21986" other="[flag: French Polynesia]" pinyin="" unified="1F1F5_1F1EB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21987" other="[flag: Papua New Guinea]" pinyin="" unified="1F1F5_1F1EC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21988" other="[flag: Philippines]" pinyin="" unified="1F1F5_1F1ED" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21989" other="[flag: Pakistan]" pinyin="" unified="1F1F5_1F1F0" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21990" other="[flag: Poland]" pinyin="" unified="1F1F5_1F1F1" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21991" other="[flag: St. Pierre &amp; Miquelon]" pinyin="" unified="1F1F5_1F1F2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21992" other="[flag: Pitcairn Islands]" pinyin="" unified="1F1F5_1F1F3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21993" other="[flag: Puerto Rico]" pinyin="" unified="1F1F5_1F1F7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21994" other="[flag: Palestinian Territories]" pinyin="" unified="1F1F5_1F1F8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21995" other="[flag: Portugal]" pinyin="" unified="1F1F5_1F1F9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21996" other="[flag: Palau]" pinyin="" unified="1F1F5_1F1FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21997" other="[flag: Paraguay]" pinyin="" unified="1F1F5_1F1FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21998" other="[flag: Qatar]" pinyin="" unified="1F1F6_1F1E6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="21999" other="[flag: Réunion]" pinyin="" unified="1F1F7_1F1EA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22000" other="[flag: Romania]" pinyin="" unified="1F1F7_1F1F4" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22001" other="[flag: Serbia]" pinyin="" unified="1F1F7_1F1F8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22002" other="[flag: Russia]" pinyin="" unified="1F1F7_1F1FA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22003" other="[flag: Rwanda]" pinyin="" unified="1F1F7_1F1FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22004" other="[flag: Saudi Arabia]" pinyin="" unified="1F1F8_1F1E6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22005" other="[flag: Solomon Islands]" pinyin="" unified="1F1F8_1F1E7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22006" other="[flag: Seychelles]" pinyin="" unified="1F1F8_1F1E8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22007" other="[flag: Sudan]" pinyin="" unified="1F1F8_1F1E9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22008" other="[flag: Sweden]" pinyin="" unified="1F1F8_1F1EA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22009" other="[flag: Singapore]" pinyin="" unified="1F1F8_1F1EC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22010" other="[flag: St. Helena]" pinyin="" unified="1F1F8_1F1ED" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22011" other="[flag: Slovenia]" pinyin="" unified="1F1F8_1F1EE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22012" other="[flag: Svalbard &amp; Jan Mayen]" pinyin="" unified="1F1F8_1F1EF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22013" other="[flag: Slovakia]" pinyin="" unified="1F1F8_1F1F0" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22014" other="[flag: Sierra Leone]" pinyin="" unified="1F1F8_1F1F1" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22015" other="[flag: San Marino]" pinyin="" unified="1F1F8_1F1F2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22016" other="[flag: Senegal]" pinyin="" unified="1F1F8_1F1F3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22017" other="[flag: Somalia]" pinyin="" unified="1F1F8_1F1F4" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22018" other="[flag: Suriname]" pinyin="" unified="1F1F8_1F1F7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22019" other="[flag: South Sudan]" pinyin="" unified="1F1F8_1F1F8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22020" other="[flag: São Tomé &amp; Príncipe]" pinyin="" unified="1F1F8_1F1F9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22021" other="[flag: El Salvador]" pinyin="" unified="1F1F8_1F1FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22022" other="[flag: Sint Maarten]" pinyin="" unified="1F1F8_1F1FD" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22023" other="[flag: Syria]" pinyin="" unified="1F1F8_1F1FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22024" other="[flag: Eswatini]" pinyin="" unified="1F1F8_1F1FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22025" other="[flag: Tristan da Cunha]" pinyin="" unified="1F1F9_1F1E6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22026" other="[flag: Turks &amp; Caicos Islands]" pinyin="" unified="1F1F9_1F1E8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22027" other="[flag: Chad]" pinyin="" unified="1F1F9_1F1E9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22028" other="[flag: French Southern Territories]" pinyin="" unified="1F1F9_1F1EB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22029" other="[flag: Togo]" pinyin="" unified="1F1F9_1F1EC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22030" other="[flag: Thailand]" pinyin="" unified="1F1F9_1F1ED" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22031" other="[flag: Tajikistan]" pinyin="" unified="1F1F9_1F1EF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22032" other="[flag: Tokelau]" pinyin="" unified="1F1F9_1F1F0" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22033" other="[flag: Timor-Leste]" pinyin="" unified="1F1F9_1F1F1" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22034" other="[flag: Turkmenistan]" pinyin="" unified="1F1F9_1F1F2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22035" other="[flag: Tunisia]" pinyin="" unified="1F1F9_1F1F3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22036" other="[flag: Tonga]" pinyin="" unified="1F1F9_1F1F4" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22037" other="[flag: Türkiye]" pinyin="" unified="1F1F9_1F1F7" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22038" other="[flag: Trinidad &amp; Tobago]" pinyin="" unified="1F1F9_1F1F9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22039" other="[flag: Tuvalu]" pinyin="" unified="1F1F9_1F1FB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22040" other="[flag: Taiwan]" pinyin="" unified="1F1F9_1F1FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22041" other="[flag: Tanzania]" pinyin="" unified="1F1F9_1F1FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22042" other="[flag: Ukraine]" pinyin="" unified="1F1FA_1F1E6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22043" other="[flag: Uganda]" pinyin="" unified="1F1FA_1F1EC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22044" other="[flag: U.S. Outlying Islands]" pinyin="" unified="1F1FA_1F1F2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22045" other="[flag: United Nations]" pinyin="" unified="1F1FA_1F1F3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22046" other="[flag: United States]" pinyin="" unified="1F1FA_1F1F8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22047" other="[flag: Uruguay]" pinyin="" unified="1F1FA_1F1FE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22048" other="[flag: Uzbekistan]" pinyin="" unified="1F1FA_1F1FF" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22049" other="[flag: Vatican City]" pinyin="" unified="1F1FB_1F1E6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22050" other="[flag: St. Vincent &amp; Grenadines]" pinyin="" unified="1F1FB_1F1E8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22051" other="[flag: Venezuela]" pinyin="" unified="1F1FB_1F1EA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22052" other="[flag: British Virgin Islands]" pinyin="" unified="1F1FB_1F1EC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22053" other="[flag: U.S. Virgin Islands]" pinyin="" unified="1F1FB_1F1EE" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22054" other="[flag: Vietnam]" pinyin="" unified="1F1FB_1F1F3" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22055" other="[flag: Vanuatu]" pinyin="" unified="1F1FB_1F1FA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22056" other="[flag: Wallis &amp; Futuna]" pinyin="" unified="1F1FC_1F1EB" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22057" other="[flag: Samoa]" pinyin="" unified="1F1FC_1F1F8" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22058" other="[flag: Kosovo]" pinyin="" unified="1F1FD_1F1F0" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22059" other="[flag: Yemen]" pinyin="" unified="1F1FE_1F1EA" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22060" other="[flag: Mayotte]" pinyin="" unified="1F1FE_1F1F9" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22061" other="[flag: South Africa]" pinyin="" unified="1F1FF_1F1E6" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22062" other="[flag: Zambia]" pinyin="" unified="1F1FF_1F1F2" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22063" other="[flag: Zimbabwe]" pinyin="" unified="1F1FF_1F1FC" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22064" other="[flag: England]" pinyin="" unified="1F3F4_E0067_E0062_E0065_E006E_E0067_E007F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22065" other="[flag: Scotland]" pinyin="" unified="1F3F4_E0067_E0062_E0073_E0063_E0074_E007F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22066" other="[flag: Wales]" pinyin="" unified="1F3F4_E0067_E0062_E0077_E006C_E0073_E007F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+  </exppkg>
+</expList>

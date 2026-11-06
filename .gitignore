@@ -1,0 +1,28 @@
+# Gradle / Android 构建产物
+lsposed/.gradle/
+lsposed/build/
+lsposed/app/build/
+lsposed/.cxx/
+lsposed/local.properties
+lsposed/.idea/
+lsposed/*.iml
+lsposed/app/*.iml
+lsposed/captures/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+
+# 由 tools/make_payload.py 生成的 Apple 表情位图包（含第三方美术资源，不入库）
+lsposed/app/src/main/assets/payload.zip
+
+# 分析用的中间产物（体积大、可重建）
+ChironIOSInput/
+*.hprof
+*.log
+
+# 系统垃圾
+.DS_Store
+Thumbs.db
+desktop.ini
