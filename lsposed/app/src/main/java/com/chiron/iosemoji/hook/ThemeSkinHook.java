@@ -226,7 +226,7 @@ public final class ThemeSkinHook {
 
     /** 取当前预设（含深色判定）；{@code ctx} 只给「莫奈取色」用来读系统动态配色。 */
     private static SkinPreset preset(Context ctx, String path) {
-        return SkinPreset.of(ModuleConfig.skinPreset(), IosSkin.isDarkPath(path), ctx);
+        return SkinPreset.of(ModuleConfig.skinPreset(), IosSkin.isDark(path, ctx), ctx);
     }
 
     /**
@@ -283,7 +283,8 @@ public final class ThemeSkinHook {
                 + ";skinq=" + PARSER_CALLS.get()
                 + ";skinc=" + IMG_BYPASS.get()
                 + ";skink=" + IMG_KEPT.get()
-                + ";skinp=" + IMG_PROTECTED.get();
+                + ";skinp=" + IMG_PROTECTED.get()
+                + ";skint=" + IosSkin.contrastFixes();
     }
 
     /** 没识别出来的图名（诊断用，最多 12 个）。 */

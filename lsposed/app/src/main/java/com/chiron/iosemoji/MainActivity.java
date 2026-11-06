@@ -337,9 +337,16 @@ public class MainActivity extends Activity {
             LinearLayout row = IosRow.base(this);
             ImageView icon = new ImageView(this);
             icon.setImageResource(group.icon);
+            // 分组图标必须完整显示：用 FIT_CENTER（不裁切、按比例缩放到框内），
+            // 再留 1dp 内边距，避免描边被行边界吃掉看起来"缺一块"。
+            icon.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            icon.setAdjustViewBounds(false);
+            icon.setPadding(IosUi.dp(this, 1), IosUi.dp(this, 1),
+                    IosUi.dp(this, 1), IosUi.dp(this, 1));
             LinearLayout.LayoutParams iconLp = new LinearLayout.LayoutParams(
-                    IosUi.dp(this, 22), IosUi.dp(this, 22));
+                    IosUi.dp(this, 24), IosUi.dp(this, 24));
             iconLp.rightMargin = IosUi.dp(this, 12);
+            iconLp.gravity = android.view.Gravity.CENTER_VERTICAL;
             row.addView(icon, iconLp);
 
             LinearLayout texts = new LinearLayout(this);

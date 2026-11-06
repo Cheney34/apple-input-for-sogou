@@ -15,7 +15,8 @@
 
 | 版本 | 适合谁 | 有什么 |
 | --- | --- | --- |
-| [**v2.0.0-alpha9**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha9) | 所有人（推荐） | 修掉「图标被当键帽涂成方块」（设置齿轮、语言/地区旗帜等）+ 键帽只认严格白名单 + 覆盖率兜底 |
+| [**v2.0.0-alpha10**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha10) | 所有人（推荐） | 深色模式对比度实算修正（键帽/底色对比 1.4 → 2.3–5.0，文字按底色自动取黑/白）+ Emoji 图标与分组图标不再被裁剪或误涂 |
+| [**v2.0.0-alpha9**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha9) | 存档 | 修掉「图标被当键帽涂成方块」（设置齿轮、语言/地区旗帜等）+ 键帽只认严格白名单 + 覆盖率兜底 |
 | [**v2.0.0-alpha8**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha8) | 存档 | 新增「**重启输入法**」按钮（一键重载皮肤）+ 键帽按搜狗原图圆角与平台规范重画（留键缝、图标不被刷掉）+ 皮肤诊断行 |
 | [**v2.0.0-alpha7**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha7) | 存档 | 存档 | 修掉「键帽漏改」的真 bug + **皮肤诊断行**（一眼看出改没改到）+ 四套皮肤 |
 | [**v2.0.0-alpha6**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha6) | 存档 | 四套皮肤可选：**iOS / 微信 / Google / 莫奈取色**（设置页「皮肤风格」切换，切换即时生效）+ 键帽按所选风格重绘 + 候选栏与顶部条底色统一 |
@@ -25,7 +26,7 @@
 | [**v1.8**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v1.8) | 只想换 Apple 表情、要稳定 | 表情分组安装 / 隐藏内置分组 / 滑动切换 / Logo 触发词 |
 | [**v1.7**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v1.7) | 老设备 / 旧搜狗版本 | 与 v1.8 同代但更早，兼容面略宽 |
 
-### 界面长什么样（alpha2 重写 / alpha3 让开关真正生效 / alpha4 换成改皮肤 / alpha5 重绘键帽 / alpha6 四套皮肤 / alpha7 可测量诊断 / alpha8 重启按钮+重画 / alpha9 图标不再被误涂）
+### 界面长什么样（alpha2 重写 / alpha3 让开关真正生效 / alpha4 换成改皮肤 / alpha5 重绘键帽 / alpha6 四套皮肤 / alpha7 可测量诊断 / alpha8 重启按钮+重画 / alpha9 图标不再被误涂 / alpha10 深色对比度实算）
 
 两个界面都换成 iOS 风格、全部代码自绘，不依赖 androidx / Material，跟随系统深浅色：
 

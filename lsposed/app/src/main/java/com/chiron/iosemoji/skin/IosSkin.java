@@ -1,5 +1,7 @@
 package com.chiron.iosemoji.skin;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -7,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 皮肤引擎 —— **纯数据 + 纯算法**，不做任何 hook。
@@ -46,6 +49,73 @@ public final class IosSkin {
         return path != null && path.contains("/black/");
     }
 
+    /**
+     * 是否按深色配色处理（alpha10 修正）。
+     *
+     * <p>只看路径会判断错：很多资源（默认主题 zip 里的、第三方皮肤里的、缓存目录里的）
+     * 路径里既没有 {@code /black/} 也没有 {@code /white/}，以前一律当浅色处理 ——
+     * 于是夜间模式下出现「白字涂在白键帽上」这种对比度极差的情况。
+     * 现在的顺序：路径明确 black → 深色；明确 white → 浅色；都不明确 → 跟系统夜间模式走。
+     */
+    public static boolean isDark(String path, Context ctx) {
+        if (path != null) {
+            if (path.contains("/black/")) return true;
+            if (path.contains("/white/")) return false;
+        }
+        if (ctx == null) return false;
+        try {
+            Configuration cfg = ctx.getResources().getConfiguration();
+            return (cfg.uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    // ── 0. 对比度工具 ─────────────────────────────────────────────────────
+
+    private static final AtomicInteger TXT_FIXED = new AtomicInteger();
+
+    /** 因对比度不足而被改写的文字/图标颜色次数（诊断用）。 */
+    public static int contrastFixes() {
+        return TXT_FIXED.get();
+    }
+
+    /** WCAG 对比度（1.0–21.0）。用来避免「深色模式下白字压白键」这类看不清的情况。 */
+    public static double contrast(int fg, int bg) {
+        double a = relLuminance(fg);
+        double b = relLuminance(bg);
+        double hi = Math.max(a, b);
+        double lo = Math.min(a, b);
+        return (hi + 0.05) / (lo + 0.05);
+    }
+
+    private static double relLuminance(int argb) {
+        return 0.2126 * linear((argb >> 16) & 0xFF)
+                + 0.7152 * linear((argb >> 8) & 0xFF)
+                + 0.0722 * linear(argb & 0xFF);
+    }
+
+    private static double linear(int c) {
+        double s = c / 255.0;
+        return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+    }
+
+    /**
+     * 保证前景在给定底色上看得清：不足 {@code min} 时换成黑或白里更好的那个。
+     *
+     * <p>这是 alpha10 对「深色模式对比度不够」的直接处理 —— 不再无条件给深色皮肤配白字，
+     * 而是按真实底色算一遍。
+     */
+    public static int ensureContrast(int fg, int bg, double min) {
+        double now = contrast(fg, bg);
+        if (now >= min) return fg;
+        double black = contrast(0xFF000000, bg);
+        double white = contrast(0xFFFFFFFF, bg);
+        if (Math.max(black, white) <= now) return fg;
+        TXT_FIXED.incrementAndGet();
+        return black >= white ? 0xFF000000 : 0xFFFFFFFF;
+    }
+
     // ── 1. ini 段落改值 ───────────────────────────────────────────────────
 
     /**
@@ -58,39 +128,47 @@ public final class IosSkin {
         if (sections == null || sections.isEmpty() || p == null) return false;
         boolean changed = false;
 
-        // 按键文字色：搜狗默认是深灰 35373B → 预设的文字色
+        // 按键文字色：搜狗默认是深灰 35373B → 预设的文字色。
+        // alpha10：不再无条件用预设的那一个文字色，而是按**键帽底色**算一遍对比度
+        // （深色皮肤里如果键帽本身偏亮，白字就会糊成一片）。
+        int keyText = ensureContrast(p.text, p.key, 3.0);
+        int funcText = ensureContrast(p.text, p.func, 3.0);
+        int keyTextPressed = ensureContrast(p.textPressed, p.keyPressed, 3.0);
+        int accentOnBar = ensureContrast(p.accent, p.kbBg, 3.0);
         Map<String, String> def = sections.get("DEFAULT_TEXT_COLORS");
         if (def != null) {
-            changed |= put(def, "COLOR_FIRST_DEFAULT_THEME", hexNoAlpha(p.accent));
-            changed |= put(def, "COLOR_FUNCTION_THEME", hexNoAlpha(p.text));
+            changed |= put(def, "COLOR_FIRST_DEFAULT_THEME", hexNoAlpha(accentOnBar));
+            changed |= put(def, "COLOR_FUNCTION_THEME", hexNoAlpha(funcText));
             changed |= put(def, "COLOR_FUNCTION_PRESSED_THEME", hexNoAlpha(p.textPressed));
-            changed |= put(def, "COLOR_LATIN_THEME", hexNoAlpha(p.text));
-            changed |= put(def, "COLOR_LATIN_PRESSED_THEME", hexNoAlpha(p.textPressed));
-            changed |= put(def, "COLOR_PRESSED_THEME", hexNoAlpha(p.textPressed));
-            changed |= put(def, "COLOR_POPUP_LONGPRESS_THEME", hexNoAlpha(p.text));
-            changed |= put(def, "COLOR_NUMBER_THEME", hexNoAlpha(p.text));
-            changed |= put(def, "COLOR_SYMBOL_THEME", hexNoAlpha(p.text));
-            changed |= put(def, "COLOR_SHIFT_THEME", hexNoAlpha(p.text));
+            changed |= put(def, "COLOR_LATIN_THEME", hexNoAlpha(keyText));
+            changed |= put(def, "COLOR_LATIN_PRESSED_THEME", hexNoAlpha(keyTextPressed));
+            changed |= put(def, "COLOR_PRESSED_THEME", hexNoAlpha(keyTextPressed));
+            changed |= put(def, "COLOR_POPUP_LONGPRESS_THEME", hexNoAlpha(ensureContrast(p.text, p.popup, 3.0)));
+            changed |= put(def, "COLOR_NUMBER_THEME", hexNoAlpha(keyText));
+            changed |= put(def, "COLOR_SYMBOL_THEME", hexNoAlpha(keyText));
+            changed |= put(def, "COLOR_SHIFT_THEME", hexNoAlpha(funcText));
         }
 
         // 长按气泡文字：未选中用正文色、选中用强调色（气泡底是键帽色，必须保证对比度）
-        changed |= putColor(sections, "COMMON_TEXT_POPUP_COLOR", "TEXT_COLOR", p.text);
-        changed |= putColor(sections, "COMMON_TEXT_POPUP_COLORS", "TEXT_COLOR", p.text);
-        changed |= putColor(sections, "COMMON_TEXT_POPUP_COLORS", "TEXT_COLOR_PRESSED", p.accent);
+        int popupText = ensureContrast(p.text, p.popup, 3.0);
+        changed |= putColor(sections, "COMMON_TEXT_POPUP_COLOR", "TEXT_COLOR", popupText);
+        changed |= putColor(sections, "COMMON_TEXT_POPUP_COLORS", "TEXT_COLOR", popupText);
+        changed |= putColor(sections, "COMMON_TEXT_POPUP_COLORS", "TEXT_COLOR_PRESSED", accentOnBar);
 
         // 候选栏 / 拼音区 / 顶部条：**底色统一成键盘底色**（不是透明）——
         // 搜狗默认是浅灰 + 灰底块，跟键盘底色不一致，看起来"状态栏那一块没跟着一起画"。
+        int barText = ensureContrast(p.text, p.kbBg, 3.0);
         String[] bars = {"ComposingView", "CloudView", "CandidateBar", "FloatWindow",
                 "HeaderView", "KeyboardHeader", "SmartBar", "ToolbarView"};
         for (String bar : bars) {
             changed |= unifyBg(sections, bar, p.kbBg);
-            changed |= putColor(sections, bar, "TEXT_COLOR", p.text);
+            changed |= putColor(sections, bar, "TEXT_COLOR", barText);
         }
 
         // 候选选中项：强调色（iOS 蓝 / 微信绿 / Google 蓝 / 莫奈 accent）
-        changed |= putColor(sections, "CloudView", "TEXT_HIGHLIGHT_COLOR", p.accent);
-        changed |= putColor(sections, "CandidateBar", "TEXT_HIGHLIGHT_COLOR", p.accent);
-        changed |= putColor(sections, "CloudView", "TEXT_HIGHLIGHT_STYLE", p.accent);
+        changed |= putColor(sections, "CloudView", "TEXT_HIGHLIGHT_COLOR", accentOnBar);
+        changed |= putColor(sections, "CandidateBar", "TEXT_HIGHLIGHT_COLOR", accentOnBar);
+        changed |= putColor(sections, "CloudView", "TEXT_HIGHLIGHT_STYLE", accentOnBar);
 
         return changed;
     }
@@ -310,6 +388,16 @@ public final class IosSkin {
             // isProtected 拦住，就靠这一步保命 —— 宁可这张不改，也不能把图标涂成方块。
             if (kind != KIND_FILL && opaqueRatio(src, box) < 0.85f) {
                 return null;
+            }
+
+            // 「满幅」判据（alpha10 新增）：九宫格键帽图是**满幅出血**的（不透明区几乎等于整张图），
+            // 而图标/字形图四周一定留透明边。名字里同时带 key 和 emoji/face 的图最容易误判，
+            // 这里用几何再挡一次，保证「Emoji 图标显示不全」这类问题不会复现。
+            if (kind == KIND_KEY || kind == KIND_POPUP) {
+                boolean fullBleed = box.width() >= w * 0.85f && box.height() >= h * 0.85f;
+                if (!fullBleed) {
+                    return null;
+                }
             }
 
             // 留出键缝：搜狗原图的 bbox 常常把整格都占满，直接铺色会让相邻键粘在一起。

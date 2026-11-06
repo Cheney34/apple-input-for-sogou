@@ -388,6 +388,7 @@ public class SettingsActivity extends Activity {
         String skinCached = null;
         String skinKept = null;
         String skinProtected = null;
+        String skinContrast = null;
         String skinSkip = null;
         StringBuilder eff = new StringBuilder();
         for (String part : raw.split(";")) {
@@ -429,6 +430,9 @@ public class SettingsActivity extends Activity {
                 case "skinp":
                     skinProtected = v;
                     break;
+                case "skint":
+                    skinContrast = v;
+                    break;
                 case "skip":
                     skinSkip = v;
                     break;
@@ -449,6 +453,7 @@ public class SettingsActivity extends Activity {
         if (skinCached != null) skinLine.append("  缓存=").append(skinCached);
         if (skinKept != null) skinLine.append("  保留=").append(skinKept);
         if (skinProtected != null) skinLine.append("  跳过图标=").append(skinProtected);
+        if (skinContrast != null) skinLine.append("  对比修正=").append(skinContrast);
         if (eff.length() > 0) skinLine.append('\n').append(eff);
         if (skinSkip != null && skinSkip.length() > 0) {
             skinLine.append("\n没认出来的图：").append(skinSkip);

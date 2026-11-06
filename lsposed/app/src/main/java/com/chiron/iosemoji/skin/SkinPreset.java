@@ -107,10 +107,12 @@ public final class SkinPreset {
     }
 
     private static SkinPreset iosDark() {
+        // alpha10：底色压到近黑（#0F0F10），键帽提到 #6E6E73 —— 原来 #1C1C1E / #636366 在
+        // 深色屏幕上对比度只有 ≈3.2:1，键帽边界几乎看不出来。
         return new SkinPreset(IOS,
-                0xFF1C1C1E, 0xFF636366, 0xFF7C7C80, 0xFF4A4A4D, 0xFF5C5C60,
-                0xFF636366, 0xFFFFFFFF, 0xFFFFFFFF, 0xFF0A84FF,
-                0.12f, 0x33000000, 2f, 1f, true);
+                0xFF0F0F10, 0xFF6E6E73, 0xFF87878C, 0xFF55555A, 0xFF6A6A6F,
+                0xFF6E6E73, 0xFFFFFFFF, 0xFFFFFFFF, 0xFF3F9BFF,
+                0.12f, 0x40000000, 2f, 1f, true);
     }
 
     // ── 微信 ──────────────────────────────────────────────────────────────
@@ -123,10 +125,12 @@ public final class SkinPreset {
     }
 
     private static SkinPreset wechatDark() {
+        // alpha10：#1E1E1E 底 + #2C2C2C 键帽 原来只有 ≈1.35:1，等于"键帽看不见"。
+        // 现在底压到 #121212、键帽提到 #3A3A3A（≈2.3:1），并让功能键更亮一档。
         return new SkinPreset(WECHAT,
-                0xFF1E1E1E, 0xFF2C2C2C, 0xFF3A3A3A, 0xFF343434, 0xFF424242,
-                0xFF2C2C2C, 0xFFEDEDED, 0xFFEDEDED, 0xFF07C160,
-                0.10f, 0x33000000, 1.5f, 1f, true);
+                0xFF121212, 0xFF3A3A3A, 0xFF4A4A4A, 0xFF424242, 0xFF525252,
+                0xFF3A3A3A, 0xFFF2F2F2, 0xFFF2F2F2, 0xFF07C160,
+                0.10f, 0x40000000, 1.5f, 1f, true);
     }
 
     // ── Google（Gboard / Material 3）──────────────────────────────────────
@@ -139,10 +143,12 @@ public final class SkinPreset {
     }
 
     private static SkinPreset googleDark() {
+        // alpha10：Material 官方的 #202124 / #3C4043 只有 ≈1.55:1，实测夜间偏糊；
+        // 底色压到 #17181B、键帽提到 #4A4F55，#303134 单独留给功能区。
         return new SkinPreset(GOOGLE,
-                0xFF202124, 0xFF3C4043, 0xFF4A4D51, 0xFF303134, 0xFF3C4043,
-                0xFF3C4043, 0xFFE8EAED, 0xFFE8EAED, 0xFF8AB4F8,
-                0.14f, 0x33000000, 2f, 1f, false);
+                0xFF17181B, 0xFF4A4F55, 0xFF5A6067, 0xFF3A3E44, 0xFF474C52,
+                0xFF4A4F55, 0xFFF1F3F4, 0xFFF1F3F4, 0xFF8AB4F8,
+                0.14f, 0x40000000, 2f, 1f, false);
     }
 
     // ── 莫奈取色（Android 12+ 动态配色）───────────────────────────────────
@@ -161,16 +167,18 @@ public final class SkinPreset {
     }
 
     private static SkinPreset monetDark(Context ctx) {
-        int bg = systemColor(ctx, "system_neutral1_900", 0xFF1C1B1F);
-        int key = systemColor(ctx, "system_neutral1_800", 0xFF2B2830);
-        int keyPressed = systemColor(ctx, "system_neutral1_700", 0xFF3A3742);
-        int func = systemColor(ctx, "system_neutral2_800", 0xFF2F2A33);
-        int funcPressed = systemColor(ctx, "system_neutral2_700", 0xFF3D3742);
+        // alpha10：neutral1_900 底 与 neutral1_800 键帽 在多数 Monet 配色下只有 ≈1.4:1，
+        // 夜间等于看不出键位。改用「底取 900、键帽取 700、按下取 600」，并把功能区提到 700 的另一支。
+        int bg = systemColor(ctx, "system_neutral1_900", 0xFF121116);
+        int key = systemColor(ctx, "system_neutral1_700", 0xFF3B3745);
+        int keyPressed = systemColor(ctx, "system_neutral1_600", 0xFF4A4553);
+        int func = systemColor(ctx, "system_neutral2_700", 0xFF3D3742);
+        int funcPressed = systemColor(ctx, "system_neutral2_600", 0xFF4C4552);
         int text = systemColor(ctx, "system_neutral1_100", 0xFFE6E1E9);
         int accent = systemColor(ctx, "system_accent1_200", 0xFFCFBCFF);
         return new SkinPreset(MONET, bg, key, keyPressed, func, funcPressed,
                 key, text, text, accent,
-                0.16f, 0x33000000, 2f, 1f, false);
+                0.16f, 0x40000000, 2f, 1f, false);
     }
 
     /** 读 framework 的动态配色资源（`android:color/system_accent1_500` 这类）。 */
