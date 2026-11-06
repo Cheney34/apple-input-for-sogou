@@ -1,4 +1,4 @@
-﻿package com.chiron.iosinput;
+package com.chiron.iosinput;
 
 /**
  * 搜狗输入法表情面板的 10 个分组。

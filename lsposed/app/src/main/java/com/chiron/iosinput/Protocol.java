@@ -1,4 +1,4 @@
-﻿package com.chiron.iosinput;
+package com.chiron.iosinput;
 
 /**
  * 模块与搜狗进程之间的通信协议。

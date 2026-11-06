@@ -21,11 +21,18 @@
 | 四条核心功能的可行性结论 | ✅ 完成 —— [`docs/FEASIBILITY.md`](docs/FEASIBILITY.md) |
 | hook 点清单（30 个，含 DEX 验证描述符） | ✅ 完成 —— [`docs/HOOK_POINTS.md`](docs/HOOK_POINTS.md) |
 | MVP 方案与测试用例 | ✅ 完成 —— [`docs/MVP_PROPOSAL.md`](docs/MVP_PROPOSAL.md) |
-| 模块源码（键盘显示层替换 + 诊断 + 旧表情功能） | ⚠️ 已写完，**未编译、未真机验证** |
+| 模块源码（键盘显示层替换 + 诊断 + 旧表情功能） | ⚠️ 已写完，**javac 冒烟编译通过**（见下），未 Gradle 构建、未真机验证 |
 | 候选栏 iOS 化 / 长按符号 / 表情面板 iOS 化 | ⏳ 未实现（Phase 4–6） |
 
-**关键的诚实声明**：本仓库的开发环境**没有 Android SDK / Gradle / 一台真机**，
-所以代码是「按 DEX 验证过的描述符逐行写出来的」，尚未经过编译与运行验证。
+**关于「验证」的说明**：本仓库的开发环境**没有 Android SDK / Gradle / 一台真机**，
+代码是「按 DEX 验证过的描述符逐行写出来的」。已做过的检查只有一项：
+
+- **javac 冒烟编译**：以 `android.jar`(API 35) + Xposed API 桩 + `R` 桩为 classpath，
+  用 `javac --release 17` 编译 `lsposed/app/src/main/java` 下全部源码 → **0 error / 0 warning**
+  （`-Xlint:all` 下仅 1 条无害的 `this-escape` 提示）。
+  这能证明：语法、类型、Android API 用法、符号引用彼此自洽；
+  **不能**证明：LSPosed 运行时行为正确、hook 描述符在该版本搜狗里真的命中。
+  后者必须上机验证（见 [`docs/MVP_PROPOSAL.md`](docs/MVP_PROPOSAL.md) 的 TC-01 ~ TC-10）。
 所有类名、方法签名、参数字典均可在 `docs/` 的证据表中查到出处（文件 + 行号），
 未确认的项目一律标注为 `UNKNOWN`，而不是猜一个看起来合理的名字。
 
@@ -164,6 +171,29 @@ cd lsposed
 
 > 未在本机验证：作者环境没有 Android SDK，`gradlew` 也没有随仓库提交 wrapper jar。
 > 首次用 Android Studio 打开工程时会自动补齐 wrapper 与 SDK 组件。
+
+### 5.3 无 SDK 环境下的冒烟检查（可选）
+
+如果只想确认源码能编译、暂时不想装 Android Studio，可以只用 `javac`：
+
+```bash
+# 1) 取 android.jar（Android 35 平台包里的 android.jar）
+curl -O https://dl.google.com/android/repository/platform-35_r01.zip
+unzip platform-35_r01.zip android-35/android.jar
+
+# 2) 准备两个桩：Xposed API 桩（IXposedHookLoadPackage / XposedHelpers /
+#    XposedBridge / XC_MethodHook / XC_MethodReplacement / XSharedPreferences /
+#    XC_LoadPackage）与 R 桩（因为 R 由 aapt2 生成，纯 javac 环境下不存在）
+
+# 3) 编译
+javac -encoding UTF-8 -Xlint:all --release 17 \
+      -classpath android.jar \
+      -d out @sources.txt      # sources.txt = 模块源码 + 桩
+```
+
+本仓库当前状态：上述流程 **0 error**（`-Xlint:all` 下仅 1 条无害的 `this-escape`）。
+桩代码只是为了让 `javac` 通过，**不要**把它们打进 APK——真实构建用
+`lsposed/app/libs/XposedBridgeAPI-82.jar`（见 [`lsposed/app/libs/README.md`](lsposed/app/libs/README.md)）。
 
 ---
 

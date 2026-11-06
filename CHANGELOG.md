@@ -2,7 +2,20 @@
 
 本项目遵循「分析 → 验证 → 实现」的推进方式：每个版本只写**有证据支撑**的东西。
 
-## v2.0.0-alpha1 — 独立仓库首个版本（未编译验证）
+## v2.0.0-alpha1 — 独立仓库首个版本（javac 冒烟编译通过，未上机验证）
+
+### 验证状态
+
+- ✅ `javac -Xlint:all --release 17`（classpath = `android.jar` API 35 + Xposed API 桩 + `R` 桩）：
+  全部源码 **0 error**，仅 1 条无害的 `this-escape` 提示。
+- ✅ 全仓库扫 `iosemoji|IOSEmoji` 残留 → 0 命中。
+- ⚠️ 未做 Gradle 构建（环境无 Android SDK），未在真机/模拟器运行，
+  hook 描述符是否在该版本搜狗中真的命中仍需上机按 `docs/MVP_PROPOSAL.md` TC-01~TC-10 验证。
+
+### 修复
+
+- 从父仓库搬来的 6 个 Java 文件带 UTF-8 BOM（`\ufeff`），会让 `javac`/Gradle 直接编译失败，
+  已统一去除：`EmojiService` / `GestureHook` / `GroupFilterHook` / `Groups` / `LogoHook` / `Protocol`。
 
 ### 新增：iOS 键盘显示层替换（Phase 2 骨架）
 

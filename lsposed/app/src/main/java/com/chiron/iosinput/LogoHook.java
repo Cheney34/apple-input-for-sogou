@@ -1,4 +1,4 @@
-﻿package com.chiron.iosinput;
+package com.chiron.iosinput;
 
 import android.inputmethodservice.InputMethodService;
 
