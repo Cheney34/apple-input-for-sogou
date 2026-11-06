@@ -34,9 +34,10 @@ public class ConfigProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
-        String[] columns = new String[ConfigValues.KEYS.length + 1];
+        String[] columns = new String[ConfigValues.KEYS.length + 2];
         System.arraycopy(ConfigValues.KEYS, 0, columns, 0, ConfigValues.KEYS.length);
-        columns[ConfigValues.KEYS.length] = COLUMN_VERSION;
+        columns[ConfigValues.KEYS.length] = ModuleConfig.KEY_SKIN_PRESET;
+        columns[ConfigValues.KEYS.length + 1] = COLUMN_VERSION;
 
         MatrixCursor cursor = new MatrixCursor(columns, 1);
         MatrixCursor.RowBuilder row = cursor.newRow();
@@ -48,6 +49,9 @@ public class ConfigProvider extends ContentProvider {
             boolean def = ConfigValues.defaultValue(key);
             row.add(key, prefs != null && prefs.getBoolean(key, def) ? 1 : 0);
         }
+        row.add(ModuleConfig.KEY_SKIN_PRESET,
+                prefs != null ? prefs.getString(ModuleConfig.KEY_SKIN_PRESET,
+                        ModuleConfig.DEFAULT_SKIN_PRESET) : ModuleConfig.DEFAULT_SKIN_PRESET);
         row.add(COLUMN_VERSION, moduleVersionName());
         return cursor;
     }

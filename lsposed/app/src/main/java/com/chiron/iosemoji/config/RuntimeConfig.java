@@ -12,10 +12,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@link ModuleConfig} 优先读这里。
  *
  * <p>优先级：运行时覆盖 > ContentProvider 冷启动快照 > XSharedPreferences > 默认值。
+ *
+ * <p>两类值：布尔开关（{@link #VALUES}）与字符串选项（{@link #STRINGS}，目前只有皮肤预设
+ * {@code skin_preset}）。
  */
 public final class RuntimeConfig {
 
     private static final ConcurrentHashMap<String, Boolean> VALUES = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, String> STRINGS = new ConcurrentHashMap<>();
 
     private RuntimeConfig() {
     }
@@ -29,12 +33,23 @@ public final class RuntimeConfig {
         VALUES.put(key, value);
     }
 
+    /** 返回 null 表示"没有覆盖"。 */
+    public static String getString(String key) {
+        return STRINGS.get(key);
+    }
+
+    public static void putString(String key, String value) {
+        if (key == null) return;
+        if (value == null) STRINGS.remove(key);
+        else STRINGS.put(key, value);
+    }
+
     public static boolean hasAny() {
-        return !VALUES.isEmpty();
+        return !VALUES.isEmpty() || !STRINGS.isEmpty();
     }
 
     public static int size() {
-        return VALUES.size();
+        return VALUES.size() + STRINGS.size();
     }
 
     /** 用有序广播带来的 extras 覆盖全部已知键（只覆盖 intent 里确实带了的）。 */
@@ -50,16 +65,27 @@ public final class RuntimeConfig {
                 // 单个键解析失败不影响其它键
             }
         }
+        try {
+            String preset = intent.getStringExtra(ModuleConfig.KEY_SKIN_PRESET);
+            if (preset != null && preset.length() > 0) {
+                STRINGS.put(ModuleConfig.KEY_SKIN_PRESET, preset);
+                n++;
+            }
+        } catch (Throwable ignored) {
+            // 皮肤预设解析失败就用当前值
+        }
         return n;
     }
 
-    /** 当前覆盖值的可读快照：master=1 kb=1 probe=0 … */
+    /** 当前覆盖值的可读快照：master=1 kb=1 probe=0 skin=ios … */
     public static String describe() {
         StringBuilder sb = new StringBuilder();
         for (String key : ConfigValues.KEYS) {
             if (sb.length() > 0) sb.append(' ');
             sb.append(shortName(key)).append('=').append(Boolean.TRUE.equals(VALUES.get(key)) ? '1' : '0');
         }
+        String skin = STRINGS.get(ModuleConfig.KEY_SKIN_PRESET);
+        if (skin != null) sb.append(" skin=").append(skin);
         return sb.toString();
     }
 
@@ -67,6 +93,8 @@ public final class RuntimeConfig {
         switch (key) {
             case ModuleConfig.KEY_MASTER:
                 return "master";
+            case ModuleConfig.KEY_THEME_SKIN:
+                return "skin_on";
             case ModuleConfig.KEY_KEYBOARD_REPLACE:
                 return "keyboard";
             case ModuleConfig.KEY_CANDIDATE_PROBE:

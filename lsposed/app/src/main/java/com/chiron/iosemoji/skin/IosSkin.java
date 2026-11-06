@@ -9,57 +9,31 @@ import android.graphics.RectF;
 import java.util.Map;
 
 /**
- * iOS 外观映射表 —— **纯数据 + 纯算法**，不做任何 hook。
+ * 皮肤引擎 —— **纯数据 + 纯算法**，不做任何 hook。
  *
  * <p>为什么走皮肤层（而不是注入自绘键盘）：搜狗键盘的布局、命中区、九宫格比例全部由它自己的
  * 皮肤 ini 驱动（{@code py_9.ini} / {@code cands.ini} / {@code images_config.ini} /
  * {@code image_list.ini}），外面盖一层 View 会打乱它算好的 insets 与命中区。
  *
- * <p>本类提供三类改动，都被 {@link com.chiron.iosemoji.hook.ThemeSkinHook} 调用：
+ * <p>配色不再是写死的一套，而是由 {@link SkinPreset} 决定（iOS / 微信 / Google / 莫奈取色）。
+ * 本类只负责"怎么画"，"用什么色"由预设提供：
  * <ol>
- *   <li>{@link #patchIni(String, Map)}：把解析出来的 ini 段落就地改值（颜色 / 去底色块）；</li>
- *   <li>{@link #targetColor(String, boolean)}：按位图文件名决定它属于哪一类（键盘底 / 字母键 /
- *       功能键 / 气泡），返回 0 表示不动；</li>
- *   <li>{@link #synth(Bitmap, int, int, boolean)}：**按 iOS 规格重新绘制**该位图
- *       （圆角、留白、投影边都自己画），而不是给搜狗原图刷一层色。</li>
+ *   <li>{@link #patchIni(String, Map, SkinPreset)}：把解析出来的 ini 段落就地改值；</li>
+ *   <li>{@link #kindOf(String)} / {@link #colorOf(String, SkinPreset)}：按位图文件名分类并取色；</li>
+ *   <li>{@link #synth(Bitmap, int, int, SkinPreset)}：**按预设规格重新绘制**该位图
+ *       （圆角、投影边、底边分离线都自己画），而不是给搜狗原图刷一层色。</li>
  * </ol>
  *
  * <p>为什么是"重绘"而不是"重上色"：搜狗默认皮肤的键帽圆角明显小于 iOS（近似直角小圆角），
  * 直接给原图刷色会把这个形状一并保留下来，看起来就不像 iOS。重绘时只沿用原图的**不透明包围盒**
- * （= 键帽位置与大小，保证九宫格拉伸参数继续有效），圆角半径、描边、投影边全部按 iOS 比例自算。
+ * （= 键帽位置与大小，保证九宫格拉伸参数继续有效），圆角半径、描边、投影边全部按预设比例自算。
  */
 public final class IosSkin {
-
-    // ── iOS 系统键盘配色（浅色 / 深色）────────────────────────────────────
-    // 浅色：底色偏灰、键帽纯白、功能键更灰 —— 三层对比明显，这是 iOS 观感的关键
-    public static final int LIGHT_KB_BG = 0xFFD1D4D9;
-    public static final int LIGHT_KEY = 0xFFFFFFFF;
-    public static final int LIGHT_KEY_PRESSED = 0xFFE5E5EA;
-    public static final int LIGHT_KEY_EDGE = 0xFFB9BDC4;   // 键帽底边那条极浅的分隔
-    public static final int LIGHT_FUNC = 0xFFADB3BC;
-    public static final int LIGHT_FUNC_PRESSED = 0xFF9FA5AE;
-    public static final int LIGHT_FUNC_EDGE = 0xFF979DA6;
-    public static final int LIGHT_POPUP = 0xFFFFFFFF;
-    public static final int LIGHT_TEXT = 0xFF000000;
-
-    // 深色：底色近黑、键帽中灰、功能键更暗
-    public static final int DARK_KB_BG = 0xFF2C2C2E;
-    public static final int DARK_KEY = 0xFF636366;
-    public static final int DARK_KEY_PRESSED = 0xFF7C7C80;
-    public static final int DARK_KEY_EDGE = 0xFF3A3A3C;
-    public static final int DARK_FUNC = 0xFF4A4A4D;
-    public static final int DARK_FUNC_PRESSED = 0xFF5C5C60;
-    public static final int DARK_FUNC_EDGE = 0xFF3A3A3C;
-    public static final int DARK_POPUP = 0xFF636366;
-    public static final int DARK_TEXT = 0xFFFFFFFF;
-
-    /** 圆角半径 = 键帽高度 × 该比例（iOS 键盘约 46dp 高的键、圆角 ~5.5dp）。 */
-    private static final float RADIUS_RATIO = 0.12f;
 
     public static final int KIND_NONE = 0;
     /** 整块底色（键盘背景 / 候选栏底 / 顶部条底）：不加圆角，直接平铺。 */
     public static final int KIND_FILL = 1;
-    /** 键帽（字母键 / 功能键 / 数字键）：按 iOS 圆角重绘 + 底边分隔。 */
+    /** 键帽（字母键 / 功能键 / 数字键）：按预设圆角重绘 + 底边分隔。 */
     public static final int KIND_KEY = 2;
     /** 长按气泡：圆角更大。 */
     public static final int KIND_POPUP = 3;
@@ -75,73 +49,60 @@ public final class IosSkin {
     // ── 1. ini 段落改值 ───────────────────────────────────────────────────
 
     /**
-     * 就地把搜狗皮肤 ini 里的颜色改成 iOS 配色。
+     * 就地把搜狗皮肤 ini 里的颜色改成预设配色。
      *
      * <p>只改「文字色 / 强调色 / 底色」这类语义明确的键，**不动任何 W / H / PADDINGS / ROWS**：
      * 尺寸一动就连锁影响 insets 与命中区。
      */
-    public static boolean patchIni(String path, Map<String, Map<String, String>> sections) {
-        if (sections == null || sections.isEmpty()) return false;
-        boolean dark = isDarkPath(path);
+    public static boolean patchIni(String path, Map<String, Map<String, String>> sections, SkinPreset p) {
+        if (sections == null || sections.isEmpty() || p == null) return false;
         boolean changed = false;
 
-        int text = dark ? DARK_TEXT : LIGHT_TEXT;
-        int accent = dark ? 0xFF0A84FF : 0xFF007AFF;
-        int kbBg = dark ? DARK_KB_BG : LIGHT_KB_BG;
-
-        // 按键文字色：搜狗默认是深灰 35373B → iOS 的纯黑（浅色）/ 纯白（深色）
+        // 按键文字色：搜狗默认是深灰 35373B → 预设的文字色
         Map<String, String> def = sections.get("DEFAULT_TEXT_COLORS");
         if (def != null) {
-            changed |= put(def, "COLOR_FIRST_DEFAULT_THEME", hexNoAlpha(accent));
-            changed |= put(def, "COLOR_FUNCTION_THEME", hexNoAlpha(text));
-            changed |= put(def, "COLOR_FUNCTION_PRESSED_THEME", hexNoAlpha(text));
-            changed |= put(def, "COLOR_LATIN_THEME", hexNoAlpha(text));
-            changed |= put(def, "COLOR_LATIN_PRESSED_THEME", hexNoAlpha(text));
-            changed |= put(def, "COLOR_PRESSED_THEME", hexNoAlpha(text));
-            changed |= put(def, "COLOR_POPUP_LONGPRESS_THEME", hexNoAlpha(dark ? DARK_TEXT : 0xFF000000));
-            changed |= put(def, "COLOR_NUMBER_THEME", hexNoAlpha(text));
-            changed |= put(def, "COLOR_SYMBOL_THEME", hexNoAlpha(text));
-            changed |= put(def, "COLOR_SHIFT_THEME", hexNoAlpha(text));
+            changed |= put(def, "COLOR_FIRST_DEFAULT_THEME", hexNoAlpha(p.accent));
+            changed |= put(def, "COLOR_FUNCTION_THEME", hexNoAlpha(p.text));
+            changed |= put(def, "COLOR_FUNCTION_PRESSED_THEME", hexNoAlpha(p.textPressed));
+            changed |= put(def, "COLOR_LATIN_THEME", hexNoAlpha(p.text));
+            changed |= put(def, "COLOR_LATIN_PRESSED_THEME", hexNoAlpha(p.textPressed));
+            changed |= put(def, "COLOR_PRESSED_THEME", hexNoAlpha(p.textPressed));
+            changed |= put(def, "COLOR_POPUP_LONGPRESS_THEME", hexNoAlpha(p.text));
+            changed |= put(def, "COLOR_NUMBER_THEME", hexNoAlpha(p.text));
+            changed |= put(def, "COLOR_SYMBOL_THEME", hexNoAlpha(p.text));
+            changed |= put(def, "COLOR_SHIFT_THEME", hexNoAlpha(p.text));
         }
 
-        // 长按气泡文字：未选中近黑、选中 iOS 蓝（气泡底是白/深灰，必须保证对比度）
-        changed |= putColor(sections, "COMMON_TEXT_POPUP_COLOR", "TEXT_COLOR", dark ? DARK_TEXT : LIGHT_TEXT);
-        changed |= putColor(sections, "COMMON_TEXT_POPUP_COLORS", "TEXT_COLOR", dark ? DARK_TEXT : LIGHT_TEXT);
-        changed |= putColor(sections, "COMMON_TEXT_POPUP_COLORS", "TEXT_COLOR_PRESSED", accent);
+        // 长按气泡文字：未选中用正文色、选中用强调色（气泡底是键帽色，必须保证对比度）
+        changed |= putColor(sections, "COMMON_TEXT_POPUP_COLOR", "TEXT_COLOR", p.text);
+        changed |= putColor(sections, "COMMON_TEXT_POPUP_COLORS", "TEXT_COLOR", p.text);
+        changed |= putColor(sections, "COMMON_TEXT_POPUP_COLORS", "TEXT_COLOR_PRESSED", p.accent);
 
-        // 候选栏 / 拼音区：**底色统一成键盘底色**（不是透明）——
+        // 候选栏 / 拼音区 / 顶部条：**底色统一成键盘底色**（不是透明）——
         // 搜狗默认是浅灰 + 灰底块，跟键盘底色不一致，看起来"状态栏那一块没跟着一起画"。
-        unifyBg(sections, "ComposingView", kbBg);
-        unifyBg(sections, "CloudView", kbBg);
-        unifyBg(sections, "CandidateBar", kbBg);
-        unifyBg(sections, "FloatWindow", kbBg);
-        changed |= putColor(sections, "ComposingView", "BG_COLOR", kbBg);
-        changed |= putColor(sections, "CloudView", "BG_COLOR", kbBg);
-        changed |= putColor(sections, "CandidateBar", "BG_COLOR", kbBg);
-        changed |= putColor(sections, "FloatWindow", "BG_COLOR", kbBg);
+        String[] bars = {"ComposingView", "CloudView", "CandidateBar", "FloatWindow",
+                "HeaderView", "KeyboardHeader", "SmartBar", "ToolbarView"};
+        for (String bar : bars) {
+            changed |= unifyBg(sections, bar, p.kbBg);
+            changed |= putColor(sections, bar, "TEXT_COLOR", p.text);
+        }
 
-        // 候选文字：搜狗蓝 → iOS 黑（浅色）/ 白（深色）；选中项用 iOS 蓝
-        changed |= putColor(sections, "ComposingView", "TEXT_COLOR", text);
-        changed |= putColor(sections, "CloudView", "TEXT_COLOR", text);
-        changed |= putColor(sections, "CandidateBar", "TEXT_COLOR", text);
-        changed |= putColor(sections, "CloudView", "TEXT_HIGHLIGHT_COLOR", accent);
-
-        // 顶部智能条：跟键盘同色，避免上方一条灰带
-        unifyBg(sections, "HeaderView", kbBg);
-        unifyBg(sections, "KeyboardHeader", kbBg);
-        changed |= putColor(sections, "HeaderView", "BG_COLOR", kbBg);
-        changed |= putColor(sections, "KeyboardHeader", "BG_COLOR", kbBg);
+        // 候选选中项：强调色（iOS 蓝 / 微信绿 / Google 蓝 / 莫奈 accent）
+        changed |= putColor(sections, "CloudView", "TEXT_HIGHLIGHT_COLOR", p.accent);
+        changed |= putColor(sections, "CandidateBar", "TEXT_HIGHLIGHT_COLOR", p.accent);
+        changed |= putColor(sections, "CloudView", "TEXT_HIGHLIGHT_STYLE", p.accent);
 
         return changed;
     }
 
-    /** 段落若存在就把它的底色类键统一成 {@code bgColor}，并清掉图片底（避免残留纹理）。 */
-    private static void unifyBg(Map<String, Map<String, String>> sections, String section, int bgColor) {
+    /** 段落若存在就把它的底色类键统一成 {@code bgColor}。 */
+    private static boolean unifyBg(Map<String, Map<String, String>> sections, String section, int bgColor) {
         Map<String, String> s = sections.get(section);
-        if (s == null) return;
-        put(s, "BG_COLOR", String.format("0x%08X", bgColor));
-        put(s, "BG_COLOR_PRESSED", String.format("0x%08X", bgColor));
-        // 保留图片名但让 H41 把它重绘成纯色底（见 synth 的 KIND_FILL 分支）
+        if (s == null) return false;
+        boolean changed = false;
+        changed |= put(s, "BG_COLOR", String.format("0x%08X", bgColor));
+        changed |= put(s, "BG_COLOR_PRESSED", String.format("0x%08X", bgColor));
+        return changed;
     }
 
     private static boolean put(Map<String, String> map, String key, String value) {
@@ -167,18 +128,15 @@ public final class IosSkin {
     // ── 2. 位图分类 ───────────────────────────────────────────────────────
 
     /**
-     * 该图片需要怎么改：
-     * {@link #KIND_FILL} 平铺底色 / {@link #KIND_KEY} 键帽 / {@link #KIND_POPUP} 气泡 /
-     * {@link #KIND_NONE} 不动。
+     * 该图片需要怎么改：{@link #KIND_FILL} 平铺底色 / {@link #KIND_KEY} 键帽 /
+     * {@link #KIND_POPUP} 气泡 / {@link #KIND_NONE} 不动。
      *
      * <p>只处理「键盘底 / 键帽 / 气泡 / 候选栏底 / 顶部条底」这几类最影响观感的图；
      * 图标、动效帧、表情一律不动，避免把界面搞花。
      */
     public static int kindOf(String fileName) {
         if (fileName == null) return KIND_NONE;
-        String n = fileName;
-        int slash = n.lastIndexOf('/');
-        if (slash >= 0) n = n.substring(slash + 1);
+        String n = baseName(fileName);
         if (!n.endsWith(".png") && !n.endsWith(".webp")) return KIND_NONE;
 
         // 气泡（要先判，避免 popup bg 被当成普通底色）
@@ -204,60 +162,60 @@ public final class IosSkin {
         return KIND_NONE;
     }
 
-    /** 该图片是否属于「功能键」配色（比字母键更灰）。 */
+    private static String baseName(String path) {
+        int slash = path.lastIndexOf('/');
+        return slash >= 0 ? path.substring(slash + 1) : path;
+    }
+
+    /** 该图片是否属于「功能键」配色（比字母键更灰 / 更淡）。 */
     public static boolean isFuncKey(String fileName) {
         if (fileName == null) return false;
-        String n = fileName;
-        int slash = n.lastIndexOf('/');
-        if (slash >= 0) n = n.substring(slash + 1);
+        String n = baseName(fileName);
         return n.startsWith("key_function") || n.startsWith("key_func") || n.contains("function");
     }
 
     /** 该图片是否用于"按下"态。 */
     public static boolean isPressed(String fileName) {
         if (fileName == null) return false;
-        String n = fileName;
-        int slash = n.lastIndexOf('/');
-        if (slash >= 0) n = n.substring(slash + 1);
+        String n = baseName(fileName);
         return n.contains("_p.") || n.contains("_press") || n.endsWith("_p.png") || n.contains("_down");
     }
 
     /** 该位图应当填的目标颜色；{@code KIND_NONE} 时返回 0。 */
-    public static int colorOf(String fileName, boolean dark) {
+    public static int colorOf(String fileName, SkinPreset p) {
+        if (p == null) return 0;
         int kind = kindOf(fileName);
         if (kind == KIND_NONE) return 0;
         boolean pressed = isPressed(fileName);
         boolean func = isFuncKey(fileName);
         switch (kind) {
             case KIND_FILL:
-                return dark ? DARK_KB_BG : LIGHT_KB_BG;
+                return p.kbBg;
             case KIND_POPUP:
-                return dark ? DARK_POPUP : LIGHT_POPUP;
+                return p.popup;
             case KIND_KEY:
             default:
-                if (func) return pressed ? (dark ? DARK_FUNC_PRESSED : LIGHT_FUNC_PRESSED)
-                        : (dark ? DARK_FUNC : LIGHT_FUNC);
-                return pressed ? (dark ? DARK_KEY_PRESSED : LIGHT_KEY_PRESSED)
-                        : (dark ? DARK_KEY : LIGHT_KEY);
+                if (func) return pressed ? p.funcPressed : p.func;
+                return pressed ? p.keyPressed : p.key;
         }
     }
 
-    // ── 3. 按 iOS 规格重绘位图 ───────────────────────────────────────────
+    // ── 3. 按预设规格重绘位图 ─────────────────────────────────────────────
 
     /**
      * 重绘位图。
      *
      * <ul>
      *   <li>{@code KIND_FILL}：整张铺目标色（键盘底 / 候选栏底 / 顶部条底）；</li>
-     *   <li>{@code KIND_KEY}：在**原图不透明包围盒**内画 iOS 圆角矩形（半径 = 高度 × 0.12），
-     *       并带一条底边分隔线 —— 键帽位置与尺寸仍是搜狗的（九宫格参数不变），但圆角是 iOS 的；</li>
+     *   <li>{@code KIND_KEY}：在**原图不透明包围盒**内画圆角矩形（半径 = 高度 × 预设比例），
+     *       带投影与底边分隔 —— 键帽位置与尺寸仍是搜狗的（九宫格参数不变），但形状是预设的；</li>
      *   <li>{@code KIND_POPUP}：同上，圆角更大。</li>
      * </ul>
      *
      * @return 新的位图；失败返回 null（调用方保持原样）
      */
-    public static Bitmap synth(Bitmap src, int kind, int color, boolean dark) {
-        if (src == null || src.isRecycled()) return null;
+    public static Bitmap synth(Bitmap src, int kind, int color, SkinPreset p) {
+        if (src == null || src.isRecycled() || p == null) return null;
         int w = src.getWidth();
         int h = src.getHeight();
         if (w <= 0 || h <= 0) return null;
@@ -280,17 +238,27 @@ public final class IosSkin {
                 return out;
             }
 
-            float radiusRatio = (kind == KIND_POPUP) ? 0.18f : RADIUS_RATIO;
-            float radius = Math.max(2f, box.height() * radiusRatio);
+            float ratio = (kind == KIND_POPUP) ? p.radiusRatio * 1.5f : p.radiusRatio;
+            float radius = Math.max(2f, box.height() * ratio);
             RectF rect = new RectF(box);
 
-            // 底边分隔：iOS 键帽下面有一条极淡的暗边，先画暗色再盖上主色，露出的 1px 就是那条边
-            int edge = edgeColor(color, dark);
-            if (edge != color) {
-                paint.setColor(edge);
-                RectF shadow = new RectF(rect);
-                shadow.offset(0f, 1f);
-                canvas.drawRoundRect(shadow, radius, radius, paint);
+            // 投影：iOS 键帽有极淡的落影；Google 也有（Material 3 用 tonal elevation）
+            if (Color_alpha(p.shadowColor) > 0) {
+                paint.setColor(p.shadowColor);
+                paint.setShadowLayer(p.shadowRadius, 0f, p.shadowDy, p.shadowColor);
+                canvas.drawRoundRect(rect, radius, radius, paint);
+                paint.clearShadowLayer();
+            }
+
+            // 底边分隔：先画暗色再盖上主色，露出的那 1px 就是那条边（iOS 有，Google 没有）
+            if (p.edgeLine) {
+                int edge = edgeColor(color, p);
+                if (edge != color) {
+                    paint.setColor(edge);
+                    RectF under = new RectF(rect);
+                    under.offset(0f, 1f);
+                    canvas.drawRoundRect(under, radius, radius, paint);
+                }
             }
 
             paint.setColor(color);
@@ -301,10 +269,24 @@ public final class IosSkin {
         }
     }
 
-    private static int edgeColor(int color, boolean dark) {
-        if (color == (dark ? DARK_KEY : LIGHT_KEY)) return dark ? DARK_KEY_EDGE : LIGHT_KEY_EDGE;
-        if (color == (dark ? DARK_FUNC : LIGHT_FUNC)) return dark ? DARK_FUNC_EDGE : LIGHT_FUNC_EDGE;
+    private static int Color_alpha(int argb) {
+        return (argb >>> 24) & 0xFF;
+    }
+
+    private static int edgeColor(int color, SkinPreset p) {
+        if (color == p.key) return darken(p.key, 0.14f);
+        if (color == p.keyPressed) return darken(p.keyPressed, 0.10f);
+        if (color == p.func) return darken(p.func, 0.14f);
+        if (color == p.funcPressed) return darken(p.funcPressed, 0.10f);
         return color;
+    }
+
+    private static int darken(int argb, float factor) {
+        int a = (argb >>> 24) & 0xFF;
+        int r = (int) (((argb >> 16) & 0xFF) * (1f - factor));
+        int g = (int) (((argb >> 8) & 0xFF) * (1f - factor));
+        int b = (int) ((argb & 0xFF) * (1f - factor));
+        return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
     /**
@@ -329,15 +311,15 @@ public final class IosSkin {
             }
         }
         if (right < 0 || bottom < 0) return null;
-        // 抽稀得到的是采样点，向外补一格；再夹到图内
         right = Math.min(w - 1, right + stepX);
         bottom = Math.min(h - 1, bottom + stepY);
         return new Rect(left, top, right + 1, bottom + 1);
     }
 
-    /** 日志用：本次改了哪些内容。 */
-    public static String describe() {
-        return "iOS skin: 键帽/键盘底/功能键/气泡按 iOS 规格重绘（圆角+底边）"
+    /** 日志用。 */
+    public static String describe(SkinPreset p) {
+        String name = p == null ? "?" : SkinPreset.labelOf(p.id);
+        return name + " 皮肤：键帽/键盘底/功能键/气泡按预设重绘（圆角+投影+底边）"
                 + " + 候选栏与顶部条底色统一 + 文字色对比度调整（布局不动）";
     }
 }

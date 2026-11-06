@@ -66,6 +66,8 @@ public final class ConfigBridge {
                         int n = RuntimeConfig.applyFromIntent(intent);
                         HookRegistry.log("config pushed: " + RuntimeConfig.describe()
                                 + " (" + n + " keys)");
+                        // 换皮肤预设后必须丢掉搜狗的位图缓存，否则还是上一套配色
+                        ThemeSkinHook.dropCaches();
                         setResultCode(Protocol.RESULT_OK);
                         setResultData(state(ctx));
                         runConfigCallback();
@@ -156,6 +158,14 @@ public final class ConfigBridge {
                             if (idx < 0) continue;
                             RuntimeConfig.put(key, cursor.getInt(idx) != 0);
                             n++;
+                        }
+                        int skinIdx = cursor.getColumnIndex(ModuleConfig.KEY_SKIN_PRESET);
+                        if (skinIdx >= 0) {
+                            String preset = cursor.getString(skinIdx);
+                            if (preset != null && preset.length() > 0) {
+                                RuntimeConfig.putString(ModuleConfig.KEY_SKIN_PRESET, preset);
+                                n++;
+                            }
                         }
                         HookRegistry.log("config provider: loaded " + n + " keys -> "
                                 + RuntimeConfig.describe());

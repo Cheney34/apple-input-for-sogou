@@ -1,6 +1,7 @@
 package com.chiron.iosemoji;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import com.chiron.iosemoji.compat.VersionProfile;
 import com.chiron.iosemoji.config.ConfigMigration;
 import com.chiron.iosemoji.config.ConfigValues;
 import com.chiron.iosemoji.config.ModuleConfig;
+import com.chiron.iosemoji.skin.SkinPreset;
 import com.chiron.iosemoji.ui.IosRow;
 import com.chiron.iosemoji.ui.IosSwitch;
 import com.chiron.iosemoji.ui.IosUi;
@@ -44,6 +46,8 @@ public class SettingsActivity extends Activity {
     private TextView hooksText;
     private TextView effectiveText;
     private TextView requestHint;
+    /** 当前皮肤风格的值（iOS / 微信 / Google / 莫奈取色）。 */
+    private TextView presetValue;
 
     /** 广播回执窗口：500ms 内没回执就认为进程不在。 */
     private static final long REPLY_TIMEOUT_MS = 500L;
@@ -153,9 +157,10 @@ public class SettingsActivity extends Activity {
         root.addView(IosUi.sectionHeader(this, "外观"));
         LinearLayout look = IosUi.card(this);
         root.addView(look, IosUi.cardParams(this));
-        addSwitch(look, ModuleConfig.KEY_THEME_SKIN, "iOS 皮肤（推荐）",
-                "改搜狗**自己的默认皮肤**：强调色改 iOS 蓝、去掉候选底色块、键帽与键盘底色按 iOS 灰白重上色。"
+        addSwitch(look, ModuleConfig.KEY_THEME_SKIN, "改皮肤（推荐）",
+                "改搜狗**自己的默认皮肤**：配色、键帽形状、候选栏底色都按所选风格重画。"
                         + "布局、按键命中、候选栏高度全部沿用搜狗原样，所以不会错位。", true);
+        addPresetRow(look);
         addSwitch(look, ModuleConfig.KEY_KEYBOARD_REPLACE, "自绘键盘（实验）",
                 "用模块自绘的键盘盖在搜狗键盘上。可能与搜狗自己算的布局/命中区冲突（样式错乱），"
                         + "一般不需要打开。", false);
@@ -191,6 +196,56 @@ public class SettingsActivity extends Activity {
         if (withSeparator) card.addView(IosUi.separator(this, 16));
     }
 
+    // ── 皮肤风格选择 ─────────────────────────────────────────────────────
+
+    private void addPresetRow(LinearLayout card) {
+        String cur = prefs.getString(ModuleConfig.KEY_SKIN_PRESET, ModuleConfig.DEFAULT_SKIN_PRESET);
+        LinearLayout row = IosRow.base(this);
+        row.addView(IosRow.textColumn(this, "皮肤风格",
+                "iOS / 微信 / Google / 莫奈取色（莫奈要 Android 12+）"), IosRow.weight());
+        presetValue = IosUi.text(this, SkinPreset.labelOf(cur), 15f, IosUi.label2(this), false);
+        presetValue.setPadding(IosUi.dp(this, 12), 0, 0, 0);
+        row.addView(presetValue);
+        row.addView(IosRow.chevron(this));
+        row.setClickable(true);
+        row.setOnClickListener(v -> showPresetDialog());
+        card.addView(row);
+        card.addView(IosUi.separator(this, 16));
+    }
+
+    private void showPresetDialog() {
+        final String[] ids = SkinPreset.IDS;
+        final String[] labels = new String[ids.length];
+        for (int i = 0; i < ids.length; i++) labels[i] = SkinPreset.labelOf(ids[i]);
+        new AlertDialog.Builder(this)
+                .setTitle("皮肤风格")
+                .setItems(labels, (dialog, which) -> applyPreset(ids[which]))
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    /** 换皮肤预设：落盘 + 下发（搜狗进程会清掉位图缓存后按新配色重画）。 */
+    private void applyPreset(String presetId) {
+        prefs.edit().putString(ModuleConfig.KEY_SKIN_PRESET, presetId).commit();
+        if (presetValue != null) presetValue.setText(SkinPreset.labelOf(presetId));
+        final int[] ok = {0};
+        for (String pkg : Protocol.TARGETS) {
+            sendConfigIntent(pkg, ok);
+        }
+        main.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (ok[0] > 0) {
+                    toast("已换皮肤：" + SkinPreset.labelOf(presetId));
+                } else {
+                    toast("已保存：" + SkinPreset.labelOf(presetId)
+                            + "（搜狗进程未运行，切换输入法后生效）");
+                }
+                queryStatus(false);
+            }
+        }, REPLY_TIMEOUT_MS);
+    }
+
     /** 改开关：先落盘（冷启动用），再下发（运行中即时生效），最后按回执给反馈。 */
     private void applySwitch(String key, boolean value) {
         prefs.edit().putBoolean(key, value).commit();
@@ -219,6 +274,9 @@ public class SettingsActivity extends Activity {
             for (String k : ConfigValues.KEYS) {
                 intent.putExtra(k, prefs.getBoolean(k, ConfigValues.defaultValue(k)));
             }
+            // 皮肤预设是字符串，一起带过去（搜狗进程据此换配色并清位图缓存）
+            intent.putExtra(ModuleConfig.KEY_SKIN_PRESET,
+                    prefs.getString(ModuleConfig.KEY_SKIN_PRESET, ModuleConfig.DEFAULT_SKIN_PRESET));
             sendOrderedBroadcast(intent, null, new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context c, Intent i) {

@@ -47,7 +47,7 @@ public final class ConfigValues {
             case ModuleConfig.KEY_MASTER:
                 return "总开关";
             case ModuleConfig.KEY_THEME_SKIN:
-                return "iOS 皮肤";
+                return "改皮肤";
             case ModuleConfig.KEY_KEYBOARD_REPLACE:
                 return "自绘键盘（实验）";
             case ModuleConfig.KEY_CANDIDATE_PROBE:

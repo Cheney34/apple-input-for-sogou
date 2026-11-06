@@ -2,6 +2,50 @@
 
 本项目遵循「分析 → 验证 → 实现」的推进方式：每个版本只写**有证据支撑**的东西。
 
+## v2.0.0-alpha6 — 四套皮肤可选：iOS / 微信 / Google / 莫奈取色
+
+### 为什么要多套
+
+用户反馈「现在这个皮肤还是没有达到 iOS 的那种风格」，并且希望在 iOS 之外再要
+**微信**、**Google 输入法（Gboard / Material 3）**、**莫奈取色（Android 12+ 动态配色）** 三套。
+单一配色不可能同时满足三种审美，于是把「配色」从写死改成**可切换的预设**。
+
+### 这一版怎么改
+
+- **新增 `skin/SkinPreset`**：一套预设 = 底色 / 键帽 / 按下态 / 功能键 / 气泡 / 文字 / 强调色
+  + 画法参数（圆角比例、投影、是否画底边分隔）。四套：
+  | 预设 | 底 | 键帽 | 功能键 | 强调色 | 画法差别 |
+  |---|---|---|---|---|---|
+  | `ios` | `#D1D4D9` | 纯白 `#FFFFFF` | `#ADB3BC` | `#007AFF` | 圆角 0.12 + 淡底边 |
+  | `wechat` | `#F2F2F2` | 纯白 | `#E9E9E9`（很淡） | 微信绿 `#07C160` | 圆角 0.10 + 淡底边 |
+  | `google` | 白 | `#F1F3F4`（键帽比底深） | `#E8EAED` | Google 蓝 `#1A73E8` | 圆角 0.14，无底边 |
+  | `monet` | 系统 `neutral1_100` | 系统 `neutral1_50` | `system_neutral2_200` | `system_accent1_500` | 圆角 0.16，取自壁纸配色 |
+  莫奈预设走 `Resources.getIdentifier("system_accent1_500","color","android")` 读 framework
+  动态配色（API 31+），读不到就退回一组 Material You 兜底色 —— 不会因为取色失败而变难看。
+- **`IosSkin` 改为预设驱动**：`patchIni(path, sections, preset)` / `colorOf(name, preset)` /
+  `synth(src, kind, color, preset)`；键帽重绘逻辑不变（沿用原图不透明包围盒 → 位置尺寸仍是搜狗的），
+  但圆角、投影、底边、配色全部来自预设。
+- **切换即时生效**：设置页新增「皮肤风格」行（`ios` / `wechat` / `google` / `monet`），选中后
+  - 写 `skin_preset` 到 prefs（冷启动用），
+  - 用有序广播连同 7 个开关一起下发，
+  - 搜狗进程收到后调用 `ThemeSkinHook.dropCaches()` 清掉 `com.sogou.theme.common.j` 的位图缓存，
+    再按新配色重画 —— 不换皮肤也要清缓存，否则还是上一套颜色。
+- **配置通道扩展字符串键**：`RuntimeConfig` 增加 `STRINGS` 覆盖层与 `getString/putString`；
+  `ConfigProvider` 额外返回 `skin_preset` 列（冷启动也能拿到）；`ModuleConfig.skinPreset()` 优先级
+  运行时覆盖 > prefs > 默认 `ios`，非法值回落 `ios`。
+
+### 构建与验证
+
+- `build-alpha6`：`AppleInputForSogou_v2.0.0-alpha6.apk` 22,812,229 B
+- `aapt2 dump badging`：`com.chiron.iosemoji` / `versionCode 25` / `2.0.0-alpha6` / label `Apple Input for Sogou`
+- 证书 `CN=Android Debug` SHA-256 `4fbf65ed…c207`（与 v1.7 / v1.8 / alpha2–alpha5 一致，可覆盖升级）
+- `dexdump -f`：105 个类全部 `Lcom/chiron/iosemoji/*`，`de/robv` 定义 0（桩未进包）
+- dex 字符串确认含 `skin_preset` / `wechat` / `google` / `monet` / `skin caches dropped`
+
+### 仍待确认（需要真机）
+
+皮肤是否真的换成对应风格、切换后是否**不用重启输入法**就变色、莫奈在你机器上取到的色阶是否符合预期。
+
 ## v2.0.0-alpha5 — 键帽按 iOS 规格「重绘」，对比度与底色统一
 
 ### 为什么 alpha4 还不够像 iOS

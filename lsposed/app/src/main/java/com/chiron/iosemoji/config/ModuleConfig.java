@@ -28,6 +28,12 @@ public final class ModuleConfig {
     public static final String KEY_MASTER = "master_enabled";
     /** iOS 皮肤（改搜狗默认皮肤的 ini + 键帽配色）—— v2.0.0-alpha4 起的默认外观方案。 */
     public static final String KEY_THEME_SKIN = "theme_skin_enabled";
+    /**
+     * 皮肤预设（**字符串**，不是布尔）：{@code ios} / {@code wechat} / {@code google} / {@code monet}。
+     * 取值与配色见 {@link com.chiron.iosemoji.skin.SkinPreset}。
+     */
+    public static final String KEY_SKIN_PRESET = "skin_preset";
+    public static final String DEFAULT_SKIN_PRESET = "ios";
     /** 自绘键盘注入（**实验**，alpha3 及以前默认开，因为会把搜狗布局算好的命中区打乱，alpha4 起默认关）。 */
     public static final String KEY_KEYBOARD_REPLACE = "keyboard_replace_enabled";
     public static final String KEY_CANDIDATE_PROBE = "candidate_probe_enabled";
@@ -104,6 +110,28 @@ public final class ModuleConfig {
     /** iOS 皮肤：改写搜狗默认皮肤的 ini 颜色 + 键帽/键盘底色重上色（不动布局）。默认开启。 */
     public static boolean themeSkinEnabled() {
         return masterEnabled() && getBoolean(KEY_THEME_SKIN, true);
+    }
+
+    private static String getString(String key, String def) {
+        // 优先级 1：设置页广播下发的覆盖值
+        String live = RuntimeConfig.getString(key);
+        if (live != null) return live;
+        // 优先级 2：XSharedPreferences
+        try {
+            XSharedPreferences p = prefs();
+            if (p == null) return def;
+            String v = p.getString(key, def);
+            return v == null ? def : v;
+        } catch (Throwable t) {
+            return def;
+        }
+    }
+
+    /** 当前皮肤预设 id（{@code ios}/{@code wechat}/{@code google}/{@code monet}）。 */
+    public static String skinPreset() {
+        String v = getString(KEY_SKIN_PRESET, DEFAULT_SKIN_PRESET);
+        if (!com.chiron.iosemoji.skin.SkinPreset.isKnown(v)) v = DEFAULT_SKIN_PRESET;
+        return v;
     }
 
     public static boolean candidateProbeEnabled() {

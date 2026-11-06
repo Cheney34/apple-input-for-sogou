@@ -1,9 +1,12 @@
 package com.chiron.iosemoji.hook;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.chiron.iosemoji.config.ModuleConfig;
+import com.chiron.iosemoji.core.HookState;
 import com.chiron.iosemoji.skin.IosSkin;
+import com.chiron.iosemoji.skin.SkinPreset;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -75,10 +78,12 @@ public final class ThemeSkinHook {
                             @SuppressWarnings("unchecked")
                             Map<String, Map<String, String>> sections = (Map<String, Map<String, String>>) raw;
                             String path = param.args[0] instanceof String ? (String) param.args[0] : "";
-                            if (!IosSkin.patchIni(path, sections)) return;
+                            SkinPreset preset = preset(HookState.context(), path);
+                            if (!IosSkin.patchIni(path, sections, preset)) return;
                             int n = INI_PATCHED.incrementAndGet();
                             if (n <= LOG_LIMIT) {
                                 HookRegistry.log("H40 skin ini patched: " + baseName(path)
+                                        + " preset=" + preset.id
                                         + " (total " + n + ")");
                             }
                         } catch (Throwable t) {
@@ -108,16 +113,18 @@ public final class ThemeSkinHook {
                             if (!skinPath) return;
                             int kind = IosSkin.kindOf(path);
                             if (kind == IosSkin.KIND_NONE) return;
-                            boolean dark = IosSkin.isDarkPath(path);
-                            int color = IosSkin.colorOf(path, dark);
+                            Context ctx = param.args[0] instanceof Context ? (Context) param.args[0] : null;
+                            SkinPreset preset = preset(ctx, path);
+                            int color = IosSkin.colorOf(path, preset);
                             if (color == 0) return;
-                            Bitmap tinted = IosSkin.synth((Bitmap) res, kind, color, dark);
+                            Bitmap tinted = IosSkin.synth((Bitmap) res, kind, color, preset);
                             if (tinted == null) return;
                             param.setResult(tinted);
                             int n = IMG_PATCHED.incrementAndGet();
                             if (n <= LOG_LIMIT) {
                                 HookRegistry.log("H41 skin bitmap redrawn: " + baseName(path)
                                         + " kind=" + kind
+                                        + " preset=" + preset.id
                                         + " -> " + String.format("#%08X", color)
                                         + " (total " + n + ")");
                             }
@@ -134,8 +141,42 @@ public final class ThemeSkinHook {
         return i >= 0 ? path.substring(i + 1) : path;
     }
 
+    /** 取当前预设（含深色判定）；{@code ctx} 只给「莫奈取色」用来读系统动态配色。 */
+    private static SkinPreset preset(Context ctx, String path) {
+        return SkinPreset.of(ModuleConfig.skinPreset(), IosSkin.isDarkPath(path), ctx);
+    }
+
+    /**
+     * 丢掉搜狗的皮肤位图缓存 —— 切换预设后必须调用，否则拿到的还是上一套配色。
+     *
+     * <p>{@code com.sogou.theme.common.j#e()} 单例 → {@code j()} 返回
+     * {@code com.sogou.theme.common.e<String,Bitmap>} 缓存 → 清空它。
+     * 全程 try/catch：清不掉只是"下次重启才换色"，不影响稳定性。
+     */
+    public static void dropCaches() {
+        try {
+            ClassLoader cl = ThemeSkinHook.class.getClassLoader();
+            if (cl == null) return;
+            Class<?> cls;
+            try {
+                cls = XposedHelpers.findClass(CLS_BITMAP, cl);
+            } catch (Throwable notFound) {
+                return; // 这个版本没这个类，清缓存失败不影响任何事
+            }
+            Object mgr = XposedHelpers.callStaticMethod(cls, "e");
+            if (mgr == null) return;
+            Object cache = XposedHelpers.callMethod(mgr, "j");
+            if (cache == null) return;
+            XposedHelpers.callMethod(cache, "clear");
+            HookRegistry.log("skin caches dropped (preset switch)");
+        } catch (Throwable t) {
+            HookRegistry.log("skin cache drop failed: " + t);
+        }
+    }
+
     /** 诊断/状态回显用。 */
     public static String summary() {
-        return "skin(ini=" + INI_PATCHED.get() + ",img=" + IMG_PATCHED.get() + ")";
+        return "skin(preset=" + ModuleConfig.skinPreset()
+                + ",ini=" + INI_PATCHED.get() + ",img=" + IMG_PATCHED.get() + ")";
     }
 }

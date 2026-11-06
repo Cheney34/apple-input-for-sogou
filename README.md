@@ -15,21 +15,31 @@
 
 | 版本 | 适合谁 | 有什么 |
 | --- | --- | --- |
-| [**v2.0.0-alpha5**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha5) | 所有人（推荐） | 改搜狗默认皮肤做 iOS 外观：**键帽按 iOS 圆角重绘** + 对比度按 iOS 调 + 候选栏/顶部条底色统一 + iOS 风格模块界面 + 表情功能 + 即时生效开关 |
+| [**v2.0.0-alpha6**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha6) | 所有人（推荐） | 四套皮肤可选：**iOS / 微信 / Google / 莫奈取色**（设置页「皮肤风格」切换，切换即时生效）+ 键帽按所选风格重绘 + 候选栏与顶部条底色统一 |
+| [**v2.0.0-alpha5**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha5) | 存档 | 只有 iOS 一套皮肤（键帽按 iOS 圆角重绘） |
 | [**v2.0.0-alpha4**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha4) | 存档 | 第一版改皮肤（只刷色，圆角仍沿用搜狗自己的，观感不如 alpha5） |
 | [**v2.0.0-alpha3**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha3) | 存档，不建议用 | 自绘键盘版：键盘样式会跟搜狗布局打架（卡 bug），仅作历史保留 |
 | [**v1.8**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v1.8) | 只想换 Apple 表情、要稳定 | 表情分组安装 / 隐藏内置分组 / 滑动切换 / Logo 触发词 |
 | [**v1.7**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v1.7) | 老设备 / 旧搜狗版本 | 与 v1.8 同代但更早，兼容面略宽 |
 
-### 界面长什么样（alpha2 重写 / alpha3 让开关真正生效 / alpha4 换成改皮肤 / alpha5 按 iOS 规格重绘键帽）
+### 界面长什么样（alpha2 重写 / alpha3 让开关真正生效 / alpha4 换成改皮肤 / alpha5 重绘键帽 / alpha6 四套皮肤）
 
 两个界面都换成 iOS 风格、全部代码自绘，不依赖 androidx / Material，跟随系统深浅色：
 
 - **模块 App**：iOS 设置页 —— 大标题、分组卡片、圆角行、右侧 `✓`/`›`、自绘开关。
   分区：状态 / 表情分组（10 组逐行勾选 + 全选）/ 操作（安装选中、安装全部、还原）/ 模块（功能开关、隐藏桌面图标、重新检测）/ 运行日志。
   原 XML 布局（`activity_main.xml`、`item_group.xml`）已删除，不再需要 `GridLayout`。
-- **输入法键盘（alpha4 起改皮肤 / alpha5 重绘键帽）**：**不再盖一层自绘键盘**，而是改搜狗自己默认皮肤 ——
-  强调色换成 iOS 蓝、候选栏与顶部条底色跟键盘统一、**键帽按 iOS 圆角（半径=键高×0.12）重绘**并带一条底边分隔、文字色拉到纯黑/纯白。
+- **输入法键盘（alpha4 起改皮肤 / alpha5 重绘键帽 / alpha6 四套皮肤）**：**不再盖一层自绘键盘**，而是改搜狗自己默认皮肤 ——
+  配色、键帽形状、候选栏与顶部条底色全部按所选风格重画（键帽沿用原图不透明包围盒 → 位置尺寸仍是搜狗的，只换圆角与颜色）。
+  四套风格（设置页「外观 → 皮肤风格」，切换即时生效）：
+
+  | 风格 | 底色 | 键帽 | 功能键 | 强调色 | 画法 |
+  |---|---|---|---|---|---|
+  | **iOS**（默认） | `#D1D4D9` | 纯白 | 更灰 `#ADB3BC` | `#007AFF` | 圆角 0.12 + 淡底边 |
+  | **微信** | `#F2F2F2` | 纯白 | 很淡 `#E9E9E9` | 微信绿 `#07C160` | 圆角 0.10 + 淡底边 |
+  | **Google** | 白 | 浅灰 `#F1F3F4` | `#E8EAED` | Google 蓝 `#1A73E8` | 圆角 0.14，无底边 |
+  | **莫奈取色** | 系统 `neutral1_100` | 系统 `neutral1_50` | `system_neutral2_200` | `system_accent1_500` | 圆角 0.16，取壁纸配色（Android 12+） |
+
   键盘布局、按键命中、候选栏高度、输入法 insets 全部还是搜狗自己算的，所以**不会再出现"键盘样式卡 bug"**。
   （想试原来的自绘键盘：设置页「外观 → 自绘键盘（实验）」，默认关闭。）
 > v2.0 沿用旧版包名 `com.chiron.iosemoji`、并沿用同一张调试证书（`CN=Android Debug`），所以是**同包名覆盖升级**：装上 v2.0 会直接替换 v1.7 / v1.8，LSPosed 里原有的模块条目和作用域照旧生效，不需要重新配置。想回旧版，卸载后装 v1.7 / v1.8 即可。
@@ -185,7 +195,8 @@ assets/theme/thememanifest.ini             主题清单（THEME_SET=theme_defaul
 | 键 | 默认 | 作用 |
 | --- | --- | --- |
 | `master_enabled` | 开 | 总开关，关掉后模块在搜狗进程内不做任何事 |
-| `theme_skin_enabled` | 开 | **改搜狗默认皮肤**（H40 改 ini 颜色 + H41 给位图重上色）—— iOS 外观的主路径 |
+| `theme_skin_enabled` | 开 | **改搜狗默认皮肤**（H40 改 ini 颜色 + H41 重绘键帽/底色）—— 外观的主路径 |
+| `skin_preset` | `ios` | 皮肤风格：`ios` / `wechat` / `google` / `monet`（莫奈需 Android 12+），见设置页「皮肤风格」 |
 | `keyboard_replace_enabled` | 关 | 自绘键盘替换显示层（H01/H02），实验性，会和搜狗布局打架 |
 | `emoji_group_filter_enabled` | 开 | 隐藏搜狗自带「组合」「拼装」分组 |
 | `emoji_swipe_enabled` | 开 | 表情面板左右滑动切分组 |
