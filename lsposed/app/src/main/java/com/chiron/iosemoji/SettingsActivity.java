@@ -387,6 +387,7 @@ public class SettingsActivity extends Activity {
         String skinParser = null;
         String skinCached = null;
         String skinKept = null;
+        String skinProtected = null;
         String skinSkip = null;
         StringBuilder eff = new StringBuilder();
         for (String part : raw.split(";")) {
@@ -425,6 +426,9 @@ public class SettingsActivity extends Activity {
                 case "skink":
                     skinKept = v;
                     break;
+                case "skinp":
+                    skinProtected = v;
+                    break;
                 case "skip":
                     skinSkip = v;
                     break;
@@ -444,6 +448,7 @@ public class SettingsActivity extends Activity {
         if (skinParser != null) skinLine.append("  解析=").append(skinParser);
         if (skinCached != null) skinLine.append("  缓存=").append(skinCached);
         if (skinKept != null) skinLine.append("  保留=").append(skinKept);
+        if (skinProtected != null) skinLine.append("  跳过图标=").append(skinProtected);
         if (eff.length() > 0) skinLine.append('\n').append(eff);
         if (skinSkip != null && skinSkip.length() > 0) {
             skinLine.append("\n没认出来的图：").append(skinSkip);

@@ -2,6 +2,47 @@
 
 本项目遵循「分析 → 验证 → 实现」的推进方式：每个版本只写**有证据支撑**的东西。
 
+## v2.0.0-alpha9 — 图标不再被当键帽涂掉（设置齿轮 / 语言旗帜回归正常）
+
+### 用户反馈
+
+> 「基本没有什么问题了，但是有一些他那个图标啊，就是设置菜单，还有一个萨克岛的旗帜的显示有问题，就是搜狗输入法键盘里面。」
+
+### 根因
+
+alpha7/alpha8 为了救「键帽漏改」，加了一条兜底：**文件名里带 `key`、或以 `btn_` / `skey` 开头就算键帽**。
+搜狗把**图标**也按这种规则命名（例如 `btn_key_menu.png`、`key_flag_lang.png`），于是：
+
+1. 齿轮、旗帜这类图标被当成键帽；
+2. 它们是「透明底 + 单色字形」，亮度分布非常均匀，`hasInk` 判不出"里面有图案"；
+3. 结果在图标包围盒里画了一块圆角纯色 —— 用户看到的就是"图标变成一块方块 / 显示错乱"。
+
+教训：**任何基于形状/亮度的启发式都救不了图标**，因为图标的"字形"本身就是一条纯色像素带。
+
+### 改法（三条，全部是收紧）
+
+| 收紧点 | 说明 |
+| --- | --- |
+| `kindOf` 改严格白名单 | 只认 `key_qwerty*` / `key_us*` / `key_uk*` / `key_number*` / `key_digit*` / `key_char*` / `key_symbol*` / `key_normal*` / `key_pressed*` / `key_function*` / `key_func*` / `key_space*` / `key_bg*` / `key.png` / `key_n.png` / `key_p.png`；整块底色只认 `bg.png` / `bg_cands*` / `bg_cloud*` / `bg_composing*` / `cand_bg*` / `bg_header*` / `bg_smart*` / `bg_top*` / `toolbar_bg*` 这类"明确是背景"的名字 |
+| 新增 `IosSkin.isProtected()` | 名字含 `icon / logo / menu / setting / gear / flag / globe / lang / voice / mic / search / more / emoji / face / arrow / back / shift / delete / enter / switch / theme / preview / anim / loading / cursor / sogou …` 一律不碰。用户报的「设置齿轮」和「语言/地区旗帜」就在这里被挡住 |
+| 新增覆盖率兜底 `opaqueRatio()` | 真键帽的不透明像素几乎填满包围盒（≥85%）；图标只占一部分。名字万一没被黑名单拦住，就靠这一步保命 —— 宁可这张不改，也不能把图标涂了 |
+
+同时把 `looksLikeKey()` 标记为 `@Deprecated` 并写明"不要再接回来"，避免以后又把图标放进来。
+
+### 诊断行再补一格
+
+`皮肤=ios  ini=调用/改动  图=解码/重画  解析=n  缓存=n  保留=n  跳过图标=n`
+
+**跳过图标** = 因命中黑名单而被直接放过的图标数量。装上 alpha9 后这个数字应该 > 0
+（键盘上的齿轮、旗帜、搜索、语音等都在里面），而 **保留** 仍是"图里自带图标而保留的键帽"。
+
+### 构建与验证
+
+- `AppleInputForSogou_v2.0.0-alpha9.apk` 22,816,325 B，`versionCode 28` / `2.0.0-alpha9`；
+  证书 SHA-256 `4fbf65ed…c207`（同签名覆盖升级）。
+- `classes.dex` 136,516 B；`dexdump -f` 列出 **117 个类全部属 `Lcom/chiron/iosemoji/*`**，`de/robv` 定义 0 个。
+- dex 内已确认含 `opaqueRatio`、`isProtected`、`skinp`（新增诊断键）。
+
 ## v2.0.0-alpha8 — 「重启输入法」按钮 + 按搜狗原始资源与平台规范重画键帽
 
 ### 1. 新增：重启输入法按钮

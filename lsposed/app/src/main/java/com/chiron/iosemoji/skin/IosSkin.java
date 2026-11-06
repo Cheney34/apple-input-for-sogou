@@ -131,35 +131,65 @@ public final class IosSkin {
      * 该图片需要怎么改：{@link #KIND_FILL} 平铺底色 / {@link #KIND_KEY} 键帽 /
      * {@link #KIND_POPUP} 气泡 / {@link #KIND_NONE} 不动。
      *
-     * <p>只处理「键盘底 / 键帽 / 气泡 / 候选栏底 / 顶部条底」这几类最影响观感的图；
-     * 图标、动效帧、表情一律不动，避免把界面搞花。
+     * <p><b>alpha9 起改为严格白名单</b>：alpha8 用过「名字里带 key / 以 btn_ 开头就算键帽」的宽规则，
+     * 结果把**图标**也当键帽刷成了色块（设置齿轮、旗帜/语言图标这类）。图标是"透明底 + 单色字形"，
+     * 亮度很均匀，任何基于"看起来像键帽"的判断都救不了它 —— 只能靠名字排除 + 覆盖率兜底。
      */
     public static int kindOf(String fileName) {
         if (fileName == null) return KIND_NONE;
-        String n = baseName(fileName);
+        String n = baseName(fileName).toLowerCase();
         if (!n.endsWith(".png") && !n.endsWith(".webp")) return KIND_NONE;
+        if (isProtected(n)) return KIND_NONE;
 
         // 气泡（要先判，避免 popup bg 被当成普通底色）
         if (n.startsWith("popup") || n.startsWith("bg_popup")) return KIND_POPUP;
 
-        // 整块底色：键盘背景、候选栏底、拼音区底、顶部条底
+        // 整块底色：只认"明确的背景图"命名，避免误伤同名图标
         if (n.equals("bg.png") || n.equals("bg1.png")
-                || n.startsWith("bg_cands") || n.startsWith("bg_cloud") || n.startsWith("bg_composing")
-                || n.startsWith("cand_bg") || n.startsWith("bg_candidate")
-                || n.startsWith("bg_header") || n.startsWith("bg_smart") || n.startsWith("bg_top")
-                || n.startsWith("toolbar") || n.startsWith("smartbar")) {
+                || n.startsWith("bg_cands") || n.startsWith("bg_cloud")
+                || n.startsWith("bg_composing") || n.startsWith("bg_candidate")
+                || n.startsWith("cand_bg") || n.startsWith("bg_header")
+                || n.startsWith("bg_smart") || n.startsWith("bg_top")
+                || n.startsWith("toolbar_bg") || n.startsWith("smartbar_bg")
+                || n.startsWith("bg_toolbar")) {
             return KIND_FILL;
         }
 
-        // 键帽
-        if (n.startsWith("key_qwerty") || n.startsWith("key_us") || n.startsWith("key_number")
-                || n.startsWith("key_digit") || n.startsWith("key_symbol") || n.startsWith("key_char")
+        // 键帽：startsWith("key") 白名单（key_qwerty / key_us / key_n / key_function …）
+        if (n.startsWith("key_qwerty") || n.startsWith("key_us") || n.startsWith("key_uk")
+                || n.startsWith("key_number") || n.startsWith("key_digit")
+                || n.startsWith("key_char") || n.startsWith("key_symbol")
+                || n.startsWith("key_normal") || n.startsWith("key_pressed")
                 || n.startsWith("key_function") || n.startsWith("key_func")
-                || n.equals("key.png") || n.equals("key_n.png") || n.equals("key_p.png")
-                || n.equals("key_normal.png") || n.equals("key_pressed.png")) {
+                || n.startsWith("key_space") || n.startsWith("key_bg")
+                || n.equals("key.png") || n.equals("key_n.png") || n.equals("key_p.png")) {
             return KIND_KEY;
         }
         return KIND_NONE;
+    }
+
+    /**
+     * 图标 / 菜单 / 语言标志这类**不是键帽**的资源，一律不碰。
+     *
+     * <p>用户反馈的两处具体症状就落在这里：键盘上的「设置菜单」齿轮图标，
+     * 以及语言/地区那面「旗帜」图标 —— 它们都是透明底单色字形，
+     * 一旦被当成键帽平铺，就会变成一块纯色方块。
+     */
+    public static boolean isProtected(String fileName) {
+        if (fileName == null) return false;
+        String n = baseName(fileName).toLowerCase();
+        String[] bad = {
+                "icon", "logo", "menu", "setting", "gear", "flag", "globe", "lang",
+                "voice", "mic", "search", "more", "smile", "emoji", "face", "doutu",
+                "arrow", "back", "shift", "delete", "enter", "return", "space_icon",
+                "switch", "hide", "expand", "collapse", "tool", "theme", "skin",
+                "preview", "anim", "lottie", "loading", "progress", "cursor",
+                "sogou", "dot", "indicator", "badge", "tips", "guide"
+        };
+        for (String s : bad) {
+            if (n.contains(s)) return true;
+        }
+        return false;
     }
 
     private static String baseName(String path) {
@@ -170,18 +200,22 @@ public final class IosSkin {
     /**
      * 「名字没在清单里，但看着就是键帽」的兜底判断。
      *
-     * <p>搜狗不同皮肤版本（尤其第三方皮肤）给键帽图起的名字并不统一，例如
-     * {@code btn_key_normal.png} / {@code keyboard_key_alpha.png} / {@code skey_bg.png}。
-     * 这类图如果不兜底，就会「图片明明被读到了却一张都没改」——表现就是用户说的
-     * 「圆角一点没变」。所以这里放宽到「文件名里带 key / btn / skey」即视为键帽，
-     * 真正的改动效果仍由 {@link #synth} 按不透明包围盒重画，不会破坏原图尺寸。
+     * <p><b>alpha9 起已停用（不要再接回来）</b>：图标是「透明底 + 单色字形」，
+     * 文件名里同样会带 {@code key}／{@code btn_}（例如 {@code btn_key_menu.png}、
+     * {@code key_flag_lang.png}），按名字兜底会把这些图标判成键帽刷成纯色方块 ——
+     * 用户看到的「设置齿轮图标」「语言/地区旗帜图标显示错乱」就是这么来的。
+     * 现在只认 {@link #kindOf} 的严格白名单，宁可少改几张，也不能把图标涂了。
+     *
+     * @deprecated alpha9 起不参与任何判断，保留只为说明踩过的坑。
      */
+    @Deprecated
     public static boolean looksLikeKey(String fileName) {
         if (fileName == null) return false;
         String n = baseName(fileName).toLowerCase();
         if (!n.endsWith(".png") && !n.endsWith(".webp")) return false;
         if (n.startsWith("popup") || n.startsWith("bg_popup")) return false;
-        return n.contains("key") || n.startsWith("btn_") || n.startsWith("skey");
+        if (isProtected(n)) return false;
+        return n.startsWith("key_qwerty") || n.startsWith("key_us") || n.equals("key.png");
     }
 
     /** 该图片是否属于「功能键」配色（比字母键更灰 / 更淡）。 */
@@ -271,6 +305,13 @@ public final class IosSkin {
                 return null;
             }
 
+            // 覆盖率兜底（alpha9 新增）：真正的键帽图不透明像素几乎填满包围盒（一般 ≥85%）；
+            // 图标/字形（设置齿轮、语言与地区旗帜等）只占其中一部分。名字万一没被
+            // isProtected 拦住，就靠这一步保命 —— 宁可这张不改，也不能把图标涂成方块。
+            if (kind != KIND_FILL && opaqueRatio(src, box) < 0.85f) {
+                return null;
+            }
+
             // 留出键缝：搜狗原图的 bbox 常常把整格都占满，直接铺色会让相邻键粘在一起。
             // 这里按高度取 2% 作为内缩，宽度方向再收敛一点，iPad/iPhone 都有可见缝隙。
             int gap = Math.max(1, Math.round(box.height() * 0.02f));
@@ -301,6 +342,27 @@ public final class IosSkin {
         } catch (Throwable t) {
             return null;
         }
+    }
+
+    /**
+     * 不透明像素在包围盒内的占比（抽稀采样，步长随尺寸自适应）。
+     *
+     * <p>用途：区分「实心键帽」与「透明底图标/字形」。键帽接近 1.0，图标通常明显低于 0.85。
+     */
+    private static float opaqueRatio(Bitmap src, Rect box) {
+        int bw = box.width();
+        int bh = box.height();
+        if (bw <= 0 || bh <= 0) return 0f;
+        int step = Math.max(1, Math.min(bw, bh) / 64);
+        int total = 0;
+        int opaque = 0;
+        for (int y = box.top; y < box.bottom; y += step) {
+            for (int x = box.left; x < box.right; x += step) {
+                total++;
+                if (android.graphics.Color.alpha(src.getPixel(x, y)) > 8) opaque++;
+            }
+        }
+        return total == 0 ? 0f : (float) opaque / (float) total;
     }
 
     /**

@@ -49,6 +49,8 @@ public final class ThemeSkinHook {
     private static final AtomicInteger IMG_REDRAWN = new AtomicInteger();
     /** 图里自带图标/文字（⌫ ⏎ 等），按设计原样保留，不重绘。 */
     private static final AtomicInteger IMG_KEPT = new AtomicInteger();
+    /** 图标/菜单/语言标志这类资源，按名字直接跳过（alpha9 起不再碰它们）。 */
+    private static final AtomicInteger IMG_PROTECTED = new AtomicInteger();
     private static final AtomicInteger PARSER_CALLS = new AtomicInteger();
     private static final AtomicInteger IMG_BYPASS = new AtomicInteger();
     /** 见过但没认出来的皮肤图名（最多留 12 个，供用户贴日志定位）。 */
@@ -136,12 +138,13 @@ public final class ThemeSkinHook {
                             if (!isSkinPath(path)) return;
                             int kind = IosSkin.kindOf(path);
                             if (kind == IosSkin.KIND_NONE) {
-                                if (IosSkin.looksLikeKey(path)) {
-                                    kind = IosSkin.KIND_KEY;     // 图名不认识但看着就是键帽
-                                } else {
-                                    remember(path);
-                                    return;
-                                }
+                                // alpha9：删掉「看着像键帽就当键帽」的兜底。
+                                // 图标是「透明底 + 单色字形」，亮度分布很均匀，任何形状启发式
+                                // 都会把它判成键帽然后刷成一块纯色方块 —— 用户看到的
+                                // 「设置齿轮图标」「语言/地区旗帜图标」变方块就是这么来的。
+                                if (IosSkin.isProtected(path)) IMG_PROTECTED.incrementAndGet();
+                                else remember(path);
+                                return;
                             }
                             Context ctx = param.args[0] instanceof Context ? (Context) param.args[0] : null;
                             SkinPreset preset = preset(ctx, path);
@@ -262,6 +265,7 @@ public final class ThemeSkinHook {
                 + ",parser=" + PARSER_CALLS.get()
                 + ",cached=" + IMG_BYPASS.get()
                 + ",kept=" + IMG_KEPT.get()
+                + ",protected=" + IMG_PROTECTED.get()
                 + ",unmatched=" + UNMATCHED.size() + ")";
     }
 
@@ -278,7 +282,8 @@ public final class ThemeSkinHook {
                 + ";skimg=" + IMG_CALLS.get() + "/" + IMG_REDRAWN.get()
                 + ";skinq=" + PARSER_CALLS.get()
                 + ";skinc=" + IMG_BYPASS.get()
-                + ";skink=" + IMG_KEPT.get();
+                + ";skink=" + IMG_KEPT.get()
+                + ";skinp=" + IMG_PROTECTED.get();
     }
 
     /** 没识别出来的图名（诊断用，最多 12 个）。 */
