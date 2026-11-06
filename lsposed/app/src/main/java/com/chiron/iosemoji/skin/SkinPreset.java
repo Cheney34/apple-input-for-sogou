@@ -125,12 +125,24 @@ public final class SkinPreset {
     }
 
     private static SkinPreset iosDark() {
-        // alpha10：底色压到近黑（#0F0F10），键帽提到 #6E6E73 —— 原来 #1C1C1E / #636366
-        // 在深色屏幕上对比度只有 ≈3.2:1，键帽边界几乎看不出来。
+        // iPhone 17 / iOS 26 深色键盘的三原色由用户给定（实测取色）：
+        //   键盘底色 #2F2F2F、按键 #6D6D6F、文字 #FDFDFE
+        // 其余层级都由这三个值线性过渡出来，保证是同一套色阶而不是拼凑：
+        //   底 ──(45%)── 功能键 ──(60%)── 功能键按下 ────── 按键 ──(12% 提亮)── 按键按下
+        //   #2F2F2F      #4A4A4C        #56565A          #6D6D6F    #7B7B7E
+        // 文字只有一个值 #FDFDFE（按下不变），强调色保持 iOS 系统蓝 #0A84FF。
         return new SkinPreset(IOS,
-                0xFF0F0F10, 0xFF6E6E73, 0xFF87878C, 0xFF55555A, 0xFF6A6A6F,
-                0xFF6E6E73, 0xFF0F0F10, 0xFFFFFFFF, 0xFFFFFFFF, 0xFF3F9BFF,
-                0.12f, 0x40000000, 2f, 1f, true, false);
+                0xFF2F2F2F,   // 键盘底色（用户给定）
+                0xFF6D6D6F,   // 按键（用户给定）
+                0xFF7B7B7E,   // 按键按下：同色相提亮 ~12%
+                0xFF4A4A4C,   // 功能键：底色→按键 45%
+                0xFF56565A,   // 功能键按下：底色→按键 60%
+                0xFF6D6D6F,   // 长按气泡：与按键同色
+                0xFF2F2F2F,   // 候选栏 / 工具条：与键盘底同色（iOS 是同一条）
+                0xFFFDFDFE,   // 文字（用户给定）
+                0xFFFDFDFE,   // 文字按下
+                0xFF0A84FF,   // 强调色 iOS 系统蓝
+                0.12f, 0x33000000, 2f, 1f, true, false);
     }
 
     // ── 微信 ──────────────────────────────────────────────────────────────
