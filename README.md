@@ -11,6 +11,16 @@
 - 模块包名：`com.chiron.iosinput` · 版本：`2.0.0-alpha1`（versionCode 20）
 - 最低支持：Android 8.0（API 26）· 只在 LSPosed / EdXposed 等 Xposed 框架下工作
 
+## 下载哪个版本？
+
+| 版本 | 适合谁 | 有什么 |
+| --- | --- | --- |
+| [**v2.0.0-alpha1**](https://github.com/Cheney34/chiron-ios-input/releases/tag/v2.0.0-alpha1) | 想试 iOS 风格键盘的尝鲜用户 | 自绘 iOS 键盘（显示层替换）+ 旧版全部表情功能；**alpha，未上机验证** |
+| [**v1.8**](https://github.com/Cheney34/chiron-ios-input/releases/tag/v1.8) | 只想换 Apple 表情、要稳定 | 表情分组安装 / 隐藏内置分组 / 滑动切换 / Logo 触发词 |
+| [**v1.7**](https://github.com/Cheney34/chiron-ios-input/releases/tag/v1.7) | 老设备 / 旧搜狗版本 | 与 v1.8 同代但更早，兼容面略宽 |
+
+> 旧版（v1.7 / v1.8）包名是 `com.chiron.iosemoji`，新版是 `com.chiron.iosinput`，**可以共存安装，但 LSPosed 里只能启用一个**。
+
 ---
 
 ## 0. 当前状态（请先读这段）
