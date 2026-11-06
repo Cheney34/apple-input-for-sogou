@@ -2,6 +2,34 @@
 
 本项目遵循「分析 → 验证 → 实现」的推进方式：每个版本只写**有证据支撑**的东西。
 
+## v2.0.1-beta2 — 再加三套皮肤：幽墨 Material / 幽墨 Pixel / 樱花粉
+
+### 来源
+
+按用户给的三个项目参考（只取"看得见的视觉参数"，不搬代码）：
+
+| 参考项目 | 取到的东西 |
+| --- | --- |
+| `Sraw/youmo-ime`（幽默输入法，fcitx5-android） | `ThemePreset.kt` 里 `MaterialLight/Dark` 与 `PixelLight/Dark` 的**完整配色**（底色/键帽/功能键/候选文字/accent）—— 这两套是成熟的桌面级配色，直接按值搬进预设 |
+| `NEORUAA/WeType_UI_Enhanced`（微信输入法美化模块） | 其"示例主题色 `#FB7299` + iOS 27 设计稿"的思路 → 做一套**樱花粉**（粉白底 + 粉键帽 + `#FB7299` accent） |
+| `Hao-o0o/WeTypeHookR`（震动模块） | 无配色可参考（纯震动），跳过 |
+
+### 新增预设
+
+| id | 名称 | 浅色底 / 键 / 功能键 / accent | 深色底 / 键 / 功能键 / accent |
+| --- | --- | --- | --- |
+| `material` | 幽墨 Material | `#ECEFF1` / `#FBFBFC` / `#DFE2E4` / `#5CB5AB`（青绿） | `#263238` / `#404A50` / `#313C42` / `#6EACA8` |
+| `pixel` | 幽墨 Pixel | `#EEEEEE` / `#FFFFFF` / `#E1E1E1` / `#4285F4` | `#2D2D2D` / `#464646` / `#373737` / `#5E97F6` |
+| `sakura` | 樱花粉 | `#FFF1F5` / `#FFFFFF` / `#FFE0EA` / `#FB7299` | `#241A1E` / `#3A2C33` / `#2E2228` / `#FB7299` |
+
+`IDS` 顺序 = 设置页顺序：`ios → wechat → google → material → pixel → sakura → monet`。
+
+### 构建
+
+- `versionCode 33` / `2.0.1-beta2`，`AppleInputForSogou_v2.0.1-beta2.apk` 22,746,693 B；
+- `classes.dex` 142,544 B，非 `com.chiron.iosemoji` 类 **0** 个；
+- dex 内确认 `material` / `pixel` / `sakura` / `樱花粉` / `幽墨 Material` / `幽墨 Pixel`；
+- 证书 `CN=Android Debug` SHA-256 `4fbf65ed…c207`（覆盖升级 v1.7 / v1.8 / alpha2–alpha12 / beta1）。
 ## v2.0.1-beta1 — 微信皮肤重做 + 候选栏底色独立（barBg）
 
 ### 1. 微信皮肤"还是不像"的三个具体原因

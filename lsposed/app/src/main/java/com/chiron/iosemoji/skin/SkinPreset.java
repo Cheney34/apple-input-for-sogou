@@ -7,7 +7,7 @@ import android.os.Build;
 /**
  * 皮肤预设 —— 一套配色 + 一点"画法"参数。
  *
- * <p>四个预设：
+ * <p>预设（顺序见 {@link #IDS}）：
  * <ul>
  *   <li>{@code ios}：iOS 系统键盘（灰底 + 纯白键帽 + 功能键明显更灰 + 键帽底边分隔线）；</li>
  *   <li>{@code wechat}：微信输入法观感（米灰底 #EBEBEB + 纯白键帽 + 极淡功能键 + 微信绿）；
@@ -26,9 +26,15 @@ public final class SkinPreset {
     public static final String WECHAT = "wechat";
     public static final String GOOGLE = "google";
     public static final String MONET = "monet";
+    /** 幽墨（fcitx5-android Material 预设，青绿 accent #5CB5AB）。 */
+    public static final String MATERIAL = "material";
+    /** 幽墨 Pixel 预设（Google 蓝 #4285F4）。 */
+    public static final String PIXEL = "pixel";
+    /** 樱花粉（#FB7299，参考 WeType UI Enhanced 的示例主题色）。 */
+    public static final String SAKURA = "sakura";
 
     /** 顺序即设置页里的显示顺序。 */
-    public static final String[] IDS = {IOS, WECHAT, GOOGLE, MONET};
+    public static final String[] IDS = {IOS, WECHAT, GOOGLE, MATERIAL, PIXEL, SAKURA, MONET};
 
     public final String id;
 
@@ -85,6 +91,9 @@ public final class SkinPreset {
 
     public static String labelOf(String id) {
         if (WECHAT.equals(id)) return "微信";
+        if (MATERIAL.equals(id)) return "幽墨 Material";
+        if (PIXEL.equals(id)) return "幽墨 Pixel";
+        if (SAKURA.equals(id)) return "樱花粉";
         if (GOOGLE.equals(id)) return "Google";
         if (MONET.equals(id)) return "莫奈取色";
         return "iOS";
@@ -98,6 +107,9 @@ public final class SkinPreset {
      */
     public static SkinPreset of(String id, boolean dark, Context ctx) {
         if (WECHAT.equals(id)) return dark ? wechatDark() : wechatLight();
+        if (MATERIAL.equals(id)) return dark ? materialDark() : materialLight();
+        if (PIXEL.equals(id)) return dark ? pixelDark() : pixelLight();
+        if (SAKURA.equals(id)) return dark ? sakuraDark() : sakuraLight();
         if (GOOGLE.equals(id)) return dark ? googleDark() : googleLight();
         if (MONET.equals(id)) return dark ? monetDark(ctx) : monetLight(ctx);
         return dark ? iosDark() : iosLight();
@@ -208,6 +220,52 @@ public final class SkinPreset {
                 0.16f, 0x40000000, 2f, 1f, false, true);
     }
 
+    // ── 幽墨 Material（取自 Sraw/youmo-ime ThemePreset.MaterialLight / MaterialDark）──
+    // 灰蓝底 + 近白键帽 + 青绿 accent，是 fcitx5-android 的默认观感。
+    private static SkinPreset materialLight() {
+        return new SkinPreset(MATERIAL,
+                0xFFECEFF1, 0xFFFBFBFC, 0xFFEDEFF0, 0xFFDFE2E4, 0xFFD3D7D9,
+                0xFFD9DBDD, 0xFFE4E7E9, 0xFF37474F, 0xFF37474F, 0xFF5CB5AB,
+                0.12f, 0x1F000000, 2f, 1f, false, false);
+    }
+
+    private static SkinPreset materialDark() {
+        return new SkinPreset(MATERIAL,
+                0xFF263238, 0xFF404A50, 0xFF4A555C, 0xFF313C42, 0xFF3A464C,
+                0xFF3C474C, 0xFF21272B, 0xFFD9DBDC, 0xFFD9DBDC, 0xFF6EACA8,
+                0.12f, 0x33000000, 2f, 1f, false, false);
+    }
+
+    // ── 幽墨 Pixel（ThemePreset.PixelLight / PixelDark）────────────────────
+    // 纯白键帽 + 浅灰底，键帽边界几乎只能靠投影辨认，Google 蓝 accent。
+    private static SkinPreset pixelLight() {
+        return new SkinPreset(PIXEL,
+                0xFFEEEEEE, 0xFFFFFFFF, 0xFFF2F2F2, 0xFFE1E1E1, 0xFFD5D5D5,
+                0xFFEEEEEE, 0xFFEEEEEE, 0xFF212121, 0xFF212121, 0xFF4285F4,
+                0.14f, 0x1F000000, 2.5f, 1.5f, false, false);
+    }
+
+    private static SkinPreset pixelDark() {
+        return new SkinPreset(PIXEL,
+                0xFF2D2D2D, 0xFF464646, 0xFF505050, 0xFF373737, 0xFF414141,
+                0xFF3A3A3A, 0xFF373737, 0xFFFAFAFA, 0xFFFAFAFA, 0xFF5E97F6,
+                0.14f, 0x33000000, 2.5f, 1.5f, false, false);
+    }
+
+    // ── 樱花粉（accent #FB7299，参考 NEORUAA/WeType_UI_Enhanced 的示例主题色）──
+    private static SkinPreset sakuraLight() {
+        return new SkinPreset(SAKURA,
+                0xFFFFF1F5, 0xFFFFFFFF, 0xFFFDE7EF, 0xFFFFE0EA, 0xFFFFD0DF,
+                0xFFFFFFFF, 0xFFFFFFFF, 0xFF241A1E, 0xFF241A1E, 0xFFFB7299,
+                0.13f, 0x1A000000, 2f, 1f, false, false);
+    }
+
+    private static SkinPreset sakuraDark() {
+        return new SkinPreset(SAKURA,
+                0xFF241A1E, 0xFF3A2C33, 0xFF46353D, 0xFF2E2228, 0xFF3A2C33,
+                0xFF3A2C33, 0xFF2E2228, 0xFFF7EDF1, 0xFFF7EDF1, 0xFFFB7299,
+                0.13f, 0x40000000, 2f, 1f, false, false);
+    }
     // ── 工具 ──────────────────────────────────────────────────────────────
 
     /** 两色按比例混合（{@code t=0} 取 a，{@code t=1} 取 b），保留 a 的 alpha。 */

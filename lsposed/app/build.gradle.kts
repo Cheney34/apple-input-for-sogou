@@ -10,8 +10,8 @@ android {
         applicationId = "com.chiron.iosemoji"
         minSdk = 26
         targetSdk = 35
-        versionCode = 32
-        versionName = "2.0.1-beta1"
+        versionCode = 33
+        versionName = "2.0.1-beta2"
         // 只针对 arm64 的搜狗包做验证；模块本身是纯 Java，不引入 native
         resourceConfigurations += listOf("zh", "en")
     }

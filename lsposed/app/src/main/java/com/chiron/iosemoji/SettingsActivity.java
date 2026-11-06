@@ -46,7 +46,7 @@ public class SettingsActivity extends Activity {
     private TextView hooksText;
     private TextView effectiveText;
     private TextView requestHint;
-    /** 当前皮肤风格的值（iOS / 微信 / Google / 莫奈取色）。 */
+    /** 当前皮肤风格的值（见 {@link SkinPreset#IDS}）。 */
     private TextView presetValue;
 
     /** 广播回执窗口：500ms 内没回执就认为进程不在。 */
@@ -213,7 +213,7 @@ public class SettingsActivity extends Activity {
         String cur = prefs.getString(ModuleConfig.KEY_SKIN_PRESET, ModuleConfig.DEFAULT_SKIN_PRESET);
         LinearLayout row = IosRow.base(this);
         row.addView(IosRow.textColumn(this, "皮肤风格",
-                "iOS / 微信 / Google / 莫奈取色（莫奈要 Android 12+）"), IosRow.weight());
+                "iOS / 微信 / Google / 幽墨 Material / 幽墨 Pixel / 樱花粉 / 莫奈取色（莫奈要 Android 12+）"), IosRow.weight());
         presetValue = IosUi.text(this, SkinPreset.labelOf(cur), 15f, IosUi.label2(this), false);
         presetValue.setPadding(IosUi.dp(this, 12), 0, 0, 0);
         row.addView(presetValue);
