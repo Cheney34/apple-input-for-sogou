@@ -2,6 +2,41 @@
 
 本项目遵循「分析 → 验证 → 实现」的推进方式：每个版本只写**有证据支撑**的东西。
 
+## v2.0.0-alpha11 — 表情包补齐：分组页签图标 + Unicode 16 新表情
+
+### 用户反馈
+
+> 「为什么我的 emoji 安装之后不像 1.8 版本一样？有一些 emoji，它丢失了那个显示的。」
+
+### 根因（两处，都在 payload.zip 的生成环节，不是 hook 写错）
+
+把 alpha10 的 `payload.zip` 和 v1.8 的逐条比对，**v1.8 有 3868 个条目，alpha10 只有 3850，差 18 个**：
+
+1. **10 个分组页签图标整组缺失**（`smileys_emotion.png`、`people_body.png`、`component.png`、
+   `animals_nature.png`、`food_drink.png`、`travel_places.png`、`activities.png`、`objects.png`、
+   `symbols.png`、`flags.png`，84×84）。
+   `tools/make_payload.py` 的 `--icons` 默认指向 `<仓库>/icons`，而这一版仓库里**根本没有 `icons/` 目录**
+   → 脚本每次都打印「缺封面 icons/xx.png」，静默跳过。结果：表情装得上，但**底部页签图标是空白**，
+   看起来就像「表情丢了」。
+2. **8 个 Unicode 16 新表情没有位图**：素材用的是 emoji-datasource-apple **15.1.2**（3785 张），
+   该版本早于 Unicode 16，缺 `1FA89` 竖琴、`1FA8F` 铲子、`1FADF` 溅、`1FAE9` 眼下袋、
+   `1FAC6` 指纹、`1FABE` 无叶树、`1FADC` 根茎类、`1F1E8-1F1F6` 萨克岛旗 → 分组里那 8 格空白。
+
+### 修法
+
+- 新增 `icons/`（10 个 84×84 页签图标，随仓库提交，共约 24 KB）。
+- 素材升级到 **emoji-datasource-apple 16.0.0**（3793 张），8 个新表情全部有了。
+- 重新生成 `payload.zip`：**分组 10 个 / 表情 2067 条 / 写入 2067 张 / 缺 0 张**，
+  条目数 **3868** —— 与 v1.8 **逐条完全一致**（`missing_vs_v18 = 0`，`extra_vs_v18 = 0`）。
+- `README` §5.1 增加两条「别再踩」的说明与自检方法（条目数应为 3868）。
+
+### 构建与验证
+
+- `AppleInputForSogou_v2.0.0-alpha11.apk` 22,746,693 B，`versionCode 30` / `2.0.0-alpha11`；
+  证书 SHA-256 `4fbf65ed…c207`（同签名覆盖升级）。
+- APK 内 `assets/payload.zip` 22,613,259 B：3868 条目 / 3817 张表情 png / **10 张封面** / 10 份 `version.json`。
+- `classes.dex` 138,028 B，117 个类全部属 `com.chiron.iosemoji`，`de.robv` 定义 0。
+
 ## v2.0.0-alpha10 — 深色模式对比度 + 图标（含 Emoji 图标）不再被裁剪/涂色
 
 ### 用户反馈

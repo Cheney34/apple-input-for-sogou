@@ -15,7 +15,8 @@
 
 | 版本 | 适合谁 | 有什么 |
 | --- | --- | --- |
-| [**v2.0.0-alpha10**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha10) | 所有人（推荐） | 深色模式对比度实算修正（键帽/底色对比 1.4 → 2.3–5.0，文字按底色自动取黑/白）+ Emoji 图标与分组图标不再被裁剪或误涂 |
+| [**v2.0.0-alpha11**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha11) | 所有人（推荐） | 表情包补齐：10 个分组页签图标 + 8 个 Unicode 16 新表情（payload 3868 项，与 v1.8 完全一致） |
+| [**v2.0.0-alpha10**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha10) | 存档 | 深色模式对比度实算修正（键帽/底色对比 1.4 → 2.3–5.0，文字按底色自动取黑/白）+ Emoji 图标与分组图标不再被裁剪或误涂 |
 | [**v2.0.0-alpha9**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha9) | 存档 | 修掉「图标被当键帽涂成方块」（设置齿轮、语言/地区旗帜等）+ 键帽只认严格白名单 + 覆盖率兜底 |
 | [**v2.0.0-alpha8**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha8) | 存档 | 新增「**重启输入法**」按钮（一键重载皮肤）+ 键帽按搜狗原图圆角与平台规范重画（留键缝、图标不被刷掉）+ 皮肤诊断行 |
 | [**v2.0.0-alpha7**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha7) | 存档 | 存档 | 修掉「键帽漏改」的真 bug + **皮肤诊断行**（一眼看出改没改到）+ 四套皮肤 |
@@ -26,7 +27,7 @@
 | [**v1.8**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v1.8) | 只想换 Apple 表情、要稳定 | 表情分组安装 / 隐藏内置分组 / 滑动切换 / Logo 触发词 |
 | [**v1.7**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v1.7) | 老设备 / 旧搜狗版本 | 与 v1.8 同代但更早，兼容面略宽 |
 
-### 界面长什么样（alpha2 重写 / alpha3 让开关真正生效 / alpha4 换成改皮肤 / alpha5 重绘键帽 / alpha6 四套皮肤 / alpha7 可测量诊断 / alpha8 重启按钮+重画 / alpha9 图标不再被误涂 / alpha10 深色对比度实算）
+### 界面长什么样（alpha2 重写 / alpha3 让开关真正生效 / alpha4 换成改皮肤 / alpha5 重绘键帽 / alpha6 四套皮肤 / alpha7 可测量诊断 / alpha8 重启按钮+重画 / alpha9 图标不再被误涂 / alpha10 深色对比度实算 / alpha11 表情包补齐）
 
 两个界面都换成 iOS 风格、全部代码自绘，不依赖 androidx / Material，跟随系统深浅色：
 
@@ -237,12 +238,25 @@ Phase 3 会用空实现补上 `s0` 来消除这两点差异。
    见 [`tools/make_payload.py`](tools/make_payload.py)。**不含 payload.zip 也能编译**，
    只是「安装表情分组」功能会在运行时提示失败。
 
+> **两个坑（v2.0.0-alpha11 起已修，别再踩）**
+> 1. `--icons` 默认指向仓库里的 [`icons/`](icons) 目录（10 个分组页签图标，84×84）。
+>    这个目录**必须放进仓库**：它是 `info.xml` 里 `exppkg.type` 对应的封面图
+>    （`smileys_emotion.png` / `people_body.png` / … / `flags.png`）。
+>    少了它，表情面板底部页签图标就是空的 —— 位图能装上，但看起来「有表情丢了」。
+> 2. 素材版本要 **emoji-datasource-apple ≥ 16.0.0**（3793 张）。15.1.2 只有 3785 张，
+>    缺 8 个 Unicode 16 新表情（1FA89 竖琴 / 1FA8F 铲子 / 1FADF 溅 / 1FAE9 眼下袋 /
+>    1FAC6 指纹 / 1FABE 无叶树 / 1FADC 根茎类 / 1F1E8-1F1F6 萨克岛旗），
+>    这 8 个会在分组里显示成空白占位。
+>
+> 生成完自检：`payload.zip` 内应含 **3868** 个条目（3817 张表情 + 10 个封面 + 分组目录/info.xml/version.json）。
+
 ### 5.2 命令
 
 ```bash
 # 生成表情包资源（可选）
 python3 tools/make_payload.py --src /path/to/apple_emoji_png \
-        --out lsposed/app/src/main/assets/payload.zip
+        --out lsposed/app/src/main/assets/payload.zip \
+        --manifests manifests --icons icons --version 16.0
 
 # 构建
 cd lsposed
