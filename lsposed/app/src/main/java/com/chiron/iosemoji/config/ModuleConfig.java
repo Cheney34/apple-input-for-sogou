@@ -26,6 +26,9 @@ public final class ModuleConfig {
     public static final String PREFS_NAME = "chiron_config";
 
     public static final String KEY_MASTER = "master_enabled";
+    /** iOS 皮肤（改搜狗默认皮肤的 ini + 键帽配色）—— v2.0.0-alpha4 起的默认外观方案。 */
+    public static final String KEY_THEME_SKIN = "theme_skin_enabled";
+    /** 自绘键盘注入（**实验**，alpha3 及以前默认开，因为会把搜狗布局算好的命中区打乱，alpha4 起默认关）。 */
     public static final String KEY_KEYBOARD_REPLACE = "keyboard_replace_enabled";
     public static final String KEY_CANDIDATE_PROBE = "candidate_probe_enabled";
     public static final String KEY_EMOJI_GROUPS = "emoji_group_filter_enabled";
@@ -89,8 +92,18 @@ public final class ModuleConfig {
         return getBoolean(KEY_MASTER, true);
     }
 
+    /**
+     * 自绘键盘注入开关。**默认关闭**：自绘 View 会覆盖搜狗自己算好的布局与命中区，
+     * 实测会导致键盘样式/按键错乱（alpha3 的用户反馈）。默认外观改由
+     * {@link #themeSkinEnabled()} 的皮肤层方案提供。
+     */
     public static boolean keyboardReplaceEnabled() {
-        return masterEnabled() && getBoolean(KEY_KEYBOARD_REPLACE, true);
+        return masterEnabled() && getBoolean(KEY_KEYBOARD_REPLACE, false);
+    }
+
+    /** iOS 皮肤：改写搜狗默认皮肤的 ini 颜色 + 键帽/键盘底色重上色（不动布局）。默认开启。 */
+    public static boolean themeSkinEnabled() {
+        return masterEnabled() && getBoolean(KEY_THEME_SKIN, true);
     }
 
     public static boolean candidateProbeEnabled() {

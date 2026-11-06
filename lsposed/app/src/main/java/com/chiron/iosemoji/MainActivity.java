@@ -24,6 +24,7 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.chiron.iosemoji.config.ConfigMigration;
 import com.chiron.iosemoji.ui.IosRow;
 import com.chiron.iosemoji.ui.IosSwitch;
 import com.chiron.iosemoji.ui.IosUi;
@@ -140,6 +141,8 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
+        // alpha4 迁移：把老版本默认开启的「自绘键盘」关掉（会跟搜狗布局打架），并启用皮肤方案
+        ConfigMigration.runOnce(this);
 
         buildUi();
         loadSelection();

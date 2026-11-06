@@ -15,20 +15,22 @@
 
 | 版本 | 适合谁 | 有什么 |
 | --- | --- | --- |
-| [**v2.0.0-alpha3**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha3) | 想试 iOS 风格键盘的尝鲜用户 | 自绘 iOS 键盘（显示层替换）+ iOS 风格模块界面 + 旧版全部表情功能；**alpha3 修好了设置页假开关与「模块连不上输入法」** |
+| [**v2.0.0-alpha4**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha4) | 所有人（推荐） | **改搜狗自己的默认皮肤**做 iOS 外观（不再盖自绘键盘 → 不会样式错乱）+ iOS 风格模块界面 + 旧版全部表情功能 + 即时生效的开关 |
+| [**v2.0.0-alpha3**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha3) | 存档，不建议用 | 自绘键盘版：键盘样式会跟搜狗布局打架（卡 bug），仅作历史保留 |
 | [**v1.8**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v1.8) | 只想换 Apple 表情、要稳定 | 表情分组安装 / 隐藏内置分组 / 滑动切换 / Logo 触发词 |
 | [**v1.7**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v1.7) | 老设备 / 旧搜狗版本 | 与 v1.8 同代但更早，兼容面略宽 |
 
-### 界面长什么样（alpha2 重写 / alpha3 让开关真正生效）
+### 界面长什么样（alpha2 重写 / alpha3 让开关真正生效 / alpha4 换成改皮肤）
 
 两个界面都换成 iOS 风格、全部代码自绘，不依赖 androidx / Material，跟随系统深浅色：
 
 - **模块 App**：iOS 设置页 —— 大标题、分组卡片、圆角行、右侧 `✓`/`›`、自绘开关。
   分区：状态 / 表情分组（10 组逐行勾选 + 全选）/ 操作（安装选中、安装全部、还原）/ 模块（功能开关、隐藏桌面图标、重新检测）/ 运行日志。
   原 XML 布局（`activity_main.xml`、`item_group.xml`）已删除，不再需要 `GridLayout`。
-- **输入法键盘**：整套 iOS 键盘 —— 字母页 qwertyuiop / asdfghjkl / `⇧ zxcvbnm ⌫` / `123 · 地球 · 空格 · ⏎`，
-  符号页 `1234567890` / `-/:;()¥&@"` / `，。、？！…`；按下时键上方浮出放大气泡，`⌫` 长按连删。
-  高度按搜狗主题 `py_9.ini` 的 `H=0.591667` 锁定，避免改变输入法 insets（键盘不会被裁）。
+- **输入法键盘（alpha4 起）**：**不再盖一层自绘键盘**，而是改搜狗自己默认皮肤的颜色与键帽配色 ——
+  强调色换成 iOS 蓝、候选栏去掉底色块、键帽/键盘底色按 iOS 灰白重上色。
+  键盘布局、按键命中、候选栏高度、输入法 insets 全部还是搜狗自己算的，所以**不会再出现"键盘样式卡 bug"**。
+  （想试原来的自绘键盘：设置页「外观 → 自绘键盘（实验）」，默认关闭。）
 > v2.0 沿用旧版包名 `com.chiron.iosemoji`、并沿用同一张调试证书（`CN=Android Debug`），所以是**同包名覆盖升级**：装上 v2.0 会直接替换 v1.7 / v1.8，LSPosed 里原有的模块条目和作用域照旧生效，不需要重新配置。想回旧版，卸载后装 v1.7 / v1.8 即可。
 
 ---
@@ -41,8 +43,8 @@
 | 四条核心功能的可行性结论 | ✅ 完成 —— [`docs/FEASIBILITY.md`](docs/FEASIBILITY.md) |
 | hook 点清单（30 个，含 DEX 验证描述符） | ✅ 完成 —— [`docs/HOOK_POINTS.md`](docs/HOOK_POINTS.md) |
 | MVP 方案与测试用例 | ✅ 完成 —— [`docs/MVP_PROPOSAL.md`](docs/MVP_PROPOSAL.md) |
-| 模块源码（键盘显示层替换 + 诊断 + 旧表情功能） | ⚠️ 已写完，**javac + aapt2 + d8 + apksigner 全链路真实构建出 APK**，未真机验证 |
-| 可安装 APK | ✅ 已构建：`AppleInputForSogou_v2.0.0-alpha2.apk`（21.74 MB，见 Releases） |
+| 模块源码（改搜狗默认皮肤 + 可选自绘键盘 + 诊断 + 旧表情功能） | ⚠️ 已写完，**javac + aapt2 + d8 + apksigner 全链路真实构建出 APK**，未真机验证 |
+| 可安装 APK | ✅ 已构建：`AppleInputForSogou_v2.0.0-alpha4.apk`（21.75 MB，见 Releases） |
 | 候选栏 iOS 化 / 长按符号 / 表情面板 iOS 化 | ⏳ 未实现（Phase 4–6） |
 
 **关于「验证」的说明**：本仓库的开发环境**没有 Android SDK / Gradle / 一台真机**，
@@ -87,10 +89,41 @@ InputMethodService.setInputView(…)
    把任意 `View` 放进 z=3 的槽位；键盘真正的实现是一个「虚拟组件树」
    （`RootComponentView` + 组件自绘），**没有 per-key View**。
 
-所以「换皮肤」最省事、最不容易炸的做法是：
-**把 z=3 槽位里的那个 View 换成我们自己的 View**，其余（候选、工具条、背景、insets）全部保持搜狗原样。
+### 1.1 首选路线（alpha4 起）：改搜狗自己的默认皮肤
 
-v2.0.0-alpha2 实现的正是这一步：
+alpha2/alpha3 走的是「把 z=3 槽位里的 View 换成我们的」，结果键盘样式会卡 bug ——
+因为搜狗键盘是**虚拟组件树自绘**（`RootComponentView` + 组件，没有 per-key View），
+命中测试、候选高度、insets、皮肤资源索引全都建立在「这是它自己的视图」这个前提上。
+
+所以 alpha4 换成顺着它自己的皮肤引擎改。搜狗默认皮肤是这样跑的：
+
+```
+assets/theme/thememanifest.ini             主题清单（THEME_SET=theme_default,…）
+└─ assets/theme/theme_default/theme.ini    [ThemeInfo] / [Advance]（键盘类型 → 布局 ini）
+   ├─ 1080/layout/colors.ini               颜色表（强调色、文字色、气泡色…）
+   ├─ 1080/layout/images_config.ini        位图九宫格切边（IMAGE=key.png,28,30,38,40 TYPE=1）
+   ├─ 1080/layout/image_list.ini           逻辑名 → png（NORMAL=key_qwerty_png）
+   ├─ 1080/port/py_9.ini                   几何：W / H / PADDINGS / ROWS / H_OFFSET
+   └─ 1080/res/{black,white}/*.png         键帽、键盘底、气泡等位图
+```
+
+所有 ini 都走同一个入口，所有位图也都走同一个入口 —— 只要卡住这两个出口，就能整套换皮：
+
+| Hook | 目标（DEX 已验证的描述符） | 做什么 |
+| --- | --- | --- |
+| `H40` | `com.sogou.theme.parse.utils.b#a(java.lang.String)` | 拿解析后的「段→键→值」表，只改颜色键：强调色 → iOS 蓝（`#007AFF`/深色 `#0A84FF`）、候选栏/云候选底色 → 透明（去掉灰底块）、功能键文字色 → 黑白 |
+| `H41` | `com.sogou.theme.common.j#f(Context,String,boolean,boolean)` | 按文件名给位图重上色：键帽/键盘底/功能键/气泡各用 iOS 灰白色板；做法是新建同尺寸位图铺目标色，再用原图 alpha 做 `DST_IN` 遮罩 → **形状与尺寸不变** |
+
+两条铁律：
+
+1. **只改颜色，绝不动 `W`/`H`/`PADDINGS`/`ROWS`/`H_OFFSET`** —— 几何一动就会连锁影响 insets 与命中区，这正是之前「样式卡 bug」的根源。
+2. 位图只重上色、不改尺寸，所以 `images_config.ini` 的九宫格切边参数继续有效，圆角不会被拉花。
+
+关掉「iOS 皮肤」开关，下一次读皮肤就回到搜狗原样（`H40`/`H41` 每次调用都判开关，不是一次性替换）。
+
+### 1.2 实验路线：自绘键盘（默认关，不推荐）
+
+如果就想看「完全自绘的 iOS 键盘长什么样」，可以用下面这组 hook（`keyboard_replace_enabled`，默认关闭）：
 
 | Hook | 目标 | 说明 |
 | --- | --- | --- |
@@ -99,7 +132,7 @@ v2.0.0-alpha2 实现的正是这一步：
 | `H04` | `com.sohu.inputmethod.sogou.r2#Z7 / #N7` 等 | 只读诊断：打印候选列表推送情况 |
 | `H09` | `com.sogou.core.ui.a#u(View)` | 预留（默认不启用） |
 
-键盘上的按键**不自己造字**，而是回到搜狗自己的输入通道：
+自绘键盘上的按键**不自己造字**，而是回到搜狗自己的输入通道：
 
 ```
 按键 → TextInjector
@@ -109,7 +142,8 @@ v2.0.0-alpha2 实现的正是这一步：
 ```
 
 也就是说：**英文/数字/空格/退格/回车走的是搜狗自己的 `InputLogic`**，
-中文联想、词库、云输入这些一概没动（中文拼音输入在 Phase 3 接入搜狗候选后开放）。
+中文联想、词库、云输入这些一概没动。但如上所述，自绘键盘会和搜狗自己的布局逻辑打架，
+所以它只作为实验开关存在，默认不开。
 
 ---
 
@@ -122,7 +156,7 @@ v2.0.0-alpha2 实现的正是这一步：
    如果你装的是通用版，勾 `com.sohu.inputmethod.sogou`。
 5. 强行停止一次搜狗输入法（或切换一次输入法），让新进程加载 hook。
 6. 打开任意输入框，检查：
-   - 键盘是否变成 Apple 样式；
+   - 键盘配色是否变成 Apple 风格（iOS 蓝强调色、灰白键帽、候选栏无灰底块）；
    - LSPosed 日志里是否有 `AppleInputForSogou` 开头的输出。
 
 > 出问题想立刻恢复：在 LSPosed 里关掉模块 → 强行停止搜狗 → 切回输入法，即回到原版。
@@ -139,18 +173,19 @@ v2.0.0-alpha2 实现的正是这一步：
 1. 拨开关 → 写入模块的 `SharedPreferences`（`chiron_config`，冷启动用）；
 2. 同时用**有序广播**（`com.chiron.iosemoji.action.CFG`）把全部键值下发到已运行的搜狗进程，
    hook 侧存进内存覆盖层并立刻按新值工作；
-3. 搜狗进程回执一份状态串 → 页面弹出「已生效：iOS 键盘 → 开」；
+3. 搜狗进程回执一份状态串 → 页面弹出「已生效：iOS 皮肤 → 开」；
    若进程没起来，则提示「已保存：…（搜狗进程未运行，切换输入法后生效）」，并在你下次切换输入法时生效；
 4. 冷启动走只读 `ContentProvider`（`content://com.chiron.iosemoji.config/config`）读一次，
    不依赖跨进程 prefs 的可读性。
 
 页面顶部「连接状态」卡会显示：搜狗进程是否在线、已装 hook 列表、**进程内真正生效的配置值**、搜狗版本。
-所有开关都是**双向可逆**的：关掉立刻退回搜狗原行为（例如关掉「iOS 键盘」会把已注入的键盘摘走）。
+所有开关都是**双向可逆**的：关掉立刻退回搜狗原行为（例如关掉「iOS 皮肤」，下一次读皮肤就是搜狗原配色；关掉自绘键盘会把已注入的键盘摘走）。
 
 | 键 | 默认 | 作用 |
 | --- | --- | --- |
 | `master_enabled` | 开 | 总开关，关掉后模块在搜狗进程内不做任何事 |
-| `keyboard_replace_enabled` | 开 | iOS 键盘显示层替换（H01/H02） |
+| `theme_skin_enabled` | 开 | **改搜狗默认皮肤**（H40 改 ini 颜色 + H41 给位图重上色）—— iOS 外观的主路径 |
+| `keyboard_replace_enabled` | 关 | 自绘键盘替换显示层（H01/H02），实验性，会和搜狗布局打架 |
 | `emoji_group_filter_enabled` | 开 | 隐藏搜狗自带「组合」「拼装」分组 |
 | `emoji_swipe_enabled` | 开 | 表情面板左右滑动切分组 |
 | `logo_trigger_enabled` | 关 | 触发词替换为 Apple  Logo |

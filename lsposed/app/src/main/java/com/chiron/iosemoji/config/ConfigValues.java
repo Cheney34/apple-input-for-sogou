@@ -11,25 +11,27 @@ public final class ConfigValues {
     /** 顺序即设置页显示顺序，也是广播下发顺序。 */
     public static final String[] KEYS = {
             ModuleConfig.KEY_MASTER,
-            ModuleConfig.KEY_KEYBOARD_REPLACE,
-            ModuleConfig.KEY_CANDIDATE_PROBE,
+            ModuleConfig.KEY_THEME_SKIN,
             ModuleConfig.KEY_EMOJI_GROUPS,
             ModuleConfig.KEY_EMOJI_SWIPE,
             ModuleConfig.KEY_LOGO_TRIGGER,
+            ModuleConfig.KEY_KEYBOARD_REPLACE,
+            ModuleConfig.KEY_CANDIDATE_PROBE,
             ModuleConfig.KEY_DIAGNOSTICS,
     };
 
     private ConfigValues() {
     }
 
-    /** 默认值：表情相关保持 v1.8 的既有行为（开），诊断与探针默认关。 */
+    /** 默认值：皮肤与表情相关默认开（v1.8 既有行为保留）；自绘键盘/探针/诊断默认关。 */
     public static boolean defaultValue(String key) {
         switch (key) {
             case ModuleConfig.KEY_MASTER:
-            case ModuleConfig.KEY_KEYBOARD_REPLACE:
+            case ModuleConfig.KEY_THEME_SKIN:
             case ModuleConfig.KEY_EMOJI_GROUPS:
             case ModuleConfig.KEY_EMOJI_SWIPE:
                 return true;
+            case ModuleConfig.KEY_KEYBOARD_REPLACE:
             case ModuleConfig.KEY_CANDIDATE_PROBE:
             case ModuleConfig.KEY_LOGO_TRIGGER:
             case ModuleConfig.KEY_DIAGNOSTICS:
@@ -44,8 +46,10 @@ public final class ConfigValues {
         switch (key) {
             case ModuleConfig.KEY_MASTER:
                 return "总开关";
+            case ModuleConfig.KEY_THEME_SKIN:
+                return "iOS 皮肤";
             case ModuleConfig.KEY_KEYBOARD_REPLACE:
-                return "iOS 键盘";
+                return "自绘键盘（实验）";
             case ModuleConfig.KEY_CANDIDATE_PROBE:
                 return "候选探针";
             case ModuleConfig.KEY_EMOJI_GROUPS:

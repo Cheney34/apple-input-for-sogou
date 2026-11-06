@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chiron.iosemoji.compat.VersionProfile;
+import com.chiron.iosemoji.config.ConfigMigration;
 import com.chiron.iosemoji.config.ConfigValues;
 import com.chiron.iosemoji.config.ModuleConfig;
 import com.chiron.iosemoji.ui.IosRow;
@@ -51,6 +52,8 @@ public class SettingsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = getSharedPreferences(ModuleConfig.PREFS_NAME, MODE_PRIVATE);
+        // alpha4 迁移：关掉会与搜狗布局冲突的自绘键盘、启用皮肤方案（只跑一次）
+        ConfigMigration.runOnce(this);
 
         ScrollView scroll = new ScrollView(this);
         scroll.setFillViewport(true);
@@ -143,11 +146,19 @@ public class SettingsActivity extends Activity {
         LinearLayout core = IosUi.card(this);
         root.addView(core, IosUi.cardParams(this));
         addSwitch(core, ModuleConfig.KEY_MASTER, "总开关",
-                "关闭后本模块在搜狗进程内不做任何事（表情、键盘、诊断全部停用）。", true);
-        addSwitch(core, ModuleConfig.KEY_KEYBOARD_REPLACE, "iOS 键盘（实验）",
-                "用模块自绘的 iOS 风格键盘顶替搜狗键盘的显示层；输入、联想、词库仍由搜狗引擎完成。", true);
+                "关闭后本模块在搜狗进程内不做任何事（表情、皮肤、诊断全部停用）。", true);
         addSwitch(core, ModuleConfig.KEY_CANDIDATE_PROBE, "候选数据探针",
                 "只读打印候选列表推送情况，日志量大，仅在排查问题时打开。", false);
+
+        root.addView(IosUi.sectionHeader(this, "外观"));
+        LinearLayout look = IosUi.card(this);
+        root.addView(look, IosUi.cardParams(this));
+        addSwitch(look, ModuleConfig.KEY_THEME_SKIN, "iOS 皮肤（推荐）",
+                "改搜狗**自己的默认皮肤**：强调色改 iOS 蓝、去掉候选底色块、键帽与键盘底色按 iOS 灰白重上色。"
+                        + "布局、按键命中、候选栏高度全部沿用搜狗原样，所以不会错位。", true);
+        addSwitch(look, ModuleConfig.KEY_KEYBOARD_REPLACE, "自绘键盘（实验）",
+                "用模块自绘的键盘盖在搜狗键盘上。可能与搜狗自己算的布局/命中区冲突（样式错乱），"
+                        + "一般不需要打开。", false);
 
         root.addView(IosUi.sectionHeader(this, "表情"));
         LinearLayout emoji = IosUi.card(this);

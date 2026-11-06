@@ -15,6 +15,7 @@ import com.chiron.iosemoji.hook.ConfigBridge;
 import com.chiron.iosemoji.hook.HookRegistry;
 import com.chiron.iosemoji.hook.KeyboardRootHook;
 import com.chiron.iosemoji.hook.SetKeyboardViewHook;
+import com.chiron.iosemoji.hook.ThemeSkinHook;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -48,6 +49,9 @@ public class HookEntry implements IXposedHookLoadPackage {
 
         HookRegistry.log("load " + lpparam.packageName + " process=" + lpparam.processName);
         ModuleConfig.reload();
+
+        // ---- 外观：改搜狗默认皮肤（ini + 键帽配色），不依赖 Context，先挂上 ----
+        installThemeHooks(lpparam.classLoader);
 
         // ---- 类级 hook（不需要 Context）----
         if (VersionProfile.allowUiReplacement() || HookState.versionName().equals("unknown")) {
@@ -136,6 +140,7 @@ public class HookEntry implements IXposedHookLoadPackage {
                     @Override
                     public void run() {
                         // 开关变化后补装/重试：各 install() 自身幂等
+                        installThemeHooks(ctx.getClassLoader());
                         tryInstallKeyboardHooks(ctx.getClassLoader());
                         installLegacyHooks(ctx.getClassLoader());
                     }
@@ -149,6 +154,7 @@ public class HookEntry implements IXposedHookLoadPackage {
                     + " | cfg " + ConfigBridge.summary());
 
             // 版本已确定，重新尝试键盘 hook（Registry 幂等，失败过的会重试）
+            installThemeHooks(ctx.getClassLoader());
             tryInstallKeyboardHooks(ctx.getClassLoader());
 
             installLegacyHooks(ctx.getClassLoader());
@@ -170,6 +176,19 @@ public class HookEntry implements IXposedHookLoadPackage {
             }
         } catch (Throwable t) {
             HookRegistry.log("attach failed");
+            HookRegistry.log(t);
+        }
+    }
+
+    /**
+     * 皮肤 hook **总是安装**（开关在回调里实时判断）——它只改颜色/配色，
+     * 不动布局，是 alpha4 起默认的外观方案（取代自绘键盘注入）。
+     */
+    private static void installThemeHooks(ClassLoader cl) {
+        try {
+            ThemeSkinHook.install(cl);
+        } catch (Throwable t) {
+            HookRegistry.log("theme skin hook failed");
             HookRegistry.log(t);
         }
     }

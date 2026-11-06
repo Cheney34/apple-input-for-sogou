@@ -2,6 +2,69 @@
 
 本项目遵循「分析 → 验证 → 实现」的推进方式：每个版本只写**有证据支撑**的东西。
 
+## v2.0.0-alpha4 — 换方向：不再盖自绘键盘，改成改搜狗自己的默认皮肤
+
+### 0. 为什么要换方向
+
+- **现象**：装上 alpha2 / alpha3 后，键盘样式会「卡 bug」（键位、底色、候选区错乱）。
+- **原因**：搜狗键盘**不是普通 View 树**，而是一棵虚拟组件树自绘
+  （`imskit…component.RootComponentView` + 组件，**没有 per-key View**）。
+  我们塞进 z=3 槽位的那个 View 只是个外壳：布局、命中测试、候选高度、insets、
+  皮肤资源索引全都还是搜狗按自己那套算 —— 两套逻辑必然打架。
+- **结论**：不再抢着画键盘，改为**顺着搜狗自己的皮肤引擎改外观**。
+  搜狗自己画的键盘，天然不会有布局问题。
+
+### 1. 搜狗皮肤是怎么跑的（取证）
+
+```
+assets/theme/thememanifest.ini             主题清单
+└─ assets/theme/theme_default/theme.ini    [ThemeInfo] / [Advance]（键盘类型 → 布局 ini）
+   ├─ 1080/layout/colors.ini               颜色表
+   ├─ 1080/layout/images_config.ini        位图九宫格切边
+   ├─ 1080/layout/image_list.ini           逻辑名 → png
+   ├─ 1080/port/py_9.ini                   几何：W / H / PADDINGS / ROWS / H_OFFSET
+   └─ 1080/res/{black,white}/*.png         键帽、键盘底、气泡等位图
+```
+
+关键发现：**ini 与位图各只有一个统一出口**，卡住这两个出口就能整套换皮：
+
+- ini：`com.sogou.theme.parse.utils.b#a(java.lang.String)` [classes2] —— `assets/` 前缀走
+  `AssetManager`，否则走文件；解析结果是可变的「段 → 键 → 值」表（`parse.entity.b#b()`）。
+- 位图：`com.sogou.theme.common.j#f(Context,String,boolean,boolean)` [classes2] —— 资产走
+  `getAssets().open()` + `BitmapFactory.decodeStream`，带缓存。
+
+### 2. 新增两个 hook
+
+| Hook | 目标（DEX 已验证） | 作用 |
+| --- | --- | --- |
+| `H40_theme_ini` | `com.sogou.theme.parse.utils.b#a(java.lang.String)` | 就地改颜色键：强调色 → iOS 蓝（`#007AFF` / 深色 `#0A84FF`）、候选栏与云候选底色 → 透明、功能键文字色 → 黑白 |
+| `H41_theme_bitmap` | `com.sogou.theme.common.j#f(Context,String,boolean,boolean)` | 按文件名给位图重上色：键盘底 / 字母键 / 功能键 / 气泡各用 iOS 灰白色板 |
+
+### 3. 只改颜色，绝不动几何
+
+- **不动 `W`/`H`/`PADDINGS`/`ROWS`/`H_OFFSET`**：几何一变就连锁影响 insets 与命中区，
+  这正是之前「样式卡 bug」的根源。
+- 位图**只重上色、不改尺寸**：新建同尺寸位图铺目标色，再用原图 alpha 做
+  `PorterDuff.Mode.DST_IN` 遮罩 → 形状与尺寸完全保持，`images_config.ini` 的九宫格切边参数继续有效。
+- 两个 hook 都每次调用判开关：关掉「iOS 皮肤」，下一次读皮肤即回到搜狗原配色（不是一次性替换）。
+
+### 4. 自绘键盘降级为实验开关
+
+- `theme_skin_enabled`（**新，默认开**）：iOS 皮肤 —— 外观主路径。
+- `keyboard_replace_enabled`（**默认改为关**）：自绘键盘（H01/H02），实验性。
+- 新增 `config/ConfigMigration`：升级到 alpha4 时一次性把老配置里的
+  `keyboard_replace_enabled=true` 关掉、`theme_skin_enabled` 置 true（只跑一次，标记 `migrated_v23_skin`）。
+
+### 5. 构建与验证
+
+- 产物：`AppleInputForSogou_v2.0.0-alpha4.apk` = 22,808,133 B；versionCode 23 / versionName 2.0.0-alpha4；
+  `application-label='Apple Input for Sogou'`；证书 `CN=Android Debug`
+  SHA-256 `4fbf65ed205c4a25bb592673714533c5effbcd234b9c08ed1be20ad7bf53c207`（与 v1.7 / v1.8 一致 ⇒ 同包名覆盖升级）。
+- `dexdump -f` 复验：定义类 101 个，**全部 `Lcom/chiron/iosemoji`**，`de/robv` 定义 **0** 个
+  （alpha3 修的「桩类污染 dex」没有复发）；dex 字符串里可查到
+  `hook/ThemeSkinHook`、`skin/IosSkin`、`config/ConfigMigration`、`H40_theme_ini`、`H41_theme_bitmap`、`theme_skin_enabled`。
+- 仍未上机验证：皮肤是否真的生效、位图重上色是否覆盖到你用的那套皮肤、开关即时可逆。
+
 ## v2.0.0-alpha3 — 设置页真的能用了 + 修掉导致「连不上输入法」的构建缺陷
 
 这一版只修两个问题，都是实测可验证的真 bug。
