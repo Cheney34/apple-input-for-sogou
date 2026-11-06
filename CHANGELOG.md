@@ -12,6 +12,19 @@
 - ⚠️ 未做 Gradle 构建（环境无 Android SDK），未在真机/模拟器运行，
   hook 描述符是否在该版本搜狗中真的命中仍需上机按 `docs/MVP_PROPOSAL.md` TC-01~TC-10 验证。
 
+### 构建产物（本机实测）
+
+- 环境无 Android SDK / Gradle，改用 `android.jar`(API 35) + `build-tools 35` 手工链路
+  `aapt2 compile/link → javac → d8 → zip → zipalign → apksigner` **真实出包**：
+  `ChironIOSInput_v2.0.0-alpha1.apk`，21.74 MB。
+- `aapt2 dump badging` 与 `apksigner verify --print-certs` 均通过
+  （`CN=Android Debug`，证书 SHA-256 `4fbf65ed205c4a25bb592673714533c5effbcd234b9c08ed1be20ad7bf53c207`）。
+- **首次内置 `assets/payload.zip`**（21.63 MB）：由 `tools/make_payload.py` 从
+  `emoji-datasource-apple@15.1.2` 的 64×64 位图生成，10 个分组清单共 2067 项，成功写入 2059 张，
+  缺 8 张（`1FA89/1FA8F/1FADF/1FAE9/1FAC6/1FABE/1FADC/1F1E8_1F1F6` —— 该素材版本尚无这几枚新 emoji，
+  对应槽位在面板里显示为空白占位）。因此 v2.0.0-alpha1 的「安装表情分组」功能开箱可用。
+  按版权要求，位图**不提交进 git**，只作为 Release 资产分发。
+
 ### 修复
 
 - 从父仓库搬来的 6 个 Java 文件带 UTF-8 BOM（`\ufeff`），会让 `javac`/Gradle 直接编译失败，

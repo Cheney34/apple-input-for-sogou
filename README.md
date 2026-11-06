@@ -21,16 +21,19 @@
 | 四条核心功能的可行性结论 | ✅ 完成 —— [`docs/FEASIBILITY.md`](docs/FEASIBILITY.md) |
 | hook 点清单（30 个，含 DEX 验证描述符） | ✅ 完成 —— [`docs/HOOK_POINTS.md`](docs/HOOK_POINTS.md) |
 | MVP 方案与测试用例 | ✅ 完成 —— [`docs/MVP_PROPOSAL.md`](docs/MVP_PROPOSAL.md) |
-| 模块源码（键盘显示层替换 + 诊断 + 旧表情功能） | ⚠️ 已写完，**javac 冒烟编译通过**（见下），未 Gradle 构建、未真机验证 |
+| 模块源码（键盘显示层替换 + 诊断 + 旧表情功能） | ⚠️ 已写完，**javac + aapt2 + d8 + apksigner 全链路真实构建出 APK**，未真机验证 |
+| 可安装 APK | ✅ 已构建：`ChironIOSInput_v2.0.0-alpha1.apk`（21.74 MB，见 Releases） |
 | 候选栏 iOS 化 / 长按符号 / 表情面板 iOS 化 | ⏳ 未实现（Phase 4–6） |
 
 **关于「验证」的说明**：本仓库的开发环境**没有 Android SDK / Gradle / 一台真机**，
-代码是「按 DEX 验证过的描述符逐行写出来的」。已做过的检查只有一项：
+代码是「按 DEX 验证过的描述符逐行写出来的」。已做过的检查：
 
-- **javac 冒烟编译**：以 `android.jar`(API 35) + Xposed API 桩 + `R` 桩为 classpath，
-  用 `javac --release 17` 编译 `lsposed/app/src/main/java` 下全部源码 → **0 error / 0 warning**
-  （`-Xlint:all` 下仅 1 条无害的 `this-escape` 提示）。
-  这能证明：语法、类型、Android API 用法、符号引用彼此自洽；
+- **全链路真实构建**：下载 `platform-35` 的 `android.jar` 与 `build-tools 35` 后，
+  用 `aapt2 compile/link → javac → d8 → zip → zipalign → apksigner`（即父仓库 `build.sh` 的思路）
+  真的产出了签名 APK；`aapt2 dump badging` 与 `apksigner verify --print-certs` 均通过。
+- **javac 严格编译**：`-Xlint:all --release 17` 下全部源码 **0 error**，
+  仅 1 条无害的 `this-escape` 提示。
+- 这能证明：语法、类型、Android API 用法、资源引用、打包签名链路彼此自洽；
   **不能**证明：LSPosed 运行时行为正确、hook 描述符在该版本搜狗里真的命中。
   后者必须上机验证（见 [`docs/MVP_PROPOSAL.md`](docs/MVP_PROPOSAL.md) 的 TC-01 ~ TC-10）。
 所有类名、方法签名、参数字典均可在 `docs/` 的证据表中查到出处（文件 + 行号），
@@ -172,7 +175,44 @@ cd lsposed
 > 未在本机验证：作者环境没有 Android SDK，`gradlew` 也没有随仓库提交 wrapper jar。
 > 首次用 Android Studio 打开工程时会自动补齐 wrapper 与 SDK 组件。
 
-### 5.3 无 SDK 环境下的冒烟检查（可选）
+### 5.3 无 Gradle / 无 Android Studio 的真实构建（✅ 已在本机跑通，即 Release 里的 APK）
+
+不装 Android Studio 也能出包，只要 `android.jar` 与 `build-tools`（`aapt2` / `d8` / `zipalign` / `apksigner`）：
+
+```powershell
+# 0) 取工具（一次性）
+#    https://dl.google.com/android/repository/platform-35_r01.zip        -> android-35/android.jar
+#    https://dl.google.com/android/repository/build-tools_r35_windows.zip -> build-tools/android-15/*
+
+# 1) 资源
+aapt2 compile --dir lsposed/app/src/main/res -o build/res.zip
+aapt2 link -o build/base.apk -I android.jar `
+    --manifest lsposed/app/src/main/AndroidManifest.xml -R build/res.zip `
+    -A lsposed/app/src/main/assets --java build/gen `
+    --min-sdk-version 26 --target-sdk-version 35 `
+    --version-code 20 --version-name 2.0.0-alpha1 --auto-add-overlay
+
+# 2) 编译（模块源码 + build/gen/**/R.java + Xposed API 桩）
+javac -encoding UTF-8 --release 17 -classpath android.jar -d build/classes @sources.txt
+
+# 3) dex
+d8 --release --lib android.jar --min-api 26 --output build/dex build/classes.jar
+
+# 4) 把 classes.dex 塞回 base.apk（先删同名 entry），再对齐、签名
+zipalign -f -p 4 build/unaligned.apk build/aligned.apk
+apksigner sign --ks signing/debug.keystore --ks-key-alias androiddebugkey `
+    --ks-pass pass:android --key-pass pass:android --min-sdk-version 26 `
+    --v1-signing-enabled true --v2-signing-enabled true `
+    --out ChironIOSInput_v2.0.0-alpha1.apk build/aligned.apk
+```
+
+本仓库 v2.0.0-alpha1 的 Release APK 就是用这套流程产出的，校验结果：
+
+- `aapt2 dump badging`：`package name='com.chiron.iosinput' versionCode='20' versionName='2.0.0-alpha1' minSdkVersion:'26' targetSdkVersion:'35' application-label:'Chiron iOS 输入'`
+- `apksigner verify`：通过；签名 `CN=Android Debug`，证书 SHA-256 `4fbf65ed205c4a25bb592673714533c5effbcd234b9c08ed1be20ad7bf53c207`
+- APK 体积 21.74 MB（其中 `assets/payload.zip` ≈ 21.6 MB 是 Apple 表情位图，仓库不提交、只进 Release 资产）
+
+### 5.4 只做 javac 冒烟检查（最省事）
 
 如果只想确认源码能编译、暂时不想装 Android Studio，可以只用 `javac`：
 
