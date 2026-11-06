@@ -38,10 +38,9 @@ final class GestureHook {
 
     private static final String TAG = "AppleInputForSogou";
 
-    private static final String CLS_PAGER =
-            "com.sogou.expressionplugin.emoji.NoScrollViewPager";
-    private static final String CLS_VIEW =
-            "com.sogou.expressionplugin.emoji.EmojiKeyboardView";
+    /** 定制版类名表（小米 / OPPO …）在 install 时注入。 */
+    private static com.chiron.iosemoji.compat.Targets sTargets = com.chiron.iosemoji.compat.Targets.XIAOMI;
+
 
     private static final AtomicBoolean DONE = new AtomicBoolean(false);
 
@@ -49,6 +48,11 @@ final class GestureHook {
     }
 
     static void install(ClassLoader cl) {
+        install(cl, com.chiron.iosemoji.compat.Targets.XIAOMI);
+    }
+
+    static void install(ClassLoader cl, com.chiron.iosemoji.compat.Targets targets) {
+        if (targets != null) sTargets = targets;
         if (cl == null) return;
         // 两个时机（handleLoadPackage / Application.attach）各调一次，
         // 哪次先成功就用哪次；重复调用只在第一次真正干活。
@@ -65,7 +69,7 @@ final class GestureHook {
 
     private static boolean hookScrollable(ClassLoader cl) {
         try {
-            XposedHelpers.findAndHookMethod(CLS_PAGER, cl,
+            XposedHelpers.findAndHookMethod(sTargets.pagerClass, cl,
                     "setScrollable", boolean.class, new XC_MethodHook() {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) {
@@ -84,13 +88,13 @@ final class GestureHook {
             }
         };
         try {
-            XposedHelpers.findAndHookConstructor(CLS_PAGER, cl,
+            XposedHelpers.findAndHookConstructor(sTargets.pagerClass, cl,
                     Context.class, unlockOnCreate);
         } catch (Throwable ignored) {
             // 一个参数的构造不存在也正常
         }
         try {
-            XposedHelpers.findAndHookConstructor(CLS_PAGER, cl,
+            XposedHelpers.findAndHookConstructor(sTargets.pagerClass, cl,
                     Context.class, AttributeSet.class,
                     new XC_MethodHook() {
                         @Override
@@ -117,7 +121,7 @@ final class GestureHook {
 
     private static void hookIntroAnimation(ClassLoader cl) {
         try {
-            XposedHelpers.findAndHookMethod(CLS_VIEW, cl,
+            XposedHelpers.findAndHookMethod(sTargets.emojiViewClass, cl,
                     "showSlideAnimation", new XC_MethodHook() {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) {

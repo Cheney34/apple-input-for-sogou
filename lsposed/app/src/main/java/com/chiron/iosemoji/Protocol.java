@@ -8,10 +8,18 @@ public final class Protocol {
     /** 模块自身包名，广播目标。 */
     public static final String MODULE_PKG = "com.chiron.iosemoji";
 
-    /** 支持的目标输入法。小米渠道包与通用包都在内。 */
+    /**
+     * 支持的目标输入法。
+     * <ul>
+     *   <li>{@code com.sohu.inputmethod.sogou.xiaomi} 小米定制版（主适配目标）</li>
+     *   <li>{@code com.sohu.inputmethod.sogou} 通用渠道包</li>
+     *   <li>{@code com.sohu.inputmethod.sogouoem} OPPO 定制版 10.32.0622.x（类名不同，见 Targets.OPPO）</li>
+     * </ul>
+     */
     public static final String[] TARGETS = {
             "com.sohu.inputmethod.sogou.xiaomi",
             "com.sohu.inputmethod.sogou",
+            "com.sohu.inputmethod.sogouoem",
     };
 
     public static final String ACTION_CMD = MODULE_PKG + ".action.CMD";

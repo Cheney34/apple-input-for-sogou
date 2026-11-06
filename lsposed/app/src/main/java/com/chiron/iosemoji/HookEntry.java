@@ -10,6 +10,7 @@ import com.chiron.iosemoji.compat.VersionProfile;
 import com.chiron.iosemoji.config.ModuleConfig;
 import com.chiron.iosemoji.core.HookState;
 import com.chiron.iosemoji.diagnostics.ViewTreeDumper;
+import com.chiron.iosemoji.compat.Targets;
 import com.chiron.iosemoji.hook.CandidateProbeHook;
 import com.chiron.iosemoji.hook.ConfigBridge;
 import com.chiron.iosemoji.hook.HookRegistry;
@@ -42,12 +43,17 @@ public class HookEntry implements IXposedHookLoadPackage {
 
     private static final String TAG = "AppleInputForSogou";
     private static final AtomicBoolean ATTACHED = new AtomicBoolean(false);
+    /** 当前进程的定制版类名表（handleLoadPackage 里按包名选定）。 */
+    private static volatile Targets sTargets = Targets.XIAOMI;
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         if (lpparam == null || !Protocol.isTarget(lpparam.packageName)) return;
 
         HookRegistry.log("load " + lpparam.packageName + " process=" + lpparam.processName);
+        // 定制版差异（小米 / OPPO …）都收在 Targets 里：类名一律从这里取，不再写死
+        sTargets = Targets.forPackage(lpparam.packageName);
+        HookRegistry.log("targets: " + sTargets.describe());
         ModuleConfig.reload();
 
         // ---- 外观：改搜狗默认皮肤（ini + 键帽配色），不依赖 Context，先挂上 ----
@@ -58,7 +64,7 @@ public class HookEntry implements IXposedHookLoadPackage {
             // 首次进入时还读不到版本，先尝试安装；失败由 Registry 记录，attach 后会重试
             tryInstallKeyboardHooks(lpparam.classLoader);
         }
-        if (ModuleConfig.candidateProbeEnabled()) {
+        if (ModuleConfig.candidateProbeEnabled() && sTargets.supportsCandidateProbe()) {
             try {
                 CandidateProbeHook.install(lpparam.classLoader);
             } catch (Throwable t) {
@@ -186,7 +192,7 @@ public class HookEntry implements IXposedHookLoadPackage {
      */
     private static void installThemeHooks(ClassLoader cl) {
         try {
-            ThemeSkinHook.install(cl);
+            ThemeSkinHook.install(cl, sTargets);
         } catch (Throwable t) {
             HookRegistry.log("theme skin hook failed");
             HookRegistry.log(t);
@@ -198,6 +204,10 @@ public class HookEntry implements IXposedHookLoadPackage {
      * 这样设置页关掉「iOS 键盘」立刻退回搜狗原键盘，重新打开也不用重启输入法。
      */
     private static void tryInstallKeyboardHooks(ClassLoader cl) {
+        if (!sTargets.supportsKeyboardReplace()) {
+            HookRegistry.log("keyboard facade not located for " + sTargets.label + ", keyboard hooks skipped");
+            return;
+        }
         if (!VersionProfile.allowUiReplacement() && !"unknown".equals(HookState.versionName())) {
             HookRegistry.log("unsupported version, keyboard hooks skipped: "
                     + VersionProfile.describe());
@@ -221,12 +231,12 @@ public class HookEntry implements IXposedHookLoadPackage {
      */
     private static void installLegacyHooks(ClassLoader cl) {
         try {
-            GestureHook.install(cl);
+            GestureHook.install(cl, sTargets);
         } catch (Throwable t) {
             HookRegistry.log(t);
         }
         try {
-            GroupFilterHook.install(cl);
+            GroupFilterHook.install(cl, sTargets);
         } catch (Throwable t) {
             HookRegistry.log(t);
         }

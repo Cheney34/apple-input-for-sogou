@@ -11,11 +11,26 @@
 - 模块包名：`com.chiron.iosemoji` · 版本：`2.0.0-alpha3`（versionCode 22）
 - 最低支持：Android 8.0（API 26）· 只在 LSPosed / EdXposed 等 Xposed 框架下工作
 
+
+### 支持哪些定制版？
+
+| 输入法 | 包名 | 皮肤改造 | 表情分组/翻页 | 自绘键盘（实验） |
+| --- | --- | --- | --- | --- |
+| 小米定制版 10.32.21.202607061714 | `com.sohu.inputmethod.sogou.xiaomi` | ✅ | ✅ | ✅ |
+| 通用渠道包 | `com.sohu.inputmethod.sogou` | ✅ | ✅ | ✅ |
+| **OPPO 定制版 10.32.0622.x** | `com.sohu.inputmethod.sogouoem` | ✅（本次新增） | 部分（分组目录过滤 ✅ / 解压旁路待验证） | ❌ 未适配 |
+
+OPPO 定制版把整个主题模块用 `-repackageclasses '` 塞进了默认包，所以同一份逻辑对应的是
+`defpackage.yy1#a(String)`（ini）与 `defpackage.nm1#j(...)`（位图），而不是小米版的
+`com.sogou.theme.parse.utils.b#a` 与 `com.sogou.theme.common.j#f`。映射统一收在
+`compat/Targets.java` 里，**没核对到的名字一律填 null 并跳过该功能**，不用猜的名字去 hook。
 ## 下载哪个版本？
 
 | 版本 | 适合谁 | 有什么 |
 | --- | --- | --- |
-| [**v2.0.1-beta4**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.1-beta4) | 所有人（推荐） | iOS 深色底色压到深灰 `#222223`（键 `#6D6D6F` / 字 `#FDFDFE` 不变），功能键与按下态按新色阶重推 |\n| [**v2.0.1-beta3**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.1-beta3) | 存档 | iOS 皮肤深色版：键 `#6D6D6F` / 字 `#FDFDFE`，底色压到深灰 `#222223`，其余层级按同一色阶过渡 |
+| [**v2.0.2-beta1**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.2-beta1) | 所有人（推荐） | 多定制版支持：**OPPO 定制版（`com.sohu.inputmethod.sogouoem`）也能改皮肤**（该版类名不同 → 新增 `Targets` 映射表）；小米版行为不变 |
+| [**v2.0.1-beta4**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.1-beta4) | 存档 | iOS 深色底色压到深灰 `#222223`（键 `#6D6D6F` / 字 `#FDFDFE` 不变），功能键与按下态按新色阶重推 |
+| [**v2.0.1-beta3**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.1-beta3) | 存档 | iOS 皮肤深色版：键 `#6D6D6F` / 字 `#FDFDFE`，底色压到深灰 `#222223`，其余层级按同一色阶过渡 |
 | [**v2.0.1-beta2**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.1-beta2) | 存档 | 七套皮肤：iOS / 微信 / Google / **幽墨 Material** / **幽墨 Pixel** / **樱花粉** / 莫奈取色 |
 | [**v2.0.1-beta1**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.1-beta1) | 存档 | 微信皮肤重做：功能键与底色同色（微信是「无键帽」的）、候选栏改白底、键帽圆角 0.16/几乎无投影；候选栏底色从键盘底色里独立出来（`barBg`），四套皮肤各自指定 |
 | [**v2.0.0-alpha12**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha12) | 存档 | 微信/Google 按原生观感重写配色，莫奈取色掺 accent + 竖向渐变，**候选栏与顶部工具条终于跟键盘同底色** |

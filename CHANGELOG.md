@@ -2,6 +2,62 @@
 
 本项目遵循「分析 → 验证 → 实现」的推进方式：每个版本只写**有证据支撑**的东西。
 
+## v2.0.2-beta1 — 多定制版支持：OPPO 定制版也能改皮肤
+
+小米版一直是适配目标，用户这次给了 **OPPO 定制版**（`com.sohu.inputmethod.sogouoem`，
+`10.32.0622.2607201151`，versionCode 2570，6 个 dex / 34,599 类）。
+直接装上去会发现「模块连不上」——因为两个版本的混淆结果完全不同。
+
+### 为什么不一样（取证）
+
+OPPO 版用 `-repackageclasses ''` 把整个主题/皮肤模块塞进了**默认包**：
+
+| 功能 | 小米版 | OPPO 定制版 |
+| --- | --- | --- |
+| 皮肤 ini 入口 | `com.sogou.theme.parse.utils.b#a(String)` | `defpackage.yy1#a(String)` |
+| ini 行解析器 | `com.sogou.theme.parse.utils.c#n(BufferedReader)` | 未定位（诊断 hook 跳过） |
+| 皮肤位图入口 | `com.sogou.theme.common.j#f(Context,String,boolean,boolean)` | `defpackage.nm1#j(Context,String,boolean,boolean)` |
+| 位图缓存清理 | `common.j#e()` 单例 → `j()` 缓存 | `nm1#f()` 单例 → `n()` 缓存 |
+| 内置表情包工具 | `expression.ExpressionUtil#u(AssetManager,String,String)` | `expression.w#x(AssetManager,String,String)` |
+| 根容器（setKeyboardView） | `com.sohu.inputmethod.ui.frame.NormalIMERootContainer` | 同名存在 ✅ |
+| 键盘外壳（s0 实现） | `com.sogou.lib.bu.ui.component.keyboard.d` | 未定位 ❌ |
+| 候选视图（`r2`: Z7/N7） | `com.sohu.inputmethod.sogou.r2` | 未定位 ❌ |
+
+`com.sogou.theme.parse.entity.b` 这类**返回类型没被改名**，所以取值方式（`b()` 拿 `ArrayMap`）两边一样。
+
+### 改法
+
+新增 `compat/Targets.java`：把「同一功能在各定制版里的类名/方法名」做成一张表，
+`HookEntry` 按 `lpparam.packageName` 选表，所有 hook 都从表里取名字：
+
+- `Targets.XIAOMI` —— 小米定制版（原行为，一个字母没改）；
+- `Targets.OPPO` —— OPPO 定制版：皮肤/表情两类填了核对过的新名字，
+  **没核对到的（键盘外壳、候选视图、b0/InputLogic/presenter.a）一律填 `null`**，
+  对应 hook 直接跳过并打日志 `keyboard facade not located for OPPO 定制版, keyboard hooks skipped`；
+- 表里没有的包名回落到 `XIAOMI`，保持向后兼容。
+
+配套改动：
+- `ThemeSkinHook.install(cl, targets)`：H40/H41 用表里的名字；H42（ini 解析探针）在该版没定位到解析器时不装；
+  H43（缓存取法）小米 `g` / OPPO `k` 都试；`dropCaches()` 单例 `e()`/`f()`、缓存 `j()`/`n()` 都试。
+- `GestureHook.install(cl, targets)`、`GroupFilterHook.install(cl, targets)`：表情翻页/分组过滤的类名同样从表里取，
+  OPPO 版 `ExpressionUtil` 未定位时 `isReady()` 返回 false 且打日志，不会误 hook。
+- `Protocol.TARGETS`、`xposed_scope`、`<queries>` 都加上 `com.sohu.inputmethod.sogouoem`。
+
+### 构建与验证
+
+- `build/beta-oppo/AppleInputForSogou_v2.0.2-beta1.apk` = **22,750,789 B**，versionCode **36** / `2.0.2-beta1`，
+  证书 SHA-256 `4fbf65ed…c207`（与 v1.7 / v1.8 / 2.0.x 一致 ⇒ 同包名覆盖升级）。
+- dex 145,936 B，118 个类**全部** `Lcom/chiron/iosemoji/*`，`de/robv` 定义仍为 0（桩未被污染）；
+  字符串表里可查到 `defpackage.yy1` / `defpackage.nm1` / `com.sogou.expressionplugin.expression.w` /
+  `com.sohu.inputmethod.sogouoem` / `keyboard facade not located for `。
+
+### 还没做的
+
+OPPO 版的「自绘键盘」与「候选探针」两条线**未适配**——这两条依赖 `b0`、`InputLogic`、`keyboard.d`、`r2`，
+在 OPPO 版里全部改名/搬家，还没定位到。皮肤与表情分组是 OPPO 版当前可用的部分。
+需要真机回报：装到 OPPO 定制版后，日志里应有
+`targets: OPPO 定制版(com.sohu.inputmethod.sogouoem) skin=ok kb=skip cand=skip emojiFilter=ok emojiSwipe=ok`，
+再看设置页诊断行的 `skini=` / `skimg=` 是否在增长。
 ## v2.0.1-beta4 — iOS 深色底色压到 #222223
 
 底色从 `#2F2F2F` 改为 **`#222223`**（按用户要求的 `#22223` 深灰域），键 `#6D6D6F` 与字 `#FDFDFE` 不变；

@@ -40,8 +40,9 @@ final class GroupFilterHook {
     /** 要屏蔽的分组目录名前缀：2_1789… 与 -2_1789…。 */
     private static final String[] BLOCKED_PREFIX = {"2_", "-2_"};
 
-    private static final String CLS_EXPR_UTIL =
-            "com.sogou.expressionplugin.expression.ExpressionUtil";
+    /** 定制版类名表（小米 / OPPO …）在 install 时注入。 */
+    private static com.chiron.iosemoji.compat.Targets sTargets = com.chiron.iosemoji.compat.Targets.XIAOMI;
+
 
     private static final Object LOCK = new Object();
 
@@ -53,11 +54,20 @@ final class GroupFilterHook {
     }
 
     static void install(ClassLoader cl) {
+        install(cl, com.chiron.iosemoji.compat.Targets.XIAOMI);
+    }
+
+    static void install(ClassLoader cl, com.chiron.iosemoji.compat.Targets targets) {
+        if (targets != null) sTargets = targets;
         if (cl == null) return;
         synchronized (LOCK) {
             if (!listInstalled && hookFileList()) listInstalled = true;
             // 目标是搜狗自己的类，进程早期可能还没加载，失败就让下次调用再试
             if (!writeInstalled && isReady(cl) && hookAssetWrite(cl)) writeInstalled = true;
+            if (!writeInstalled && sTargets.expressionUtilClass == null && !reported) {
+                reported = true;
+                EmojiService.XposedLog.i("group filter: asset-write hook skipped, provider class unknown for " + sTargets.label);
+            }
             if ((listInstalled || writeInstalled) && !reported) {
                 reported = true;
                 EmojiService.XposedLog.i("group filter: list=" + listInstalled
@@ -67,8 +77,9 @@ final class GroupFilterHook {
     }
 
     private static boolean isReady(ClassLoader cl) {
+        if (sTargets.expressionUtilClass == null) return false;
         try {
-            cl.loadClass(CLS_EXPR_UTIL);
+            cl.loadClass(sTargets.expressionUtilClass);
             return true;
         } catch (Throwable notYet) {
             return false;
@@ -111,7 +122,7 @@ final class GroupFilterHook {
 
     private static boolean hookAssetWrite(ClassLoader cl) {
         try {
-            XposedHelpers.findAndHookMethod(CLS_EXPR_UTIL, cl, "u",
+            XposedHelpers.findAndHookMethod(sTargets.expressionUtilClass, cl, sTargets.expressionUtilAssetMethod,
                     AssetManager.class, String.class, String.class,
                     new XC_MethodHook() {
                         @Override

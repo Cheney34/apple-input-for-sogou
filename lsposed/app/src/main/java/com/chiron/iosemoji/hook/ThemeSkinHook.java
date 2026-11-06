@@ -3,6 +3,7 @@ package com.chiron.iosemoji.hook;
 import android.content.Context;
 import android.graphics.Bitmap;
 
+import com.chiron.iosemoji.compat.Targets;
 import com.chiron.iosemoji.config.ModuleConfig;
 import com.chiron.iosemoji.core.HookState;
 import com.chiron.iosemoji.skin.IosSkin;
@@ -36,12 +37,15 @@ import de.robv.android.xposed.XposedHelpers;
  */
 public final class ThemeSkinHook {
 
-    /** ini 解析入口：com.sogou.theme.parse.utils.b#a(String) → parse.entity.b */
-    private static final String CLS_INI_ENTRY = "com.sogou.theme.parse.utils.b";
-    /** ini 行解析器：com.sogou.theme.parse.utils.c#n(BufferedReader) → ArrayMap（旁路探针） */
-    private static final String CLS_INI_PARSER = "com.sogou.theme.parse.utils.c";
-    /** 位图解码入口：com.sogou.theme.common.j#f(Context,String,boolean,boolean) → Bitmap */
-    private static final String CLS_BITMAP = "com.sogou.theme.common.j";
+    /**
+     * 当前进程对应定制版的类名表（小米 / OPPO …）。
+     *
+     * <p>搜狗的定制版之间**混淆结果不同**：小米版主题模块在 {@code com.sogou.theme.*}，
+     * OPPO 版被 {@code -repackageclasses ''} 塞进默认包（ini 入口 = {@code defpackage.yy1#a}，
+     * 位图入口 = {@code defpackage.nm1#j}）。所以这里不再是写死的常量，而是
+     * {@link com.chiron.iosemoji.compat.Targets} 提供的映射；见 {@link #install(ClassLoader, Targets)}。
+     */
+    private static volatile Targets sTargets = Targets.XIAOMI;
 
     private static final AtomicInteger INI_CALLS = new AtomicInteger();
     private static final AtomicInteger INI_PATCHED = new AtomicInteger();
@@ -62,16 +66,35 @@ public final class ThemeSkinHook {
     }
 
     public static void install(ClassLoader cl) {
+        install(cl, Targets.XIAOMI);
+    }
+
+    /**
+     * 按定制版类名表安装。
+     *
+     * <p>只装这张表里**核对过**的目标；表里为 null 的功能直接跳过并留日志，
+     * 避免用猜的名字 hook（猜错是静默失效，比不装更难查）。
+     */
+    public static void install(ClassLoader cl, Targets targets) {
+        if (targets != null) sTargets = targets;
+        Targets t = sTargets;
+        if (!t.supportsSkin()) {
+            HookRegistry.log("skin hooks skipped: " + t.describe());
+            return;
+        }
         HookRegistry.install("H40_theme_ini", cl, ThemeSkinHook::hookIni);
         HookRegistry.install("H41_theme_bitmap", cl, ThemeSkinHook::hookBitmap);
-        HookRegistry.install("H42_theme_ini_parser", cl, ThemeSkinHook::hookIniParser);
+        if (t.themeParserClass != null) {
+            HookRegistry.install("H42_theme_ini_parser", cl, ThemeSkinHook::hookIniParser);
+        }
         HookRegistry.install("H43_theme_bitmap_cached", cl, ThemeSkinHook::hookBitmapCached);
     }
 
     // ── H40：ini 段值改写 ─────────────────────────────────────────────────
 
     private static void hookIni(ClassLoader cl) {
-        XposedHelpers.findAndHookMethod(CLS_INI_ENTRY, cl, "a", String.class,
+        final Targets t = sTargets;
+        XposedHelpers.findAndHookMethod(t.themeIniClass, cl, t.themeIniMethod, String.class,
                 new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) {
@@ -103,11 +126,14 @@ public final class ThemeSkinHook {
     /** H42：ini 行解析器旁路探针 —— 只计数，用来判断"皮肤到底有没有解析 ini"。 */
     private static void hookIniParser(ClassLoader cl) {
         try {
-            Class<?> cls = XposedHelpers.findClass(CLS_INI_PARSER, cl);
+            final Targets t = sTargets;
+            if (t.themeParserClass == null) return;
+            Class<?> cls = XposedHelpers.findClass(t.themeParserClass, cl);
+            final String parserMethod = t.themeParserMethod == null ? "n" : t.themeParserMethod;
             for (java.lang.reflect.Method m : cls.getDeclaredMethods()) {
-                if (!"n".equals(m.getName())) continue;
+                if (!parserMethod.equals(m.getName())) continue;
                 if (m.getParameterCount() != 1) continue;
-                de.robv.android.xposed.XposedBridge.hookAllMethods(cls, "n", new XC_MethodHook() {
+                de.robv.android.xposed.XposedBridge.hookAllMethods(cls, parserMethod, new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) {
                         PARSER_CALLS.incrementAndGet();
@@ -123,7 +149,8 @@ public final class ThemeSkinHook {
     // ── H41：皮肤位图重绘 ─────────────────────────────────────────────────
 
     private static void hookBitmap(ClassLoader cl) {
-        XposedHelpers.findAndHookMethod(CLS_BITMAP, cl, "f",
+        final Targets t = sTargets;
+        XposedHelpers.findAndHookMethod(t.bitmapClass, cl, t.bitmapMethod,
                 Context.class, String.class, boolean.class, boolean.class,
                 new XC_MethodHook() {
                     @Override
@@ -183,13 +210,24 @@ public final class ThemeSkinHook {
      */
     private static void hookBitmapCached(ClassLoader cl) {
         try {
-            Class<?> cls = XposedHelpers.findClass(CLS_BITMAP, cl);
-            de.robv.android.xposed.XposedBridge.hookAllMethods(cls, "g", new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) {
-                    IMG_BYPASS.incrementAndGet();
+            final Targets t = sTargets;
+            Class<?> cls = XposedHelpers.findClass(t.bitmapClass, cl);
+            // 小米版带缓存取法是 g(...)，OPPO 定制版是 k(...)；两个都试，纯计数用。
+            boolean hooked = false;
+            for (String name : new String[]{"g", "k"}) {
+                try {
+                    de.robv.android.xposed.XposedBridge.hookAllMethods(cls, name, new XC_MethodHook() {
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) {
+                            IMG_BYPASS.incrementAndGet();
+                        }
+                    });
+                    hooked = true;
+                } catch (Throwable ignored) {
+                    // 这个方法名在这个版本不存在，试下一个
                 }
-            });
+            }
+            if (!hooked) HookRegistry.log("H43: no cached getter found on " + t.bitmapClass);
         } catch (Throwable t) {
             HookRegistry.log("H43 install skipped: " + t);
         }
@@ -242,13 +280,30 @@ public final class ThemeSkinHook {
             if (cl == null) return;
             Class<?> cls;
             try {
-                cls = XposedHelpers.findClass(CLS_BITMAP, cl);
+                cls = XposedHelpers.findClass(sTargets.bitmapClass, cl);
             } catch (Throwable notFound) {
                 return; // 这个版本没这个类，清缓存失败不影响任何事
             }
-            Object mgr = XposedHelpers.callStaticMethod(cls, "e");
+            // 单例取法 / 缓存取法各定制版不同：小米 e()/j()，OPPO 定制版 f()/n()。两个都试。
+            Object mgr = null;
+            for (String name : new String[]{"e", "f"}) {
+                try {
+                    mgr = XposedHelpers.callStaticMethod(cls, name);
+                } catch (Throwable ignored) {
+                    mgr = null;
+                }
+                if (mgr != null) break;
+            }
             if (mgr == null) return;
-            Object cache = XposedHelpers.callMethod(mgr, "j");
+            Object cache = null;
+            for (String name : new String[]{"j", "n"}) {
+                try {
+                    cache = XposedHelpers.callMethod(mgr, name);
+                } catch (Throwable ignored) {
+                    cache = null;
+                }
+                if (cache != null) break;
+            }
             if (cache == null) return;
             XposedHelpers.callMethod(cache, "clear");
             HookRegistry.log("skin caches dropped (preset switch)");
