@@ -265,27 +265,34 @@ public final class IosSkin {
                 return out;
             }
 
-            float ratio = (kind == KIND_POPUP) ? p.radiusRatio * 1.5f : p.radiusRatio;
-            float radius = Math.max(2f, box.height() * ratio);
-            RectF rect = new RectF(box);
+            // 原图里已经画了图标/文字的图（例如带 ⌫ 的删除键、带 ⏎ 的回车键）不要动：
+            // 平铺一层颜色会把图标一起刷掉。这类图保持搜狗原样，观感反而正常。
+            if (kind != KIND_FILL && hasInk(src, box)) {
+                return null;
+            }
 
-            // 投影：iOS 键帽有极淡的落影；Google 也有（Material 3 用 tonal elevation）
+            // 留出键缝：搜狗原图的 bbox 常常把整格都占满，直接铺色会让相邻键粘在一起。
+            // 这里按高度取 2% 作为内缩，宽度方向再收敛一点，iPad/iPhone 都有可见缝隙。
+            int gap = Math.max(1, Math.round(box.height() * 0.02f));
+            RectF rect = new RectF(box.left + gap, box.top + gap, box.right - gap, box.bottom - gap);
+            if (rect.width() < 2f || rect.height() < 2f) {
+                rect = new RectF(box);
+            }
+
+            // 圆角：优先用搜狗自己这张图的实际圆角（保证形状不对不上），
+            // 但它本身偏方 —— 取「原图圆角」与「预设规格圆角」的较大值，既不变形也不方。
+            int detected = detectRadius(src, box);
+            float spec = rect.height() * ((kind == KIND_POPUP) ? p.radiusRatio * 1.5f : p.radiusRatio);
+            float radius = Math.min(Math.max(detected, spec), Math.min(rect.width(), rect.height()) * 0.5f);
+            radius = Math.max(2f, radius);
+
+            // 投影：iOS 键帽只有极淡的一层落影（没有描边），Material 3 用 tonal 阴影。
+            // 阴影画在 rect 之外也在位图范围内，正好落在留出的键缝里。
             if (Color_alpha(p.shadowColor) > 0) {
-                paint.setColor(p.shadowColor);
+                paint.setColor(color);
                 paint.setShadowLayer(p.shadowRadius, 0f, p.shadowDy, p.shadowColor);
                 canvas.drawRoundRect(rect, radius, radius, paint);
                 paint.clearShadowLayer();
-            }
-
-            // 底边分隔：先画暗色再盖上主色，露出的那 1px 就是那条边（iOS 有，Google 没有）
-            if (p.edgeLine) {
-                int edge = edgeColor(color, p);
-                if (edge != color) {
-                    paint.setColor(edge);
-                    RectF under = new RectF(rect);
-                    under.offset(0f, 1f);
-                    canvas.drawRoundRect(under, radius, radius, paint);
-                }
             }
 
             paint.setColor(color);
@@ -294,6 +301,77 @@ public final class IosSkin {
         } catch (Throwable t) {
             return null;
         }
+    }
+
+    /**
+     * 从原图 alpha 通道估算这张资源自己的圆角半径。
+     *
+     * <p>做法：在包围盒顶部若干行里，从左边向内找第一个不透明像素，这个水平内缩量就约等于圆角半径。
+     * 取多行最大值更稳（避开抗锯齿最上一行的误差），最后夹到 <code>[0, 高度/2]</code>。
+     */
+    private static int detectRadius(Bitmap src, Rect box) {
+        int h = box.height();
+        if (h <= 2) return 0;
+        int maxProbe = Math.max(1, Math.min(h / 2, 24));
+        int best = 0;
+        for (int dy = 1; dy <= maxProbe; dy += 2) {
+            int y = box.top + dy;
+            if (y >= box.bottom) break;
+            int inset = 0;
+            for (int x = box.left; x < box.right; x++) {
+                if (((src.getPixel(x, y) >>> 24) & 0xFF) > 24) break;
+                inset++;
+            }
+            if (inset > best) best = inset;
+            if (inset == 0) break;
+        }
+        return Math.min(best, h / 2);
+    }
+
+    /**
+     * 包围盒内部是否含「墨」（图标 / 文字 / 明显的分隔线）。
+     *
+     * <p>判据：统计盒内亮度的中位数，再看有多少像素明显偏离它。键帽本体是几乎单色的，
+     * 带图标的键会有一小片对比强烈的像素。超过 2% 就认为有墨，这张图原样返回。
+     * 完全单色的图最多只会在边缘有几像素抗锯齿，远低于阈值。
+     */
+    private static boolean hasInk(Bitmap src, Rect box) {
+        int total = 0;
+        int deviant = 0;
+        int[] hist = new int[16];
+        int stepX = Math.max(1, box.width() / 48);
+        int stepY = Math.max(1, box.height() / 48);
+        for (int y = box.top; y < box.bottom; y += stepY) {
+            for (int x = box.left; x < box.right; x += stepX) {
+                int px = src.getPixel(x, y);
+                if (((px >>> 24) & 0xFF) <= 24) continue;
+                int lum = luminance(px);
+                hist[Math.min(15, lum >> 4)]++;
+                total++;
+            }
+        }
+        if (total < 32) return false;
+        int medianBucket = 0;
+        int acc = 0;
+        for (int i = 0; i < 16; i++) {
+            acc += hist[i];
+            if (acc * 2 >= total) {
+                medianBucket = i;
+                break;
+            }
+        }
+        int median = medianBucket * 16 + 8;
+        for (int i = 0; i < 16; i++) {
+            if (Math.abs(i * 16 + 8 - median) >= 40) deviant += hist[i];
+        }
+        return deviant * 100 > total * 2;
+    }
+
+    private static int luminance(int argb) {
+        int r = (argb >> 16) & 0xFF;
+        int g = (argb >> 8) & 0xFF;
+        int b = argb & 0xFF;
+        return (int) (0.299f * r + 0.587f * g + 0.114f * b);
     }
 
     private static int Color_alpha(int argb) {

@@ -15,6 +15,7 @@
 
 | 版本 | 适合谁 | 有什么 |
 | --- | --- | --- |
+| [**v2.0.0-alpha8**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha8) | 所有人（推荐） | 新增「**重启输入法**」按钮（一键重载皮肤）+ 键帽按搜狗原图圆角与平台规范重画（留键缝、图标不被刷掉）+ 皮肤诊断行 |
 | [**v2.0.0-alpha7**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha7) | 所有人（推荐） | 修掉「键帽漏改」的真 bug + **皮肤诊断行**（一眼看出改没改到）+ 四套皮肤 |
 | [**v2.0.0-alpha6**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha6) | 所有人（推荐） | 四套皮肤可选：**iOS / 微信 / Google / 莫奈取色**（设置页「皮肤风格」切换，切换即时生效）+ 键帽按所选风格重绘 + 候选栏与顶部条底色统一 |
 | [**v2.0.0-alpha5**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha5) | 存档 | 只有 iOS 一套皮肤（键帽按 iOS 圆角重绘） |
@@ -23,14 +24,14 @@
 | [**v1.8**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v1.8) | 只想换 Apple 表情、要稳定 | 表情分组安装 / 隐藏内置分组 / 滑动切换 / Logo 触发词 |
 | [**v1.7**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v1.7) | 老设备 / 旧搜狗版本 | 与 v1.8 同代但更早，兼容面略宽 |
 
-### 界面长什么样（alpha2 重写 / alpha3 让开关真正生效 / alpha4 换成改皮肤 / alpha5 重绘键帽 / alpha6 四套皮肤 / alpha7 可测量诊断）
+### 界面长什么样（alpha2 重写 / alpha3 让开关真正生效 / alpha4 换成改皮肤 / alpha5 重绘键帽 / alpha6 四套皮肤 / alpha7 可测量诊断 / alpha8 重启按钮+重画）
 
 两个界面都换成 iOS 风格、全部代码自绘，不依赖 androidx / Material，跟随系统深浅色：
 
 - **模块 App**：iOS 设置页 —— 大标题、分组卡片、圆角行、右侧 `✓`/`›`、自绘开关。
   分区：状态 / 表情分组（10 组逐行勾选 + 全选）/ 操作（安装选中、安装全部、还原）/ 模块（功能开关、隐藏桌面图标、重新检测）/ 运行日志。
   原 XML 布局（`activity_main.xml`、`item_group.xml`）已删除，不再需要 `GridLayout`。
-- **输入法键盘（alpha4 起改皮肤 / alpha5 重绘键帽 / alpha6 四套皮肤 / alpha7 可测量诊断）**：**不再盖一层自绘键盘**，而是改搜狗自己默认皮肤 ——
+- **输入法键盘（alpha4 起改皮肤 / alpha5 重绘键帽 / alpha6 四套皮肤 / alpha7 可测量诊断 / alpha8 重启按钮+重画）**：**不再盖一层自绘键盘**，而是改搜狗自己默认皮肤 ——
   配色、键帽形状、候选栏与顶部条底色全部按所选风格重画（键帽沿用原图不透明包围盒 → 位置尺寸仍是搜狗的，只换圆角与颜色）。
   四套风格（设置页「外观 → 皮肤风格」，切换即时生效）：
 

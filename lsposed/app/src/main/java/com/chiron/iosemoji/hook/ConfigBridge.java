@@ -74,6 +74,25 @@ public final class ConfigBridge {
                     } else if (Protocol.ACTION_CFG_QUERY.equals(action)) {
                         setResultCode(Protocol.RESULT_OK);
                         setResultData(state(ctx));
+                    } else if (Protocol.ACTION_RESTART.equals(action)) {
+                        // 「重启输入法」：先把状态回给 App（否则 App 收不到回执），再结束自己的进程。
+                        // 结束进程是合法的（自己的进程），系统在下次需要输入法时会重新拉起，
+                        // 这就等于让搜狗把皮肤资源、配置、hook 全部按当前设置重新走一遍。
+                        setResultCode(Protocol.RESULT_OK);
+                        setResultData("restarting;" + state(ctx));
+                        HookRegistry.log("restart requested -> 200ms 后结束搜狗进程（pid "
+                                + android.os.Process.myPid() + "）");
+                        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            android.os.Process.killProcess(android.os.Process.myPid());
+                                        } catch (Throwable t) {
+                                            HookRegistry.log("restart failed: " + t);
+                                        }
+                                    }
+                                }, 200L);
                     }
                 } catch (Throwable t) {
                     HookRegistry.log(t);
@@ -89,6 +108,7 @@ public final class ConfigBridge {
 
         IntentFilter filter = new IntentFilter(Protocol.ACTION_CFG);
         filter.addAction(Protocol.ACTION_CFG_QUERY);
+        filter.addAction(Protocol.ACTION_RESTART);
         try {
             if (Build.VERSION.SDK_INT >= 33) {
                 ctx.registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED);

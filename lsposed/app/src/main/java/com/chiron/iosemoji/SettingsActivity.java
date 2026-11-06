@@ -136,6 +136,12 @@ public class SettingsActivity extends Activity {
 
         LinearLayout btn = IosRow.button(this, "重新检测连接", IosUi.BLUE, v -> queryStatus(true));
         card.addView(btn);
+
+        // 重启输入法：等于帮用户在系统设置里"强制停止搜狗输入法"，但不用离开本页面。
+        // 换皮肤 / 换深浅色 / 改开关后如果观感没变，按一下这个，最干净。
+        LinearLayout btnRestart = IosRow.button(this, "重启输入法（重载皮肤）", IosUi.ORANGE,
+                v -> restartIme());
+        card.addView(btnRestart);
         card.addView(IosUi.separator(this, 16));
     }
 
@@ -273,6 +279,41 @@ public class SettingsActivity extends Activity {
         }, REPLY_TIMEOUT_MS);
     }
 
+    /**
+     * 重启输入法：让搜狗进程自己结束，系统随后会在需要时重新拉起它。
+     *
+     * <p>效果等同于用户在系统设置里「强制停止」搜狗输入法，但不用离开这一页。
+     * 皮肤 ini / 位图在进程内是带缓存的对象，换预设或换深浅色后若观感没变，
+     * 按一下这个是最干净的重载方式。
+     */
+    private void restartIme() {
+        final int[] ok = {0};
+        for (String pkg : Protocol.TARGETS) {
+            try {
+                Intent intent = new Intent(Protocol.ACTION_RESTART).setPackage(pkg);
+                sendOrderedBroadcast(intent, null, new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context c, Intent i) {
+                        if (getResultCode() == Protocol.RESULT_OK) ok[0]++;
+                    }
+                }, main, 0, null, null);
+            } catch (Throwable t) {
+                // 某个包没装/不可见就跳过
+            }
+        }
+        main.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (ok[0] > 0) {
+                    toast("已重启输入法：点任意输入框即可重新加载皮肤");
+                } else {
+                    toast("没连上搜狗进程（先点开一次键盘，再按这个）");
+                }
+                queryStatus(false);
+            }
+        }, 1500);
+    }
+
     private void sendConfigIntent(String targetPkg, final int[] ok) {
         try {
             Intent intent = new Intent(Protocol.ACTION_CFG).setPackage(targetPkg);
@@ -345,6 +386,7 @@ public class SettingsActivity extends Activity {
         String skinImg = null;
         String skinParser = null;
         String skinCached = null;
+        String skinKept = null;
         String skinSkip = null;
         StringBuilder eff = new StringBuilder();
         for (String part : raw.split(";")) {
@@ -380,6 +422,9 @@ public class SettingsActivity extends Activity {
                 case "skinc":
                     skinCached = v;
                     break;
+                case "skink":
+                    skinKept = v;
+                    break;
                 case "skip":
                     skinSkip = v;
                     break;
@@ -398,6 +443,7 @@ public class SettingsActivity extends Activity {
         if (skinImg != null) skinLine.append("  图=").append(skinImg);
         if (skinParser != null) skinLine.append("  解析=").append(skinParser);
         if (skinCached != null) skinLine.append("  缓存=").append(skinCached);
+        if (skinKept != null) skinLine.append("  保留=").append(skinKept);
         if (eff.length() > 0) skinLine.append('\n').append(eff);
         if (skinSkip != null && skinSkip.length() > 0) {
             skinLine.append("\n没认出来的图：").append(skinSkip);

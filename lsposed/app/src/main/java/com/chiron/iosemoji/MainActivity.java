@@ -279,6 +279,11 @@ public class MainActivity extends Activity {
 
         moduleCard.addView(IosRow.clickable(this, "重新检测连接",
                 "在搜狗里打一次字，让输入法进程先启动", v -> ping(true)));
+        moduleCard.addView(IosUi.separator(this, 16));
+
+        // 重启输入法：换皮肤 / 改开关后观感没变时按一下，等于帮用户强停一遍搜狗进程。
+        moduleCard.addView(IosRow.clickable(this, "重启输入法",
+                "重新加载皮肤与配置（不用去系统设置强停）", v -> restartIme()));
 
         // 日志卡
         root.addView(IosUi.sectionHeader(this, "运行日志"));
@@ -537,6 +542,50 @@ public class MainActivity extends Activity {
             statusView.setText("没找到搜狗输入法（小米渠道包或通用包）");
             setConnected(false);
         }
+    }
+
+    /**
+     * 重启输入法：让搜狗进程自己结束，系统随后重新拉起它。
+     *
+     * <p>等价于「系统设置 → 应用 → 搜狗输入法 → 强制停止」，但一键完成。
+     * 换皮肤或改开关后观感没变时，按这个最干净。
+     */
+    private void restartIme() {
+        List<String> targets = installedTargets();
+        if (targets.isEmpty()) {
+            appendLog("没找到搜狗输入法，无法重启");
+            statusView.setText("没找到搜狗输入法（小米渠道包或通用包）");
+            setConnected(false);
+            return;
+        }
+        final int[] ok = {0};
+        for (String pkg : targets) {
+            try {
+                Intent intent = new Intent(Protocol.ACTION_RESTART).setPackage(pkg);
+                sendOrderedBroadcast(intent, null, new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context c, Intent i) {
+                        if (getResultCode() == Protocol.RESULT_OK) ok[0]++;
+                    }
+                }, handler, 0, null, null);
+                appendLog("→ 重启输入法：" + pkg);
+            } catch (Throwable t) {
+                appendLog("重启失败：" + pkg + " " + t.getMessage());
+            }
+        }
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (ok[0] > 0) {
+                    appendLog("输入法已重启，切到任意输入框即会重新加载皮肤");
+                    statusView.setText("输入法已重启，切到任意输入框即会重新加载皮肤");
+                } else {
+                    appendLog("没连上搜狗进程（先在搜狗里打一次字，再按重启）");
+                    statusView.setText("没连上搜狗进程：先在搜狗里打一次字，再按「重启输入法」");
+                }
+                setConnected(ok[0] > 0);
+            }
+        }, 1500);
     }
 
     private boolean sendCommand(String cmd, String groups) {

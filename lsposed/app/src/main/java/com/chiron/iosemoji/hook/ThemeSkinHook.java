@@ -47,6 +47,8 @@ public final class ThemeSkinHook {
     private static final AtomicInteger INI_PATCHED = new AtomicInteger();
     private static final AtomicInteger IMG_CALLS = new AtomicInteger();
     private static final AtomicInteger IMG_REDRAWN = new AtomicInteger();
+    /** 图里自带图标/文字（⌫ ⏎ 等），按设计原样保留，不重绘。 */
+    private static final AtomicInteger IMG_KEPT = new AtomicInteger();
     private static final AtomicInteger PARSER_CALLS = new AtomicInteger();
     private static final AtomicInteger IMG_BYPASS = new AtomicInteger();
     /** 见过但没认出来的皮肤图名（最多留 12 个，供用户贴日志定位）。 */
@@ -149,7 +151,11 @@ public final class ThemeSkinHook {
                                 return;
                             }
                             Bitmap tinted = IosSkin.synth((Bitmap) res, kind, color, preset);
-                            if (tinted == null) return;
+                            if (tinted == null) {
+                                // 原图内含图标/文字（例如 ⌫、⏎），保留搜狗原样
+                                IMG_KEPT.incrementAndGet();
+                                return;
+                            }
                             param.setResult(tinted);
                             int n = IMG_REDRAWN.incrementAndGet();
                             if (n <= LOG_LIMIT) {
@@ -255,6 +261,7 @@ public final class ThemeSkinHook {
                 + ",img=" + IMG_CALLS.get() + "/" + IMG_REDRAWN.get()
                 + ",parser=" + PARSER_CALLS.get()
                 + ",cached=" + IMG_BYPASS.get()
+                + ",kept=" + IMG_KEPT.get()
                 + ",unmatched=" + UNMATCHED.size() + ")";
     }
 
@@ -270,7 +277,8 @@ public final class ThemeSkinHook {
                 + ";skini=" + INI_CALLS.get() + "/" + INI_PATCHED.get()
                 + ";skimg=" + IMG_CALLS.get() + "/" + IMG_REDRAWN.get()
                 + ";skinq=" + PARSER_CALLS.get()
-                + ";skinc=" + IMG_BYPASS.get();
+                + ";skinc=" + IMG_BYPASS.get()
+                + ";skink=" + IMG_KEPT.get();
     }
 
     /** 没识别出来的图名（诊断用，最多 12 个）。 */

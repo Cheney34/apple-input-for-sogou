@@ -26,6 +26,14 @@ public final class Protocol {
      */
     public static final String ACTION_CFG = MODULE_PKG + ".action.CFG";
     public static final String ACTION_CFG_QUERY = MODULE_PKG + ".action.QCFG";
+    /**
+     * 「重启输入法」：让搜狗进程自己结束（随后系统会重新拉起），用来强制重载皮肤资源。
+     *
+     * <p>为什么需要它：皮肤 ini / 位图在进程里是带缓存的对象，换预设、换主题、换深浅色后
+     * 有些路径不会重新解析；最省事、最不侵入的做法就是让进程重来一遍 ——
+     * 效果等同用户在设置里强停搜狗输入法，但不用去系统设置里翻。
+     */
+    public static final String ACTION_RESTART = MODULE_PKG + ".action.RESTART";
 
     /** 有序广播回执码：1 = 搜狗进程收到并已应用；0 = 没有接收者（进程没起来）。 */
     public static final int RESULT_OK = 1;
