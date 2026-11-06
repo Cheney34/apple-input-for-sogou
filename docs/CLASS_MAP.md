@@ -1,4 +1,4 @@
-# Chiron iOS Input — 阶段 0 静态分析报告（2/8）：核心类结构地图
+# Apple Input for Sogou — 阶段 0 静态分析报告（2/8）：核心类结构地图
 
 > 目标 APK：`com.sohu.inputmethod.sogou.xiaomi`（小米定制版搜狗输入法）`10.32.21.202607061714`
 > 分析日期：2026-11-06
@@ -16,7 +16,7 @@
 | **【R】** | 需运行时验证：静态分析无法确定（真实调用顺序、对象实例、多进程行为等） |
 | **UNKNOWN** | 未确认，禁止编码实现时假定 |
 
-引用格式 `包路径/类.java:行号`，均相对于 `ChironIOSInput\analysis\jadx_out\sources\`。
+引用格式 `包路径/类.java:行号`，均相对于 `AppleInputForSogou\analysis\jadx_out\sources\`。
 
 **混淆/AspectJ 警告【D】**：本 APK 用 AspectJ 大面积织入，几乎每个业务类都带合成成员（`ajc$tjp_*`、`M/N/O/.../X(...org.aspectj.lang.a)`、`$$SRouter$$Autowired`）。后果：
 1. 禁止"遍历所有方法名找特征"的反射探测 —— 会把 AspectJ 合成方法当成业务方法；

@@ -49,7 +49,7 @@ public final class ModuleConfig {
                         created.reload();
                         sPrefs = created;
                     } catch (Throwable t) {
-                        XposedBridge.log("[ChironIOSInput] config open failed: " + t);
+                        XposedBridge.log("[AppleInputForSogou] config open failed: " + t);
                         return null;
                     }
                 }

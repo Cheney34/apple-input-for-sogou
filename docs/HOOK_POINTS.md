@@ -78,7 +78,7 @@ XposedHelpers.findAndHookMethod(
 ### H20 `ExpressionKeyboardEmoji#f0(Z)Landroid/view/View;`（高风险）
 - 返回表情面板 View，被 `expression/manager/j.java:292` 取用后 `setKeyboardView(...)`。
 - 风险：`EmojiKeyboardView` 会被 `presenter.i` 反向调用（`updateMenuData`/`showSlideAnimation`/`setRVCanScroll`/`getPresenter`/`initData`）。若替换返回值，必须**保留原实例**（创建但不上树），否则 NPE。
-- 推荐折中：**不换返回值**，用 H02 在 z=3 上叠加 Chiron 面板并隐藏原生面板（`ExpressionViewContainer` 的可见性）。
+- 推荐折中：**不换返回值**，用 H02 在 z=3 上叠加 Apple 面板并隐藏原生面板（`ExpressionViewContainer` 的可见性）。
 
 ### H21/H22 表情组间滑动（v1.8 已验证可用，本工程复核）
 - `NoScrollViewPager`（classes2，`extends androidx.viewpager.widget.ViewPager`）只有 `onInterceptTouchEvent/onTouchEvent/setScrollable` 三个自有方法；`slide` 字段门控滑动。

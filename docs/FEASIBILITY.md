@@ -16,7 +16,7 @@
 | 3 | 长按符号 / 中英切换（iOS 交互） | ✅ 可行（中置信） | 自绘层实现 + `InputLogic#onText` / `MainImeServiceDel#onKey` | 键码/事件码语义部分 UNKNOWN（`f1`、`onKey` 参数） | Phase 5 |
 | 4 | iOS 表情面板替换（含苹果 emoji 注入） | ✅ 可行（中高置信） | `EXPRESSION_VIEW` 槽（z=3 复用）+ `sogou.u#f(BaseExpressionInfo)` 上屏 | 表情面板被 presenter 反向驱动；原生 Assets 与磁盘分组需并行处理 | Phase 6 |
 
-**总体判断**：本任务书的四大功能**在静态层面全部具备可实施的注入点**，且"搜狗负责输入、Chiron 负责体验"的分工在结构上成立——输入引擎（native + `IMEInterface`）、候选生成（`getCandidatesNative`）、上屏（`ic.g`）三者都位于 UI 层之下，与 UI 解耦。
+**总体判断**：本任务书的四大功能**在静态层面全部具备可实施的注入点**，且"搜狗负责输入、Apple 负责体验"的分工在结构上成立——输入引擎（native + `IMEInterface`）、候选生成（`getCandidatesNative`）、上屏（`ic.g`）三者都位于 UI 层之下，与 UI 解耦。
 
 **总体风险排序**（高→低）：输入区高度与 insets > 键盘重建后的对象失效 > 候选附加信息语义不明 > 表情面板反向驱动 > 手势与键码语义 > 主题/皮肤背景绘制。
 
@@ -62,10 +62,10 @@ Phase 3 目标拓扑：
 | 振动/音效 | 搜狗按键反馈由内部实现 | 首版用我们自己的 `Vibrator`/`SoundPool`；如需原生策略，Phase 5 再桥接 |
 
 ### 1.5 验证方法（Phase 3 出口标准）
-1. 小米 HyperOS 设备上，任意输入框弹出键盘 → 100% 显示 Chiron 键盘（截图对比 iOS 参考图）。
+1. 小米 HyperOS 设备上，任意输入框弹出键盘 → 100% 显示 Apple 键盘（截图对比 iOS 参考图）。
 2. 26 键拼音输入 "nihao" → 候选条出现 "你好/你号…"（证明引擎链路未被破坏）。
 3. 点选首个候选 → 输入框得到 "你好"，且搜狗词频学习生效（第二次输入 "nih" 时 "你好" 排名上升）。
-4. 悬浮键盘、游戏键盘、从表情面板返回键盘 → 三次切换后仍是 Chiron 键盘。
+4. 悬浮键盘、游戏键盘、从表情面板返回键盘 → 三次切换后仍是 Apple 键盘。
 5. 收起/弹出 10 次无崩溃、无内存持续增长（`dumpsys meminfo` 对比）。
 6. 关闭模块（LSPosed 作用域取消）→ 完全恢复搜狗原生键盘（证明"失败即原样"）。
 
@@ -145,7 +145,7 @@ Phase 3 目标拓扑：
 ## §4 功能四：iOS 表情面板替换
 
 ### 4.1 目标
-- 用 Chiron 的苹果 emoji 面板（v6.4 能力：10 个分组 PNG + payload 注入 + 分组过滤 + 左右滑动）**替代**搜狗原生表情面板的 UI，但**保留**搜狗的表情输入通道。
+- 用本模块的苹果 emoji 面板（v6.4 能力：10 个分组 PNG + payload 注入 + 分组过滤 + 左右滑动）**替代**搜狗原生表情面板的 UI，但**保留**搜狗的表情输入通道。
 - 额外消灭搜狗内置的"组合(pg)"与"拼装"分组（v1.8 的 `GroupFilterHook` 已实现，需在本工程复核）。
 
 ### 4.2 静态证据
@@ -160,7 +160,7 @@ Phase 3 目标拓扑：
 
 ### 4.3 实施路径（两套并行，推荐 A'）
 - **A'（推荐，风险最低）**：保留 `EmojiKeyboardView` 实例与数据链（这样 presenter 的反向驱动 `updateMenuData/showSlideAnimation/setRVCanScroll` 全部成立），只**隐藏原生 UI 子层**并把 Chiron 的 emoji 视图叠加/替换进去；滑动交给原生 pager（`setScrollable(true)` 已由 v1.8 `GestureHook` 打开）。
-- **B（彻底）**：hook `ExpressionKeyboardEmoji#f0(boolean)` 返回 Chiron 面板 View。风险：presenter 会继续对 `EmojiKeyboardView` 调用 5 个方法，若我们把实例丢弃，可能出现 NPE 或无响应——必须保留实例（只不挂到视图树）。
+- **B（彻底）**：hook `ExpressionKeyboardEmoji#f0(boolean)` 返回 Apple 面板 View。风险：presenter 会继续对 `EmojiKeyboardView` 调用 5 个方法，若我们把实例丢弃，可能出现 NPE 或无响应——必须保留实例（只不挂到视图树）。
 - 分组过滤：迁移 v1.8 `GroupFilterHook`，但**补上** `expression/manager/f#E(Context)` / `#F(...)` 的 hook，确保"组合(pg)/拼装"不复活；`File.list()` 过滤保留作为兜底。
 - 苹果 emoji 注入：沿用 v6.4 的 `assets/payload.zip` + `manifests/*.xml` 分组方案（`ref/chiron-apple-emoji/lsposed-sogou/tools/make_payload.py`）；需在本工程复核 `EmojiService` 的安装协议（CMD_INSTALL_ALL / INSTALL_CORE / INSTALL_GROUPS / RESTORE）。
 
@@ -174,12 +174,12 @@ Phase 3 目标拓扑：
 | 面板高度 | 表情面板高度与键盘不同（`ExpressionViewContainer#setExpressionViewHeight`） | 自绘面板高度取 `ExpressionViewContainer` 上报值（Phase 6 验证） |
 
 ### 4.5 验证方法
-1. 点表情键 → 出现 Chiron 面板（不是搜狗原生 12 宫格）。
-2. 分组列表只剩 Chiron 的 10 组，无"组合(pg)"/"拼装"。
+1. 点表情键 → 出现 Apple 面板（不是搜狗原生 12 宫格）。
+2. 分组列表只剩 本模块的 10 组，无"组合(pg)"/"拼装"。
 3. 左右滑动切组（v1.8 GestureHook 生效）。
 4. 点 emoji → 上屏为该 emoji（微信/备忘录/浏览器三个目标各验一次）。
 5. 进程重启（杀进程）后分组仍被过滤（验证 hook 时机覆盖所有 entry，v1.8 用 0/300/1200/3000ms 四次安装）。
-6. 从表情面板返回键盘 → 键盘仍是 Chiron 键盘（两功能共存验证）。
+6. 从表情面板返回键盘 → 键盘仍是 Apple 键盘（两功能共存验证）。
 
 ---
 

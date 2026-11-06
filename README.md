@@ -1,6 +1,6 @@
-# Chiron iOS 输入（Chiron iOS Input）
+# Apple Input for Sogou（Apple 输入法 · 搜狗版）
 
-> **搜狗负责输入，Chiron 负责体验。**
+> **搜狗负责输入，Apple 负责体验。**
 >
 > 一个针对「小米定制版搜狗输入法」的 LSPosed 模块：保留搜狗的输入引擎、词库、候选生成与上屏逻辑，
 > 只把**键盘、候选栏、表情面板**的显示层与交互换成 iOS 风格。
@@ -15,9 +15,9 @@
 
 | 版本 | 适合谁 | 有什么 |
 | --- | --- | --- |
-| [**v2.0.0-alpha2**](https://github.com/Cheney34/chiron-ios-input/releases/tag/v2.0.0-alpha2) | 想试 iOS 风格键盘的尝鲜用户 | 自绘 iOS 键盘（显示层替换）+ iOS 风格模块界面 + 旧版全部表情功能；**alpha，未上机验证** |
-| [**v1.8**](https://github.com/Cheney34/chiron-ios-input/releases/tag/v1.8) | 只想换 Apple 表情、要稳定 | 表情分组安装 / 隐藏内置分组 / 滑动切换 / Logo 触发词 |
-| [**v1.7**](https://github.com/Cheney34/chiron-ios-input/releases/tag/v1.7) | 老设备 / 旧搜狗版本 | 与 v1.8 同代但更早，兼容面略宽 |
+| [**v2.0.0-alpha2**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.0-alpha2) | 想试 iOS 风格键盘的尝鲜用户 | 自绘 iOS 键盘（显示层替换）+ iOS 风格模块界面 + 旧版全部表情功能；**alpha，未上机验证** |
+| [**v1.8**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v1.8) | 只想换 Apple 表情、要稳定 | 表情分组安装 / 隐藏内置分组 / 滑动切换 / Logo 触发词 |
+| [**v1.7**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v1.7) | 老设备 / 旧搜狗版本 | 与 v1.8 同代但更早，兼容面略宽 |
 
 ### 界面长什么样（alpha2 重写）
 
@@ -42,7 +42,7 @@
 | hook 点清单（30 个，含 DEX 验证描述符） | ✅ 完成 —— [`docs/HOOK_POINTS.md`](docs/HOOK_POINTS.md) |
 | MVP 方案与测试用例 | ✅ 完成 —— [`docs/MVP_PROPOSAL.md`](docs/MVP_PROPOSAL.md) |
 | 模块源码（键盘显示层替换 + 诊断 + 旧表情功能） | ⚠️ 已写完，**javac + aapt2 + d8 + apksigner 全链路真实构建出 APK**，未真机验证 |
-| 可安装 APK | ✅ 已构建：`ChironIOSInput_v2.0.0-alpha2.apk`（21.74 MB，见 Releases） |
+| 可安装 APK | ✅ 已构建：`AppleInputForSogou_v2.0.0-alpha2.apk`（21.74 MB，见 Releases） |
 | 候选栏 iOS 化 / 长按符号 / 表情面板 iOS 化 | ⏳ 未实现（Phase 4–6） |
 
 **关于「验证」的说明**：本仓库的开发环境**没有 Android SDK / Gradle / 一台真机**，
@@ -117,13 +117,13 @@ v2.0.0-alpha2 实现的正是这一步：
 
 1. 手机已 Root，并安装 **LSPosed**（Magisk / KernelSU 模块形式）。
 2. 安装本模块 APK（`com.chiron.iosemoji`）。
-3. 打开 LSPosed → 模块 → **启用 Chiron iOS 输入**。
+3. 打开 LSPosed → 模块 → **启用 Apple Input for Sogou**。
 4. 作用域勾选：`搜狗输入法`（小米定制版，包名 `com.sohu.inputmethod.sogou.xiaomi`）。
    如果你装的是通用版，勾 `com.sohu.inputmethod.sogou`。
 5. 强行停止一次搜狗输入法（或切换一次输入法），让新进程加载 hook。
 6. 打开任意输入框，检查：
-   - 键盘是否变成 Chiron 样式；
-   - LSPosed 日志里是否有 `ChironIOSInput` 开头的输出。
+   - 键盘是否变成 Apple 样式；
+   - LSPosed 日志里是否有 `AppleInputForSogou` 开头的输出。
 
 > 出问题想立刻恢复：在 LSPosed 里关掉模块 → 强行停止搜狗 → 切回输入法，即回到原版。
 > 模块**从不修改搜狗 APK**，也不写系统分区。
@@ -197,7 +197,21 @@ cd lsposed
 
 ### 5.3 无 Gradle / 无 Android Studio 的真实构建（✅ 已在本机跑通，即 Release 里的 APK）
 
-不装 Android Studio 也能出包，只要 `android.jar` 与 `build-tools`（`aapt2` / `d8` / `zipalign` / `apksigner`）：
+不装 Android Studio 也能出包，只要 `android.jar` 与 `build-tools`（`aapt2` / `d8` / `zipalign` / `apksigner`）。
+
+**最省事：一条命令**（脚本会走完下面的 7 步，并自动从 `AndroidManifest.xml` 读 `versionCode` / `versionName`）：
+
+```powershell
+pwsh -File tools/build-apk.ps1 `
+    -AndroidJar   "<SDK>\platforms\android-35\android.jar" `
+    -BuildToolsDir "<SDK>\build-tools\35.0.0" `
+    -Out          build\AppleInputForSogou_v2.0.0-alpha2.apk
+```
+
+编译用到的 Xposed API：优先用 `lsposed/app/libs/XposedBridgeAPI-82.jar`（仓库不提交，需自行放入）；
+没有该文件时自动回退到 `lsposed/xposed-stubs/`（只有签名、没有实现，**仅参与编译，不会打进 APK**）。
+
+下面是脚本内部等价的手工步骤，供核对：
 
 ```powershell
 # 0) 取工具（一次性）
@@ -223,12 +237,12 @@ zipalign -f -p 4 build/unaligned.apk build/aligned.apk
 apksigner sign --ks signing/debug.keystore --ks-key-alias androiddebugkey `
     --ks-pass pass:android --key-pass pass:android --min-sdk-version 26 `
     --v1-signing-enabled true --v2-signing-enabled true `
-    --out ChironIOSInput_v2.0.0-alpha2.apk build/aligned.apk
+    --out AppleInputForSogou_v2.0.0-alpha2.apk build/aligned.apk
 ```
 
 本仓库 v2.0.0-alpha2 的 Release APK 就是用这套流程产出的，校验结果：
 
-- `aapt2 dump badging`：`package name='com.chiron.iosemoji' versionCode='21' versionName='2.0.0-alpha2' minSdkVersion:'26' targetSdkVersion:'35' application-label:'Chiron iOS 输入'`
+- `aapt2 dump badging`：`package name='com.chiron.iosemoji' versionCode='21' versionName='2.0.0-alpha2' minSdkVersion:'26' targetSdkVersion:'35' application-label:'Apple Input for Sogou'`
 - `apksigner verify`：通过；签名 `CN=Android Debug`，证书 SHA-256 `4fbf65ed205c4a25bb592673714533c5effbcd234b9c08ed1be20ad7bf53c207`
 - APK 体积 21.74 MB（其中 `assets/payload.zip` ≈ 21.6 MB 是 Apple 表情位图，仓库不提交、只进 Release 资产）
 
@@ -321,7 +335,7 @@ javac -encoding UTF-8 -Xlint:all --release 17 \
 的 `lsposed-sogou/` 目录**拆分**出来的独立项目：
 
 - 保留：表情分组安装器、分组过滤、滑动解锁、Logo 触发词（v1.8 已验证的功能）；
-- 改变：模块名 `IOSEmoji` → `ChironIOSInput`、入口类新写、构建方式（手写脚本 → Gradle + 可复现的 aapt2 链路）；**包名保持 `com.chiron.iosemoji` 不变**，保证同签名覆盖升级；
+- 改变：模块名 `IOSEmoji` → `AppleInputForSogou`、入口类新写、构建方式（手写脚本 → Gradle + 可复现的 aapt2 链路）；**包名保持 `com.chiron.iosemoji` 不变**，保证同签名覆盖升级；
 - 新增：iOS 键盘显示层替换、配置开关、版本门控、诊断工具、全套静态分析文档。
 
 两者**没有运行时依赖**，可以分别安装/卸载（注意：同时安装时两个模块都会 hook 搜狗进程，

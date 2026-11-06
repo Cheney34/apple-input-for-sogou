@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Chiron iOS 输入</string>
-    <string name="tagline">LSPosed 模块 · 搜狗负责输入，Chiron 负责体验</string>
+    <string name="app_name">Apple Input for Sogou</string>
+    <string name="tagline">LSPosed 模块 · 搜狗负责输入，Apple 负责体验</string>
     <string name="version_label">v2.0.0-alpha2</string>
 
     <string name="confirm_restore">把被替换过的分组恢复成搜狗自带的原始表情？</string>

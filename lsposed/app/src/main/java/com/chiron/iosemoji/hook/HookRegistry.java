@@ -29,7 +29,7 @@ public final class HookRegistry {
     }
 
     public static void log(String message) {
-        XposedBridge.log("[ChironIOSInput] " + message);
+        XposedBridge.log("[AppleInputForSogou] " + message);
     }
 
     public static void log(Throwable t) {

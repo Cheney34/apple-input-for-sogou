@@ -2,9 +2,21 @@
 
 本项目遵循「分析 → 验证 → 实现」的推进方式：每个版本只写**有证据支撑**的东西。
 
+## v2.0.0-alpha2（重构建）— 项目改名为 Apple Input for Sogou
+
+- **项目对外名称**：`Chiron iOS 输入` → **`Apple Input for Sogou`（Apple 输入法 · 搜狗版）**。
+  应用名、模块描述、README/文档标题、日志 TAG（`AppleInputForSogou`）同步改名；
+  **包名 `com.chiron.iosemoji` 与签名证书保持不变**，所以仍是同包名覆盖升级。
+- **仓库改名**：`Cheney34/chiron-ios-input` → `Cheney34/apple-input-for-sogou`（GitHub 自动 301 重定向旧地址）。
+- 新增 `tools/build-apk.ps1`：把「无 Gradle」的七步构建固化成一条命令 —— 自动从 `AndroidManifest.xml`
+  读 `versionCode`/`versionName`，优先用 `lsposed/app/libs/XposedBridgeAPI-82.jar`，缺失时回退到
+  `lsposed/xposed-stubs/`（编译期签名桩，不会打进 APK）。
+- APK 重新构建并替换 Release 资产：`AppleInputForSogou_v2.0.0-alpha2.apk`（versionCode 21 不变，
+  `application-label` 已变为 `Apple Input for Sogou`，证书 SHA-256 仍为 `4fbf65ed…c207`）。
+
 ## v2.0.0-alpha2 — 包名回退 + iOS 界面重写（真实出包，未上机验证）
 
-> alpha1 把包名改成了 `com.chiron.iosemoji` 之外的 `com.chiron.iosinput`，导致手机上像是「另一个程序」、
+> alpha1 把包名从 `com.chiron.iosemoji` 改成了 `com.chiron.iosinput`，导致手机上像是「另一个程序」、
 > 无法覆盖升级。alpha2 起**包名回退为 `com.chiron.iosemoji`**（与 v1.7/v1.8 一致），并用同一张调试证书签名，
 > 因此属于**同包名覆盖升级**：装上会直接替换旧模块，LSPosed 里的条目和作用域不用重配。
 
@@ -35,9 +47,9 @@
 ### 构建产物（本机实测）
 
 - `aapt2`(2.19) + `javac`(17) + `d8` + `zipalign` + `apksigner` 手工链路真实出包
-  `ChironIOSInput_v2.0.0-alpha2.apk`（21.74 MB，含 `assets/payload.zip`）。
+  `AppleInputForSogou_v2.0.0-alpha2.apk`（21.74 MB，含 `assets/payload.zip`）。
 - `aapt2 dump badging`：`package name='com.chiron.iosemoji' versionCode='21' versionName='2.0.0-alpha2'
-  minSdkVersion:'26' targetSdkVersion:'35' application-label:'Chiron iOS 输入'`。
+  minSdkVersion:'26' targetSdkVersion:'35' application-label:'Apple Input for Sogou'`。
 - 仍未上机验证：H01/H02 是否命中、键盘触摸与 insets 表现，需按 `docs/MVP_PROPOSAL.md` TC 清单跑一遍。
 ## v2.0.0-alpha1 — 独立仓库首个版本（javac 冒烟编译通过，未上机验证）
 
@@ -53,7 +65,7 @@
 
 - 环境无 Android SDK / Gradle，改用 `android.jar`(API 35) + `build-tools 35` 手工链路
   `aapt2 compile/link → javac → d8 → zip → zipalign → apksigner` **真实出包**：
-  `ChironIOSInput_v2.0.0-alpha1.apk`，21.74 MB。
+  `AppleInputForSogou_v2.0.0-alpha1.apk`，21.74 MB。
 - `aapt2 dump badging` 与 `apksigner verify --print-certs` 均通过
   （`CN=Android Debug`，证书 SHA-256 `4fbf65ed205c4a25bb592673714533c5effbcd234b9c08ed1be20ad7bf53c207`）。
 - **首次内置 `assets/payload.zip`**（21.63 MB）：由 `tools/make_payload.py` 从
@@ -84,7 +96,7 @@
   候选探针、视图树诊断），经 `XSharedPreferences` 在搜狗进程内读取，读不到一律用默认值。
 - `VersionProfile`：版本白名单 `10.32.21.202607061714`；非白名单版本自动降级为
   `DIAGNOSTIC_ONLY`（只读，不改界面）。
-- `HookRegistry`：hook 安装幂等 + 失败隔离 + 统一日志（TAG `ChironIOSInput`）。
+- `HookRegistry`：hook 安装幂等 + 失败隔离 + 统一日志（TAG `AppleInputForSogou`）。
 
 ### 新增：诊断
 
@@ -100,7 +112,7 @@
 
 ### 变更（自 v1.8 起）
 
-- 模块名 `IOSEmoji` → `ChironIOSInput`（日志 TAG 同步改名）；**包名保持 `com.chiron.iosemoji`**，便于同签名覆盖升级 v1.7 / v1.8。
+- 模块名 `IOSEmoji` → `AppleInputForSogou`（日志 TAG 同步改名）；**包名保持 `com.chiron.iosemoji`**，便于同签名覆盖升级 v1.7 / v1.8。
 - 构建方式：`build.sh`（aapt2 + javac + d8 手写链路）→ **Gradle / Android Studio 工程**。
 - 仓库：从 `chiron-apple-emoji` 的 `lsposed-sogou/` 目录拆分独立成库。
 

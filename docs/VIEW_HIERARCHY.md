@@ -1,4 +1,4 @@
-# Chiron iOS Input — 阶段 0 静态分析报告（3/8）：键盘 View 层级
+# Apple Input for Sogou — 阶段 0 静态分析报告（3/8）：键盘 View 层级
 
 > 目标 APK：`com.sohu.inputmethod.sogou.xiaomi` `10.32.21.202607061714`
 > 证据来源：`analysis\jadx_out\sources\`（jadx 1.5.1）+ `analysis\dex_index.json`（androguard）

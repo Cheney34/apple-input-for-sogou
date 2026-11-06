@@ -38,7 +38,7 @@ import de.robv.android.xposed.XposedHelpers;
  */
 final class LogoHook {
 
-    private static final String TAG = "ChironIOSInput";
+    private static final String TAG = "AppleInputForSogou";
 
     /**
      * 苹果私用区码位，iOS / macOS 上打出来就是苹果标志。

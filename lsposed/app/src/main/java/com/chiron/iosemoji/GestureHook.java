@@ -36,7 +36,7 @@ import de.robv.android.xposed.XposedHelpers;
  */
 final class GestureHook {
 
-    private static final String TAG = "ChironIOSInput";
+    private static final String TAG = "AppleInputForSogou";
 
     private static final String CLS_PAGER =
             "com.sogou.expressionplugin.emoji.NoScrollViewPager";

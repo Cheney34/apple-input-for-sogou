@@ -32,7 +32,7 @@ import de.robv.android.xposed.XposedHelpers;
  */
 final class GroupFilterHook {
 
-    private static final String TAG = "ChironIOSInput";
+    private static final String TAG = "AppleInputForSogou";
 
     /** 分组目录的路径后缀，d.q 实际取值是 <filesDir>/sogou/emojipackage。 */
     private static final String DIR_SUFFIX = "/sogou/emojipackage";

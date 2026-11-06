@@ -196,11 +196,11 @@ public class MainActivity extends Activity {
 
         int pad = IosUi.dp(this, 22);
 
-        TextView title = IosUi.largeTitle(this, "Chiron iOS 输入");
+        TextView title = IosUi.largeTitle(this, "Apple Input for Sogou");
         title.setPadding(pad, 0, pad, 0);
         root.addView(title);
 
-        TextView sub = IosUi.text(this, "搜狗负责输入 · Chiron 负责体验", 14f, IosUi.label2(this), false);
+        TextView sub = IosUi.text(this, "搜狗负责输入 · Apple 负责体验", 14f, IosUi.label2(this), false);
         sub.setPadding(pad, IosUi.dp(this, 4), pad, 0);
         root.addView(sub);
 

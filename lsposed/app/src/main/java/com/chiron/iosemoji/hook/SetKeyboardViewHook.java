@@ -69,7 +69,7 @@ public final class SetKeyboardViewHook {
                                             RelativeLayout.LayoutParams.WRAP_CONTENT));
                                     XposedHelpers.callMethod(container, "addChildView", our, 3);
                                     XposedHelpers.callMethod(container, "updateAllChildren");
-                                    HookRegistry.log("H02 injected Chiron keyboard at z=3");
+                                    HookRegistry.log("H02 injected Apple keyboard at z=3");
                                 } catch (Throwable t) {
                                     HookRegistry.log("H02 after failed");
                                     HookRegistry.log(t);

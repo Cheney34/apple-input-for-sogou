@@ -43,7 +43,7 @@
   - `v()`：加载 `sogouime` 并把恢复标志写回 `com.sohu.inputmethod.sogou.recovery.b`（捕获 `NoSuchFieldError|NoSuchMethodError|UnsatisfiedLinkError`）。
   - `s(Context, IMEInterface)` = **引擎 open**：`iMEInterface.open(l.e1.getBytes(), l.z.getBytes(), ErrorTrace.CORE_LOG_SDCARD_PATH.getBytes(), l.O.getBytes(), com.sohu.util.o.e(ctx).j(2), (ForeignLanguagePackageManager.K(3)+"/core/dict/").getBytes(), SettingManager.t2(ctx).G(R.string.pref_dict_memory_opt,true))`，随后 `setParameter(66,…)`、`setLWPreLocalGearPosition`、`setParameter(60,…)`、`setLastAssocLayer`、`setParameter(77,privacyMode)`。
   - 系统词典 9 个 bin（`sgim_sys.bin`、`sgim_gd_bigram/cagram/nmode/asso_sc/asso_bs/abg/asso_bt`、`sgim_bh.bin`），扩展词典 43 个 bin（`sgim_py`、`sgim_aid`、`sgim_cf`、`sgim_cor`、`sgim_gd_em`、`sgim_lm(.9key)`、`sgim_pyslm`、`sgim_en_sys`、`sgim_ip`、`sgim_name`、`sgim_qr`、`sgim_sp`、`sgim_gd_wb`、`sgim_InputStr` …）。
-- **对本项目的意义**：引擎完全藏在 `IMEInterface` 后面，输入法业务代码只跟 Java 层交互 ⇒ 只要不碰 `IMEInterface`/`IMECoreInterface` 的调用约定，替换 UI 不会损害候选质量。这是"搜狗负责输入、Chiron 负责体验"的结构性依据。
+- **对本项目的意义**：引擎完全藏在 `IMEInterface` 后面，输入法业务代码只跟 Java 层交互 ⇒ 只要不碰 `IMEInterface`/`IMECoreInterface` 的调用约定，替换 UI 不会损害候选质量。这是"搜狗负责输入、Apple 负责体验"的结构性依据。
 
 ---
 

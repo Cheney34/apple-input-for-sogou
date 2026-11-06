@@ -16,5 +16,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "chiron-ios-input"
+rootProject.name = "apple-input-for-sogou"
 include(":app")

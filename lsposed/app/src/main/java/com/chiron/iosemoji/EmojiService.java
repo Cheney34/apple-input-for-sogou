@@ -29,7 +29,7 @@ import java.util.zip.ZipInputStream;
  */
 public final class EmojiService {
 
-    private static final String TAG = "ChironIOSInput";
+    private static final String TAG = "AppleInputForSogou";
 
     private static final AtomicBoolean REGISTERED = new AtomicBoolean(false);
     private static final AtomicBoolean RUNNING = new AtomicBoolean(false);

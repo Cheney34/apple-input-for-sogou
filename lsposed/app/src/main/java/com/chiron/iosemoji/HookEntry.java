@@ -38,7 +38,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  */
 public class HookEntry implements IXposedHookLoadPackage {
 
-    private static final String TAG = "ChironIOSInput";
+    private static final String TAG = "AppleInputForSogou";
     private static final AtomicBoolean ATTACHED = new AtomicBoolean(false);
 
     @Override

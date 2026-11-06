@@ -71,7 +71,7 @@ public class SettingsActivity extends Activity {
         addSwitch(core, ModuleConfig.KEY_MASTER, "总开关",
                 "关闭后本模块在搜狗进程内不做任何事（表情、键盘、诊断全部停用）。", true, true);
         addSwitch(core, ModuleConfig.KEY_KEYBOARD_REPLACE, "iOS 键盘（实验）",
-                "用 Chiron 自绘键盘顶替搜狗键盘的显示层；输入、联想、词库仍由搜狗引擎完成。", true, true);
+                "用 模块自绘的 iOS 风格键盘顶替搜狗键盘的显示层；输入、联想、词库仍由搜狗引擎完成。", true, true);
         addSwitch(core, ModuleConfig.KEY_CANDIDATE_PROBE, "候选数据探针",
                 "只读打印候选列表推送情况，日志量大，仅在排查问题时打开。", false, false);
 
@@ -104,7 +104,7 @@ public class SettingsActivity extends Activity {
         addInfo(info, "目标版本白名单", VersionProfile.describe());
         addInfo(info, "设备上的搜狗", readSogouVersion());
         addInfo(info, "作用域", "com.sohu.inputmethod.sogou.xiaomi\ncom.sohu.inputmethod.sogou");
-        addInfo(info, "日志 TAG", "ChironIOSInput");
+        addInfo(info, "日志 TAG", "AppleInputForSogou");
 
         // 说明
         root.addView(IosUi.sectionHeader(this, "说明"));

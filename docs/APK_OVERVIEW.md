@@ -1,4 +1,4 @@
-# Chiron iOS Input — 阶段 0 静态分析报告（1/8）：APK 概览
+# Apple Input for Sogou — 阶段 0 静态分析报告（1/8）：APK 概览
 
 > 目标 APK：`com.sohu.inputmethod.sogou.xiaomi`（小米定制版搜狗输入法）
 > 分析日期：2026-11-06
@@ -11,7 +11,7 @@
 | 项目 | 值 | 证据来源 |
 |---|---|---|
 | 原始路径 | `C:\Users\KOUFIK\Downloads\搜狗輸入法小米版-...apk` | 用户提供 |
-| 分析用副本 | `ChironIOSInput\input\sogou.apk` | 本地复制（ASCII 路径） |
+| 分析用副本 | `AppleInputForSogou\input\sogou.apk` | 本地复制（ASCII 路径） |
 | 大小 | 64,994,361 字节 | zip 目录遍历 |
 | SHA-256 | `90B4A1945D28427A50CC6DF8FA1FE0E29977A0053622FA7A05FBDCFF01F6B09C` | 用户提供 + 本地 `Get-FileHash` 一致 |
 | zip 条目总数 | 11,256 | `zipfile.namelist()` |

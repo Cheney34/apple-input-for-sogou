@@ -20,14 +20,14 @@ import com.chiron.iosemoji.hook.TextInjector;
  *
  * <p><b>只做三件事</b>：把键位摆出来、把触摸翻译成「按键」、把按键交给
  * {@link TextInjector}。它**不碰**输入引擎、候选、词库 —— 拼音/联想/上屏仍然是搜狗自己做的
- * （这正是本项目「搜狗负责输入，Chiron 负责体验」的边界）。
+ * （这正是本项目「搜狗负责输入，Apple 负责体验」的边界）。
  *
  * <p>尺寸基准与搜狗主题 {@code py_9.ini} 对齐（{@code H = 0.591667 × 宽}），
  * 所以换掉键盘后输入法窗口高度、候选栏位置都不用改。
  */
 public final class ChironKeyboardView extends ViewGroup {
 
-    private static final String TAG = "ChironIOSInput";
+    private static final String TAG = "AppleInputForSogou";
 
     private static final int PAGE_LETTER = 0;
     private static final int PAGE_SYMBOL = 1;
