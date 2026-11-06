@@ -56,6 +56,8 @@ public final class ThemeSkinHook {
     /** 图标/菜单/语言标志这类资源，按名字直接跳过（alpha9 起不再碰它们）。 */
     private static final AtomicInteger IMG_PROTECTED = new AtomicInteger();
     private static final AtomicInteger PARSER_CALLS = new AtomicInteger();
+    /** 被「只改内置默认皮肤」规则挡掉的资源（第三方皮肤）。 */
+    private static final AtomicInteger CUSTOM_SKIPPED = new AtomicInteger();
     private static final AtomicInteger IMG_BYPASS = new AtomicInteger();
     /** 见过但没认出来的皮肤图名（最多留 12 个，供用户贴日志定位）。 */
     /** 见到但没处理的资源（带原因 tag），用于「到底走到了哪一步」的诊断。 */
@@ -110,6 +112,12 @@ public final class ThemeSkinHook {
                             @SuppressWarnings("unchecked")
                             Map<String, Map<String, String>> sections = (Map<String, Map<String, String>>) raw;
                             String path = param.args[0] instanceof String ? (String) param.args[0] : "";
+                            // 铁律 1：只改内置默认皮肤；用户自己装的第三方皮肤一律不碰
+                            //（改坏了就是「键盘呼不出来」，beta3 的教训）
+                            if (!AssetSkinHook.isDefaultTheme(path)) {
+                                CUSTOM_SKIPPED.incrementAndGet();
+                                return;
+                            }
                             SkinPreset preset = preset(HookState.context(), path);
                             if (!IosSkin.patchIni(path, sections, preset)) return;
                             int n = INI_PATCHED.incrementAndGet();
@@ -191,6 +199,10 @@ public final class ThemeSkinHook {
             if (src == null) return;
             String path = pickPath(param);
             if (path == null) return;
+            if (!AssetSkinHook.isDefaultTheme(path)) {
+                CUSTOM_SKIPPED.incrementAndGet();
+                return;
+            }
             if (!isSkinPath(path)) {
                 // 诊断：把「被路径过滤掉」的图名列出来，避免「什么都没发生」这种无信息状态
                 seen("skip-path", path);
@@ -389,7 +401,8 @@ public final class ThemeSkinHook {
                 + ";skink=" + IMG_KEPT.get()
                 + ";skinp=" + IMG_PROTECTED.get()
                 + ";skint=" + IosSkin.contrastFixes()
-                + ";skinse=" + SEEN.size();
+                + ";skinse=" + SEEN.size()
+                + ";skintp=" + CUSTOM_SKIPPED.get();
     }
 
     /** 见到但没处理的名字（带原因 tag），诊断用。 */

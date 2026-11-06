@@ -391,6 +391,7 @@ public class SettingsActivity extends Activity {
         String skinContrast = null;
         String skinSkip = null;
         String skinAsset = null;
+        String skinCustom = null;
         String skinSample = null;
         String skinResync = null;
         StringBuilder eff = new StringBuilder();
@@ -439,6 +440,9 @@ public class SettingsActivity extends Activity {
                 case "skip":
                     skinSkip = v;
                     break;
+                case "skintp":
+                    skinCustom = v;
+                    break;
                 case "asset":
                     skinAsset = v;
                     break;
@@ -467,6 +471,7 @@ public class SettingsActivity extends Activity {
         if (skinProtected != null) skinLine.append("  跳过图标=").append(skinProtected);
         if (skinContrast != null) skinLine.append("  对比修正=").append(skinContrast);
         // 资源级（AssetManager）通道：这条不通，说明皮肤不是从 assets 读的（可能解包到文件了）
+        if (skinCustom != null) skinLine.append("  第三方跳过=").append(skinCustom);
         if (skinAsset != null) skinLine.append("\n资源=").append(skinAsset);
         if (skinResync != null) skinLine.append("  重读=").append(skinResync);
         if (eff.length() > 0) skinLine.append('\n').append(eff);
