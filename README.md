@@ -17,7 +17,7 @@
 | 输入法 | 包名 | 皮肤改造 | 表情分组/翻页 | 自绘键盘（实验） |
 | --- | --- | --- | --- | --- |
 | 小米定制版 10.32.21.202607061714 | `com.sohu.inputmethod.sogou.xiaomi` | ✅ 已确认 | ✅ 已确认 | ✅ 实验 |
-| 搜狗官方 20.19.0 | `com.sohu.inputmethod.sogou` | ⏳ 待验证（皮肤入口类同名，**方法签名未验证**） | ⏳ 待验证 | ❌ 整层类不存在 |
+| 搜狗官方 20.19.0 | `com.sohu.inputmethod.sogou` | ⏳ 入口已定位（ini 入口同名同签名；位图入口 `common.j`→**`common.g`**），**待真机实测** | ⏳ 待验证 | ⏳ 有对应物（`NormalIMERootContainer`→`com.sogou.bu.basic.SogouInputArea`），未适配 |
 | OPPO 定制版 10.32.0622.x | `com.sohu.inputmethod.sogouoem` | ⏳ 待修（类名写错，见下） | 部分（分组过滤 ✅ / 解压旁路待验证） | ❌ 未适配 |
 | vivo 定制版 | ？ | ❌ 未开始（**缺 APK**） | ❌ | ❌ |
 
