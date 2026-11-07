@@ -1,18 +1,22 @@
 package com.chiron.iosemoji.hook;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
+import com.chiron.iosemoji.compat.Targets;
 import com.chiron.iosemoji.config.ModuleConfig;
 import com.chiron.iosemoji.core.HookState;
 import com.chiron.iosemoji.skin.IosSkin;
 import com.chiron.iosemoji.skin.SkinPreset;
 
-import java.lang.reflect.Method;
-import java.util.Set;
+import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -20,333 +24,352 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 /**
- * H60：让 MIUI / HyperOS「全面屏键盘优化」底栏跟随本模块的皮肤配色。
+ * H60 + H61：让 MIUI / HyperOS「全面屏键盘优化」底栏跟随本模块皮肤。
  *
- * <p><b>为什么 H40 / H41 改不到它</b>：那两个 hook 改的是搜狗 APK 内部
- * {@code com.sogou.theme.*} 解析出来的 ini 颜色表与皮肤位图。而全面屏键盘优化底栏
- * 是 MIUI 从 {@code com.miui.phrase} 动态 dex 里加载
- * {@code com.miui.inputmethod.InputMethodBottomManager} 后，挂到
- * {@code InputMethodService} 的 {@code SoftInputWindow} 上的一组 View。
- * 它<b>不读搜狗的 ini，也不读搜狗的位图</b>，颜色走的是另一条独立通道：
+ * <p><b>真正的颜色落点是 {@code com.miui.phrase} 里的
+ * {@code com.miui.inputmethod.InputMethodBottomManager}</b>（v2.0.3-beta6 起按此实现）：
  * <pre>
- *   PhoneWindow.setNavigationBarColor(int)          ← 输入法主动上报的窗口色
+ *   Sogou 上报窗口色 → PhoneWindow.setNavigationBarColor(int)
  *        ↓
- *   InputMethodServiceInjector.customizeBottomViewColor(boolean, int, int, int)
- *        ↓ reflectModule()
- *   InputMethodBottomManager  →  miuiBottomArea 底栏
+ *   framework: InputMethodServiceInjector.customizeBottomViewColor(boolean,int,int,int)
+ *        ↓
+ *   InputMethodBottomManager.customizeBottomViewColor(...)   ← H61 before 改参（治本）
+ *        ↓
+ *   InputMethodBottomManager.setBottomColor(boolean,int,int,int)
+ *        sBottomView.setBackgroundColor(bg) + 左右图标 setBackgroundTintList(CSL)
  * </pre>
- * 所以皮肤换得再彻底，底栏拿到的仍是搜狗上报的「原始皮肤色」。
  *
- * <p><b>切入点的选择</b>：真正干活的 {@code com.miui.inputmethod.*} 在动态 dex 的
- * ClassLoader 里（{@code InputMethodModuleManager.loadDex} → addDexPath），不是
- * {@code lpparam.classLoader}；要 hook 它得额外给 LSPosed 勾选 {@code com.miui.phrase}
- * 作用域并监听 loadDex。但 {@code InputMethodServiceInjector} 在 framework.jar
- * （boot classpath），<b>在搜狗进程内用 null ClassLoader 就能拿到</b>，且它正好是
- * 所有颜色上报的转发枢纽。因此本 hook 完全在现有作用域内工作，不需要改 xposed_scope。
+ * <p><b>为什么以前不生效（已从 phrase 5.7.4 反编译确认）</b>：
+ * {@code setBottomColor()} 第一行就是
+ * {@code if (sBottomView == null) { Log.e("...please setBottomColor after addMiuiBottomView"); return; }}
+ * —— 搜狗上报颜色时底栏还没 add（或刚被重建），这次上报被直接丢弃；随后
+ * {@code addMiuiBottomView()} 用<b>默认色</b>把底栏建起来，再没有人重设。
+ * 所以必须「改参 + 建完之后主动补一次」两条都做。
  *
- * <p><b>三处配合，缺一不可</b>：
- * <ol>
- *   <li><b>before 改参（治本）</b>：hook {@code customizeBottomViewColor}，
- *       把任何来源的颜色都改写成当前 {@link SkinPreset} 的配色。只主动调一次是不够的，
- *       搜狗后续每次上报都会把颜色冲掉；</li>
- *   <li>{@code addMiuiBottomView} 之后补一次：底栏刚创建、切换输入法后重建的时序；</li>
- *   <li>{@code PhoneWindow.setNavigationBarColor} 之后补一次：换肤 / 深浅色切换的时序。</li>
- * </ol>
- *
- * <p>参数语义由三个已实机验证的实现交叉确认（RC1844/MIUI_IME_Unlock、
- * Yizhou147/HyperOS-IME-Unlock、NEORUAA/WeType_UI_Enhanced）：
- * <ul>
- *   <li>arg0 {@code isCustom}：传 true 表示使用自定义配色；</li>
- *   <li>arg1：底栏背景色（不透明）；</li>
- *   <li>arg2：图标 / 文字色 = {@code ~bg | 0xFF000000}（反色，天然适配深浅色）；</li>
- *   <li>arg3：次要 / 按下态 = {@code ~bg | 0x66000000}（同色 40% alpha）。</li>
- * </ul>
- *
- * <p>全程只改颜色、不碰任何 View 的尺寸 / padding / insets，也不动窗口几何，
- * 与 H40/H41 的「铁律」一致。任何一步失败都只记日志，搜狗与底栏保持原行为。
+ * <p><b>参数语义</b>（phrase 5.7.4 反编译 + 已有实现交叉确认）：
+ * arg0 {@code isCustom}（true=用自定义配色）、arg1 底栏背景色、arg2 图标常态色、
+ * arg3 图标按下态色。全程只改颜色，不动尺寸 / padding / insets。
  */
 public final class MiuiBottomBarHook {
 
-    /** 不同 MIUI / HyperOS 版本里这个注入类的名字不一样，逐个试（DEX 层面已见过的两个）。 */
+    private static final String CLS_BOTTOM_MANAGER = "com.miui.inputmethod.InputMethodBottomManager";
+
+    /** 不同 MIUI / HyperOS 版本里注入类名字不一样，逐个试。 */
     private static final String[] INJECTORS = {
             "android.inputmethodservice.InputMethodServiceInjector",
             "android.inputmethodservice.InputMethodServiceStubImpl",
     };
 
-    /**
-     * 透明模式：把 arg1 传 {@code Color.TRANSPARENT}，让底栏透出父容器，
-     * 只保留白/黑图标（WeType_UI_Enhanced 的做法，观感最"无缝"）。
-     *
-     * <p>但它要求底栏的父容器已经铺好键盘底色；在搜狗这套「改默认皮肤」方案里
-     * 父容器是 MIUI 的窗口，某些版本会露出窗口默认黑/白，反而更花。
-     * 因此默认用实色 {@code SkinPreset.kbBg}。上机若发现底栏与键盘之间
-     * 仍有一条接缝，可以把它改成 true 试一次。
-     */
+    /** 底栏透出父容器（只留图标）。默认关：需要父容器已铺键盘底色。 */
     private static final boolean FORCE_TRANSPARENT = false;
-
-    private static volatile Method sCustomize;
-    /** 由 ThemeSkinHook 在解析皮肤 ini 时同步：跟随实际加载的 black/white 皮肤，而不是猜系统夜间模式。 */
-    private static volatile boolean sSkinDark;
-    private static volatile boolean sHasSkinHint;
-    private static volatile int sAppliedBg = Integer.MIN_VALUE;
-    private static volatile boolean sApplying;
-    /** setNavigationBarColor 是进程级高频方法，节流避免无谓反射。 */
-    private static volatile long sLastNavApply;
-    /** 熔断：连续失败 3 次就彻底停用 H60（宁可底栏原色，也不能影响键盘唤起）。 */
-    private static volatile boolean sDisabled;
-    private static final AtomicInteger FAIL = new AtomicInteger();
-    private static final int FAIL_MAX = 3;
 
     private static final AtomicInteger PATCHED = new AtomicInteger();
     private static final AtomicInteger APPLIED = new AtomicInteger();
 
+    private static volatile boolean sInstalled;
+    private static volatile boolean sFrameworkHooked;
+    private static volatile boolean sManagerHooked;
+    private static volatile boolean sDisabled;
+    private static volatile Boolean sSkinDark;
+    private static volatile String sManagerLoader;
+    private static volatile long sLastNavApply;
+    private static final int FAIL_MAX = 3;
+    private static int sFails;
+
     private MiuiBottomBarHook() {
     }
 
-    /** 幂等安装。跟 H40/H41 一起在 attach 前后各调一次都没问题。 */
+    // ------------------------------------------------------------------ install
+
     public static void install(ClassLoader cl) {
-        HookRegistry.install("H60_miui_bottom_bar", cl, MiuiBottomBarHook::setup);
+        install(cl, null);
     }
 
-    private static void setup(ClassLoader cl) {
-        Class<?> injector = findInjector();
-        if (injector == null) {
-            // 非 MIUI、或该 ROM 没有「全面屏键盘优化」：直接跳过，不改任何行为。
-            // 这里不抛异常：状态串里的 bb=0/0;bbm=0 已经能说明没挂上，抛异常只会像出错。
-            HookRegistry.log("H60 skipped: no MIUI InputMethodServiceInjector on this ROM");
+    public static void install(final ClassLoader cl, Targets targets) {
+        if (sInstalled) {
+            tryInstallBottomManager(cl);
             return;
         }
-        HookRegistry.log("H60 injector=" + injector.getName()
-                + " prop(ro.miui.support_miui_ime_bottom)=" + supportProp());
-
-        // 主动调用用的 Method（private static，必须 setAccessible）
-        try {
-            Method m = injector.getDeclaredMethod("customizeBottomViewColor",
-                    boolean.class, int.class, int.class, int.class);
-            m.setAccessible(true);
-            sCustomize = m;
-        } catch (Throwable t) {
-            // 某些 ROM 换成了别的签名，before-hook 仍然能命中，只是没法主动补刀
-            HookRegistry.log("H60 customizeBottomViewColor(4 args) not found: " + t);
-        }
-
-        // ── 1. 治本：所有上报到 MIUI 底栏的颜色都改写成皮肤色 ──────────────
-        // v2.0.3-beta4：**不再改 customizeBottomViewColor 的参数**。
-        // 上一版在 before 里改写 args，个别 ROM 上会让 MIUI 的底栏创建失败并连带影响键盘唤起；
-        // 现在改成「只观察 + 主动下发」（第 2、3 两点 + apply()），行为可逆、失败不伤原生链路。
-        hookAll(injector, "customizeBottomViewColor", new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) {
-                try {
-                    if (!enabled() || param.args == null || param.args.length < 4) return;
-                    int n = PATCHED.incrementAndGet();
-                    if (n <= 3) HookRegistry.log("H60 color report observed #" + n);
-                } catch (Throwable ignored) {
-                }
-            }
-        });
-
-        // ── 2. 底栏创建 / 切换输入法重建后，下一帧补一次 ────────────────────
-        hookAll(injector, "addMiuiBottomView", new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) {
-                try {
-                    if (!enabled()) return;
-                    // 参数表（MIUI 12.5 上核对过）：
-                    //   [0] LayoutInflater [1] fullscreenArea [2] inputFrame
-                    //   [3] rootView       [4] miuiBottomArea [5] InputMethodManager
-                    //   [6] InputMethodService
-                    // 这里不动任何 View，只在下一帧重新下发颜色，避免踩布局。
-                    if (PATCHED.get() <= 5) logArgs(param);
-                    postApply(true);
-                } catch (Throwable t) {
-                    HookRegistry.log("H60 addMiuiBottomView after failed: " + t);
-                }
-            }
-        });
-
-        // ── 3. 换肤 / 深浅色切换时会重新上报导航栏颜色 ─────────────────────
-        try {
-            Class<?> phoneWindow = XposedHelpers.findClass(
-                    "com.android.internal.policy.PhoneWindow", null);
-            XposedHelpers.findAndHookMethod(phoneWindow, "setNavigationBarColor", int.class,
-                    new XC_MethodHook() {
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) {
-                            try {
-                                if (!enabled()) return;
-                                if (HookState.context() == null) return;
-                                long now = SystemClock.uptimeMillis();
-                                if (now - sLastNavApply < 400L) return;
-                                sLastNavApply = now;
-                                apply(false);
-                            } catch (Throwable t) {
-                                HookRegistry.log("H60 navBar after failed: " + t);
-                            }
-                        }
-                    });
-            HookRegistry.log("H60 PhoneWindow.setNavigationBarColor hooked");
-        } catch (Throwable t) {
-            // 有的版本这个方法在 Window 基类 / 被内联掉；有 1、2 两点兜底即可
-            HookRegistry.log("H60 PhoneWindow hook skipped: " + t);
-        }
-    }
-
-    // ── 配色 ───────────────────────────────────────────────────────────────
-
-    private static boolean enabled() {
-        return !sDisabled
-                && ModuleConfig.masterEnabled()
-                && ModuleConfig.themeSkinEnabled()
-                && ModuleConfig.miuiBottomBarEnabled();
-    }
-
-    /** 返回 {背景色, 图标色, 次要色}。 */
-    private static int[] colors() {
-        try {
-            Context ctx = HookState.context();
-            boolean dark = sHasSkinHint ? sSkinDark : IosSkin.isDark(null, ctx);
-            SkinPreset p = SkinPreset.of(ModuleConfig.skinPreset(), dark, ctx);
-
-            int bg, icon, soft;
-            if (FORCE_TRANSPARENT) {
-                bg = Color.TRANSPARENT;
-                icon = IosSkin.ensureContrast(p.text, p.kbBg, 3.0);
-                soft = Color.argb(0x66, Color.red(icon), Color.green(icon), Color.blue(icon));
-            } else {
-                bg = p.kbBg;
-                int inverted = ~bg;
-                icon = inverted | 0xFF000000;                 // 反色，强制不透明
-                soft = (inverted & 0x00FFFFFF) | 0x66000000; // 反色，40% alpha
-            }
-            return new int[]{bg, icon, soft};
-        } catch (Throwable t) {
-            HookRegistry.log("H60 colors failed: " + t);
-            return null;
-        }
-    }
-
-    // ── 应用 ───────────────────────────────────────────────────────────────
-
-    /**
-     * 主动下发一次配色。{@code force=true} 用于「底栏刚重建 / 配置刚变」，
-     * 此时即使颜色没变也要重发；否则同色去重，避免无谓的反射调用。
-     */
-    private static void apply(boolean force) {
-        if (!enabled() || sApplying) return;
-        Method m = sCustomize;
-        if (m == null) return;
-        int[] c = colors();
-        if (c == null) return;
-        if (!force && c[0] == sAppliedBg) return;
-
-        sApplying = true;
-        try {
-            m.invoke(null, Boolean.TRUE, c[0], c[1], c[2]);
-            sAppliedBg = c[0];
-            int n = APPLIED.incrementAndGet();
-            if (n <= 5 || force) {
-                HookRegistry.log(String.format(
-                        "H60 apply bg=#%08X icon=#%08X soft=#%08X preset=%s dark=%b",
-                        c[0], c[1], c[2], ModuleConfig.skinPreset(), sSkinDark));
-            }
-        } catch (Throwable t) {
-            HookRegistry.log("H60 apply failed: " + t);
-            if (FAIL.incrementAndGet() >= FAIL_MAX && !sDisabled) {
-                sDisabled = true;
-                HookRegistry.log("H60 circuit breaker OPEN —— 本进程不再改底栏（保命优先）");
-            }
-        } finally {
-            sApplying = false;
-        }
-    }
-
-    /** customizeBottomViewColor 最终会改 View，统一切到主线程执行。 */
-    private static void postApply(final boolean force) {
-        try {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
+        sInstalled = true;
+        hookFramework(cl);
+        tryInstallBottomManager(cl);
+        // 动态 dex 里的类要等注入完成才能 load，前几十秒反复试（失败只影响底栏配色）。
+        final Handler h = new Handler(Looper.getMainLooper());
+        final long[] delays = {300L, 1000L, 3000L, 6000L, 12000L, 24000L, 45000L};
+        for (final long d : delays) {
+            h.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    apply(force);
+                    if (sManagerHooked || sDisabled) return;
+                    tryInstallBottomManager(cl);
                 }
-            });
-        } catch (Throwable t) {
-            HookRegistry.log("H60 post failed: " + t);
+            }, d);
         }
+        HookRegistry.log("H60/H61 install: framework=" + sFrameworkHooked + " manager=" + sManagerHooked);
     }
 
-    /** ThemeSkinHook 解析到 black/white 皮肤时同步，保证底栏跟「实际渲染的键盘」同色。 */
-    public static void noteSkinDark(boolean dark) {
-        if (sHasSkinHint && sSkinDark == dark) return;
-        sHasSkinHint = true;
-        sSkinDark = dark;
-        sAppliedBg = Integer.MIN_VALUE;
-        postApply(true);
-    }
-
-    /** 设置页改了皮肤预设 / 开关后由 ConfigBridge 回调，立刻重刷底栏。 */
-    public static void reapply() {
-        sAppliedBg = Integer.MIN_VALUE;
-        postApply(true);
-    }
-
-    // ── 诊断 ───────────────────────────────────────────────────────────────
-
-    /** 状态串字段：{@code bb=<改参次数>/<主动应用次数>}。bb 左侧为 0 说明颜色上报根本没走这条通道。 */
-    public static String stateFields() {
-        return "bb=" + PATCHED.get() + "/" + APPLIED.get()
-                + ";bbdark=" + (sHasSkinHint ? (sSkinDark ? 1 : 0) : -1)
-                + ";bbm=" + (sCustomize != null ? 1 : 0);
-    }
-
-    private static void logArgs(XC_MethodHook.MethodHookParam param) {
-        if (param.args == null) return;
-        StringBuilder sb = new StringBuilder("H60 addMiuiBottomView args:");
-        for (int i = 0; i < param.args.length; i++) {
-            Object a = param.args[i];
-            sb.append(" [").append(i).append("]=")
-                    .append(a == null ? "null" : a.getClass().getSimpleName());
-        }
-        HookRegistry.log(sb.toString());
-    }
-
-    private static int hookAll(Class<?> clazz, String name, XC_MethodHook cb) {
-        try {
-            Set<XC_MethodHook.Unhook> hooks = XposedBridge.hookAllMethods(clazz, name, cb);
-            int n = hooks == null ? 0 : hooks.size();
-            if (n == 0) HookRegistry.log("H60 no '" + name + "' on " + clazz.getName());
-            return n;
-        } catch (Throwable t) {
-            HookRegistry.log("H60 hook '" + name + "' failed: " + t);
-            return 0;
-        }
-    }
-
-    private static Class<?> findInjector() {
+    /** framework 侧只做「观察 + 补一次」，不再改参（改参放到 phrase 侧，出问题也只在底栏）。 */
+    private static void hookFramework(ClassLoader cl) {
+        if (sFrameworkHooked) return;
         for (String name : INJECTORS) {
             try {
-                Class<?> c = XposedHelpers.findClass(name, null);
-                if (c != null) return c;
+                Class<?> cls = XposedHelpers.findClass(name, null);
+                if (cls == null) continue;
+                XposedBridge.hookAllMethods(cls, "addMiuiBottomView", new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) {
+                        postApply(80L);
+                    }
+                });
+                try {
+                    XposedHelpers.findAndHookMethod(cls, "customizeBottomViewColor",
+                            boolean.class, int.class, int.class, int.class,
+                            new XC_MethodHook() {
+                                @Override
+                                protected void afterHookedMethod(MethodHookParam param) {
+                                    postApply(30L);
+                                }
+                            });
+                } catch (Throwable ignored) {
+                    // 这个注入类里没有这个方法就跳过
+                }
+                sFrameworkHooked = true;
+                HookRegistry.log("H60 framework hooked: " + name);
+                break;
+            } catch (Throwable t) {
+                HookRegistry.log("H60 framework skip " + name + ": " + t);
+            }
+        }
+        try {
+            XposedHelpers.findAndHookMethod("com.android.internal.policy.PhoneWindow", null,
+                    "setNavigationBarColor", int.class, new XC_MethodHook() {
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) {
+                            long now = SystemClock.uptimeMillis();
+                            if (now - sLastNavApply < 400L) return;
+                            sLastNavApply = now;
+                            postApply(60L);
+                        }
+                    });
+        } catch (Throwable ignored) {
+        }
+    }
+
+    /** phrase 侧的 InputMethodBottomManager：改参（治本）+ 建完之后补一次。 */
+    private static void tryInstallBottomManager(ClassLoader cl) {
+        if (sManagerHooked || sDisabled) return;
+        Class<?> cls = resolveBottomManager(cl);
+        if (cls == null) return;
+        try {
+            try {
+                XposedHelpers.findAndHookMethod(cls, "customizeBottomViewColor",
+                        boolean.class, int.class, int.class, int.class, new XC_MethodHook() {
+                            @Override
+                            protected void beforeHookedMethod(MethodHookParam param) {
+                                rewriteArgs(param);
+                            }
+                        });
             } catch (Throwable ignored) {
-                // 换下一个名字
             }
             try {
-                return Class.forName(name);
+                XposedHelpers.findAndHookMethod(cls, "setBottomColor",
+                        boolean.class, int.class, int.class, int.class, new XC_MethodHook() {
+                            @Override
+                            protected void beforeHookedMethod(MethodHookParam param) {
+                                rewriteArgs(param);
+                            }
+                        });
             } catch (Throwable ignored) {
-                // 换下一个名字
+            }
+            // 底栏刚建好 / 重建后补一次：setBottomColor 的 early-return 会吃掉首次上报。
+            try {
+                XposedBridge.hookAllMethods(cls, "addMiuiBottomView", new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) {
+                        postApply(120L);
+                    }
+                });
+            } catch (Throwable ignored) {
+            }
+            try {
+                XposedBridge.hookAllMethods(cls, "refreshBottomSkin", new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) {
+                        postApply(60L);
+                    }
+                });
+            } catch (Throwable ignored) {
+            }
+            sManagerHooked = true;
+            HookRegistry.log("H61 hooked: " + CLS_BOTTOM_MANAGER + " via " + sManagerLoader);
+        } catch (Throwable t) {
+            fail("installBottomManager", t);
+        }
+    }
+
+    private static Class<?> resolveBottomManager(ClassLoader cl) {
+        ClassLoader[] candidates = new ClassLoader[]{
+                cl,
+                HookState.context() == null ? null : HookState.context().getClassLoader(),
+                Thread.currentThread().getContextClassLoader(),
+                ClassLoader.getSystemClassLoader(),
+        };
+        for (int i = 0; i < candidates.length; i++) {
+            ClassLoader l = candidates[i];
+            if (l == null) continue;
+            try {
+                Class<?> cls = XposedHelpers.findClass(CLS_BOTTOM_MANAGER, l);
+                if (cls != null) {
+                    sManagerLoader = (i == 0 ? "ime" : "c" + i);
+                    return cls;
+                }
+            } catch (Throwable ignored) {
             }
         }
         return null;
     }
 
-    /** 只读诊断：确认这台机器到底开没开全面屏键盘优化，不作为安装前置条件。 */
-    private static String supportProp() {
+    private static void rewriteArgs(XC_MethodHook.MethodHookParam param) {
         try {
-            Class<?> sp = Class.forName("android.os.SystemProperties");
-            Method get = sp.getDeclaredMethod("get", String.class, String.class);
-            return String.valueOf(get.invoke(null, "ro.miui.support_miui_ime_bottom", "?"));
+            if (!enabled() || param.args == null || param.args.length < 4) return;
+            int[] c = colors();
+            if (c == null) return;
+            param.args[0] = Boolean.TRUE;
+            param.args[1] = c[0];
+            param.args[2] = c[1];
+            param.args[3] = c[2];
+            int n = PATCHED.incrementAndGet();
+            if (n <= 4) HookRegistry.log(String.format("H61 bottom color -> #%08X", c[0]));
         } catch (Throwable t) {
-            return "?";
+            fail("rewriteArgs", t);
+        }
+    }
+
+    private static void postApply(long delay) {
+        if (!enabled()) return;
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                apply();
+            }
+        }, delay);
+    }
+
+    /** 主动改已存在的底栏（反射静态字段，全部判空、失败只记日志）。 */
+    public static void apply() {
+        if (!enabled()) return;
+        try {
+            Class<?> cls = resolveBottomManager(null);
+            if (cls == null) return;
+            int[] c = colors();
+            if (c == null) return;
+
+            View bottom = (View) staticField(cls, "sBottomView");
+            if (bottom == null) {
+                HookRegistry.log("H60 apply skipped: sBottomView == null（等 addMiuiBottomView）");
+                return;
+            }
+            bottom.setBackgroundColor(c[0]);
+            int[][] states = (int[][]) staticField(cls, "sBottomIconStates");
+            ImageView left = (ImageView) staticField(cls, "sLeftButton");
+            ImageView right = (ImageView) staticField(cls, "sRightButton");
+            if (states != null && (left != null || right != null)) {
+                ColorStateList csl = new ColorStateList(states, new int[]{c[1], c[2]});
+                if (left != null) left.setBackgroundTintList(csl);
+                if (right != null) right.setBackgroundTintList(csl);
+            }
+            setStatic(cls, "currentBottomViewColor", c[0]);
+            int n = APPLIED.incrementAndGet();
+            if (n <= 4) HookRegistry.log(String.format("H60 bottom applied -> #%08X", c[0]));
+        } catch (Throwable t) {
+            fail("apply", t);
+        }
+    }
+
+    private static Object staticField(Class<?> cls, String name) {
+        try {
+            Field f = cls.getDeclaredField(name);
+            f.setAccessible(true);
+            return f.get(null);
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
+    private static void setStatic(Class<?> cls, String name, Object value) {
+        try {
+            Field f = cls.getDeclaredField(name);
+            f.setAccessible(true);
+            f.set(null, value);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    // ------------------------------------------------------------------- colors
+
+    private static boolean enabled() {
+        if (sDisabled) return false;
+        try {
+            return ModuleConfig.masterEnabled()
+                    && ModuleConfig.themeSkinEnabled()
+                    && ModuleConfig.miuiBottomBarEnabled();
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    private static int[] colors() {
+        Context ctx = HookState.context();
+        if (ctx == null) return null;
+        boolean dark;
+        if (sSkinDark != null) {
+            dark = sSkinDark;
+        } else {
+            dark = IosSkin.isDark(null, ctx);
+        }
+        SkinPreset p = SkinPreset.of(ModuleConfig.skinPreset(), dark, ctx);
+        int bg = p.barBg != 0 && !FORCE_TRANSPARENT ? p.barBg : p.kbBg;
+        if (FORCE_TRANSPARENT) bg = Color.TRANSPARENT;
+        int icon = (IosSkin.ensureContrast(p.text, bg, 3.0) & 0xFFFFFF) | 0xFF000000;
+        int iconPressed = (IosSkin.ensureContrast(p.textPressed, bg, 3.0) & 0xFFFFFF) | 0xFF000000;
+        return new int[]{bg, icon, iconPressed};
+    }
+
+    // --------------------------------------------------------------------- API
+
+    /** ThemeSkinHook 解析到 /black/ 或 /white/ 皮肤目录时同步深浅色，避免一次误判。 */
+    public static void noteSkinDark(boolean dark) {
+        sSkinDark = dark;
+    }
+
+    /** 配置变更 / 换肤 / 重载后重新下发一次。 */
+    public static void reapply() {
+        sSkinDark = null;
+        if (!sInstalled) return;
+        tryInstallBottomManager(null);
+        postApply(60L);
+    }
+
+    public static String stateFields() {
+        return "bb=" + PATCHED.get() + "/" + APPLIED.get()
+                + ";bbmg=" + (sManagerHooked ? 1 : 0)
+                + ";bbfw=" + (sFrameworkHooked ? 1 : 0)
+                + ";bbld=" + (sManagerLoader == null ? "-" : sManagerLoader)
+                + ";bbdark=" + (sSkinDark == null ? "-" : (sSkinDark ? "1" : "0"))
+                + ";bbdis=" + (sDisabled ? 1 : 0);
+    }
+
+    public static String summary() {
+        return "bottom(patched=" + PATCHED.get() + ",applied=" + APPLIED.get()
+                + ",manager=" + (sManagerHooked ? "ok" : "no") + ")";
+    }
+
+    private static void fail(String where, Throwable t) {
+        sFails++;
+        HookRegistry.log("H60/H61 " + where + " failed: " + t);
+        if (sFails >= FAIL_MAX && !sDisabled) {
+            sDisabled = true;
+            HookRegistry.log("H60 circuit breaker OPEN —— 本进程不再改底栏（保命优先）");
         }
     }
 }

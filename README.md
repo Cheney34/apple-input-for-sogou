@@ -38,6 +38,7 @@ OPPO 定制版把整个主题模块用 `-repackageclasses '` 塞进了默认包�
 ## 下载哪个版本？
 
 | 版本 | 适合谁 | 有什么 |
+| **v2.0.3-beta6** | 推荐（实验渠道版） | H61：底栏改为 hook `InputMethodBottomManager`（真正的颜色落点） |
 | --- | --- | --- |
 | [**v2.0.3-beta4**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.3-beta4) | 小米定制版（紧急修复） | **修「键盘呼不出来」**：H50 绝不重编码 nine-patch（`.9.png` / 带 `npTc` 切边块的图，重编码会丢切边数据导致 Inflate 崩）；资源层改位图改为**默认关**（新开关 `asset_skin_images_enabled`，ini 颜色照改）；**H60 改默认关**并去掉对 `customizeBottomViewColor` 参数的改写（只观察 + 主动下发），加 3 次失败熔断 |
 | [**v2.0.3-beta5**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.3-beta5) | 小米定制版（推荐） | **皮肤拆成三层独立开关**：类名层（H40 ini + H41 位图，默认开，小米/官方只需这层）/ 资源层 ini（H50，**默认关**）/ 资源层位图（默认关）。H50 只碰 `colors.ini`/`cands.ini`/`cands_outer.ini`/`phoneSkin.ini` 四个纯颜色文件，结构性 ini（mapping/thememanifest/theme/template/keys/texts/images_config/image_list）一律不碰；修 beta3「只开改皮肤也呼不出键盘」|
