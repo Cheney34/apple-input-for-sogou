@@ -44,6 +44,8 @@ public final class ModuleConfig {
 
     /** MIUI「全面屏键盘优化」底栏是否跟随皮肤配色（H60，仅小米定制版有效）。 */
     public static final String KEY_MIUI_BOTTOM_BAR = "miui_bottom_bar_enabled";
+    /** 资源层是否连位图一起重画（默认关：重编码会丢 nine-patch 数据，风险高）。 */
+    public static final String KEY_ASSET_SKIN_IMAGES = "asset_skin_images_enabled";
 
     private static volatile XSharedPreferences sPrefs;
     private static final Object LOCK = new Object();
@@ -149,7 +151,13 @@ public final class ModuleConfig {
     }
 
     public static boolean miuiBottomBarEnabled() {
-        return masterEnabled() && getBoolean(KEY_MIUI_BOTTOM_BAR, true);
+        // v2.0.3-beta4：默认关。H60 会 hook framework 的颜色上报链路，属于「可能影响键盘能否唤起」的改动，
+        // 先让它在小米上验证过再默认开。
+        return masterEnabled() && getBoolean(KEY_MIUI_BOTTOM_BAR, false);
+    }
+
+    public static boolean assetSkinImagesEnabled() {
+        return themeSkinEnabled() && getBoolean(KEY_ASSET_SKIN_IMAGES, false);
     }
 
     /** 设置页写入的快捷方法（由模块自己的 UI 进程调用）。 */

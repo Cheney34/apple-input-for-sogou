@@ -295,6 +295,12 @@ public final class AssetSkinHook {
 
     private static byte[] patchImageBytes(String path, byte[] raw, String presetId) {
         try {
+            // ★ 铁律 0：nine-patch 绝对不重画。
+            // decode → compress 会把 PNG 里的 npTc（九宫格切边数据）整块丢掉，
+            // 搜狗/系统 Inflate 这张图时会直接抛异常 —— 现象就是「键盘呼不出来」。
+            if (isNinePatch(path, raw)) return null;
+            // 资源层默认只兜底 ini 颜色；位图交给类名层（H41）去做，避免影响启动。
+            if (!ModuleConfig.assetSkinImagesEnabled()) return null;
             Bitmap src = BitmapFactory.decodeByteArray(raw, 0, raw.length);
             if (src == null) return null;
             int kind = IosSkin.kindOf(path);
@@ -320,6 +326,19 @@ public final class AssetSkinHook {
             trip("patchImageBytes " + path, t);
             return null;
         }
+    }
+
+    /**
+     * 是不是 nine-patch：文件名字面 {@code .9.png}，或 PNG 里带 {@code npTc} 块（九宫格切边）。
+     * 这类图一旦被 decode→compress 重编码，切边数据就没了，系统加载会崩。
+     */
+    private static boolean isNinePatch(String path, byte[] raw) {
+        if (path != null && path.toLowerCase().endsWith(".9.png")) return true;
+        if (raw == null || raw.length < 16) return false;
+        for (int i = 0; i + 3 < raw.length; i++) {
+            if (raw[i] == 'n' && raw[i + 1] == 'p' && raw[i + 2] == 'T' && raw[i + 3] == 'c') return true;
+        }
+        return false;
     }
 
     // -------------------------------------------------------------- utils

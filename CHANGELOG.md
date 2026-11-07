@@ -1,3 +1,34 @@
+## v2.0.3-beta4 — 紧急修复：键盘呼不出来（nine-patch 被重编码）+ H60 默认关
+
+基线：v2.0.3-beta3（`172474a`）。用户反馈「底栏颜色没应用，而且又无法呼出键盘了」。
+
+### 1. 键盘呼不出来：H50 重编码 nine-patch（根因）
+`hook/AssetSkinHook.java#patchImageBytes()` 原来是 `BitmapFactory.decodeByteArray` → `IosSkin.synth` →
+`out.compress(PNG, 100, bos)`。搜狗皮肤里的键帽底图大多是 **nine-patch**（`.9.png` / PNG 内嵌 `npTc` 块），
+重新编码会把切边数据整块丢掉 ⇒ 系统或搜狗 Inflate 这张图时抛异常 ⇒ 键盘视图建不起来。
+
+- 新增 `isNinePatch(path, raw)`：文件名字面 `.9.png`，或原始字节里出现 `npTc` 块，一律 `return null`（原样放过）；
+- 资源层位图改为**默认关**：新增开关 `asset_skin_images_enabled`（默认 `false`），H50 默认只兜底 **ini 颜色**，位图继续交给类名层 H41（那条路已验证可用、且不碰 nine-patch）；
+- 设置页新增「资源层改位图（实验）」开关，文案写明风险。
+
+### 2. H60 默认关 + 不再改 framework 调用参数
+上一版在 `customizeBottomViewColor` 的 before 里改写 `args[1..3]`，是 beta3 唯一触碰 framework 调用参数的地方，
+也是「键盘唤起失败」的次要嫌疑。现在：
+
+- 删除 before 改参，改成 **after 只观察**（计数用于诊断）+ `addMiuiBottomView` after 与 `setNavigationBarColor` after 主动下发；
+- `miui_bottom_bar_enabled` 默认改 **关**；
+- 新增熔断：`apply()` 连续失败 3 次 → `H60 circuit breaker OPEN`，本进程不再改底栏。
+
+### 3. 构建与验证
+- `build/v203b4/AppleInputForSogou_v2.0.3-beta4.apk` 22,750,789 B；`versionCode 44` / `2.0.3-beta4`；
+  证书 `CN=Android Debug` SHA-256 `4fbf65ed…c207`（可覆盖升级）。
+- `dexdump -f`：116 个类全部 `Lcom/chiron/iosemoji/*`，非 chiron 0、`de/robv` 定义 0。
+- dex 字符串确认：`isNinePatch`、`asset_skin_images_enabled`、`H60 color report observed`、`H60 circuit breaker OPEN` 均在；旧串 `H60 color report patched` 已消失（改参逻辑确实删掉了）。
+
+### 4. 现场自救（键盘已经呼不出来的情况）
+打开模块 App →「功能开关」→ 关掉「改皮肤（推荐）」→ 点「重启输入法（重载皮肤）」，键盘即可恢复；
+只想保留颜色、担心位图的话，保持「资源层改位图」关闭即可。
+
 ## v2.0.3-beta3 — MIUI「全面屏键盘优化」底栏跟随皮肤（H60）+ 状态里标明渠道
 
 基线：v2.0.3-beta2（`0e7e4bc`），只加一条 MIUI 专属改造 + 修「看不出连的是哪个渠道」。

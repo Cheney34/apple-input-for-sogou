@@ -173,8 +173,12 @@ public class SettingsActivity extends Activity {
         addSwitch(look, ModuleConfig.KEY_THEME_SKIN, "改皮肤（推荐）",
                 "改搜狗**自己的默认皮肤**：配色、键帽形状、候选栏底色都按所选风格重画。"
                         + "布局、按键命中、候选栏高度全部沿用搜狗原样，所以不会错位。", true);
-        addSwitch(look, ModuleConfig.KEY_MIUI_BOTTOM_BAR, "全面屏底栏跟随皮肤",
-                "MIUI「全面屏键盘优化」底部那条栏也用所选皮肤的底色/图标色（仅小米定制版有效）。",
+        addSwitch(look, ModuleConfig.KEY_MIUI_BOTTOM_BAR, "全面屏底栏跟随皮肤（实验）",
+                "MIUI「全面屏键盘优化」底部那条栏也用所选皮肤的底色/图标色（仅小米定制版）。"
+                        + "仍在验证，默认关；若开关后键盘呼不出来，先关掉它再点「重启输入法」。",
+                true);
+        addSwitch(look, ModuleConfig.KEY_ASSET_SKIN_IMAGES, "资源层改位图（实验）",
+                "连资源层的键帽位图也重画。默认关：重编码会丢 nine-patch 切边数据，曾导致键盘呼不出来。",
                 true);
         addPresetRow(look);
 

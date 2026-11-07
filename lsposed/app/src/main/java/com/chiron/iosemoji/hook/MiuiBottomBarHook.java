@@ -92,6 +92,10 @@ public final class MiuiBottomBarHook {
     private static volatile boolean sApplying;
     /** setNavigationBarColor 是进程级高频方法，节流避免无谓反射。 */
     private static volatile long sLastNavApply;
+    /** 熔断：连续失败 3 次就彻底停用 H60（宁可底栏原色，也不能影响键盘唤起）。 */
+    private static volatile boolean sDisabled;
+    private static final AtomicInteger FAIL = new AtomicInteger();
+    private static final int FAIL_MAX = 3;
 
     private static final AtomicInteger PATCHED = new AtomicInteger();
     private static final AtomicInteger APPLIED = new AtomicInteger();
@@ -127,28 +131,17 @@ public final class MiuiBottomBarHook {
         }
 
         // ── 1. 治本：所有上报到 MIUI 底栏的颜色都改写成皮肤色 ──────────────
+        // v2.0.3-beta4：**不再改 customizeBottomViewColor 的参数**。
+        // 上一版在 before 里改写 args，个别 ROM 上会让 MIUI 的底栏创建失败并连带影响键盘唤起；
+        // 现在改成「只观察 + 主动下发」（第 2、3 两点 + apply()），行为可逆、失败不伤原生链路。
         hookAll(injector, "customizeBottomViewColor", new XC_MethodHook() {
             @Override
-            protected void beforeHookedMethod(MethodHookParam param) {
+            protected void afterHookedMethod(MethodHookParam param) {
                 try {
                     if (!enabled() || param.args == null || param.args.length < 4) return;
-                    if (!(param.args[1] instanceof Integer)) return;
-                    int want = (Integer) param.args[1];
-                    // 调用方本来就要「透明/无底栏」（全屏、游戏、悬浮键盘）时不要接管，
-                    // 否则会把本来不显示的底栏点亮成一条灰条。
-                    if (!FORCE_TRANSPARENT && (want >>> 24) == 0) return;
-                    int[] c = colors();
-                    if (c == null) return;
-                    // 只改颜色，不动 args[0]（isCustom）—— 由调用方决定要不要走自定义配色。
-                    param.args[1] = c[0];
-                    param.args[2] = c[1];
-                    param.args[3] = c[2];
                     int n = PATCHED.incrementAndGet();
-                    if (n <= 5) {
-                        HookRegistry.log(String.format("H60 color report patched -> #%08X", c[0]));
-                    }
-                } catch (Throwable t) {
-                    HookRegistry.log("H60 before patch failed: " + t);
+                    if (n <= 3) HookRegistry.log("H60 color report observed #" + n);
+                } catch (Throwable ignored) {
                 }
             }
         });
@@ -202,7 +195,8 @@ public final class MiuiBottomBarHook {
     // ── 配色 ───────────────────────────────────────────────────────────────
 
     private static boolean enabled() {
-        return ModuleConfig.masterEnabled()
+        return !sDisabled
+                && ModuleConfig.masterEnabled()
                 && ModuleConfig.themeSkinEnabled()
                 && ModuleConfig.miuiBottomBarEnabled();
     }
@@ -258,6 +252,10 @@ public final class MiuiBottomBarHook {
             }
         } catch (Throwable t) {
             HookRegistry.log("H60 apply failed: " + t);
+            if (FAIL.incrementAndGet() >= FAIL_MAX && !sDisabled) {
+                sDisabled = true;
+                HookRegistry.log("H60 circuit breaker OPEN —— 本进程不再改底栏（保命优先）");
+            }
         } finally {
             sApplying = false;
         }
