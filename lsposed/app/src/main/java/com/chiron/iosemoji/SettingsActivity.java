@@ -48,6 +48,8 @@ public class SettingsActivity extends Activity {
     private TextView requestHint;
     /** 当前皮肤风格的值（见 {@link SkinPreset#IDS}）。 */
     private TextView presetValue;
+    /** 最近一次连上的渠道名（小米定制版 / 搜狗官方版 / …），用于状态卡与 Toast。 */
+    private String lastChannel;
 
     /** 广播回执窗口：500ms 内没回执就认为进程不在。 */
     private static final long REPLY_TIMEOUT_MS = 500L;
@@ -171,6 +173,9 @@ public class SettingsActivity extends Activity {
         addSwitch(look, ModuleConfig.KEY_THEME_SKIN, "改皮肤（推荐）",
                 "改搜狗**自己的默认皮肤**：配色、键帽形状、候选栏底色都按所选风格重画。"
                         + "布局、按键命中、候选栏高度全部沿用搜狗原样，所以不会错位。", true);
+        addSwitch(look, ModuleConfig.KEY_MIUI_BOTTOM_BAR, "全面屏底栏跟随皮肤",
+                "MIUI「全面屏键盘优化」底部那条栏也用所选皮肤的底色/图标色（仅小米定制版有效）。",
+                true);
         addPresetRow(look);
 
 
@@ -267,7 +272,8 @@ public class SettingsActivity extends Activity {
             @Override
             public void run() {
                 if (ok[0] > 0) {
-                    toast("已生效：" + label + " → " + (value ? "开" : "关"));
+                    toast("已生效：" + label + " → " + (value ? "开" : "关")
+                            + (lastChannel != null ? "（" + lastChannel + "）" : ""));
                 } else {
                     toast("已保存：" + label + " → " + (value ? "开" : "关")
                             + "（搜狗进程未运行，切换输入法后生效）");
@@ -359,7 +365,7 @@ public class SettingsActivity extends Activity {
             @Override
             public void run() {
                 if (replies[0] == 0) {
-                    statusText.setText("未连接");
+                    statusText.setText("未连接（作用域：小米 / 官方 / OPPO / vivo）");
                     statusText.setTextColor(IosUi.RED);
                     hooksText.setText("—");
                     effectiveText.setText("—");
@@ -390,6 +396,8 @@ public class SettingsActivity extends Activity {
         String skinSkip = null;
         String skinCustom = null;
         String skinResync = null;
+        String channel = null;
+        String channelPkg = null;
         StringBuilder eff = new StringBuilder();
         for (String part : raw.split(";")) {
             int eq = part.indexOf('=');
@@ -408,6 +416,12 @@ public class SettingsActivity extends Activity {
                     break;
                 case "sg":
                     sg = v;
+                    break;
+                case "ch":
+                    channel = v;
+                    break;
+                case "chpkg":
+                    channelPkg = v;
                     break;
                 case "skin":
                     skinPreset = v;
@@ -447,7 +461,12 @@ public class SettingsActivity extends Activity {
                     eff.append(k).append('=').append("1".equals(v) ? "开" : "关");
             }
         }
-        statusText.setText("已连接" + (source != null ? "（配置来源 " + source + "）" : ""));
+        // 关键：说清楚「连上的是哪个渠道的搜狗」，否则小米/官方/OPPO/vivo 混在一起看不出区别
+        StringBuilder chan = new StringBuilder(channel == null ? "未识别渠道" : channel);
+        if (channelPkg != null) chan.append("（").append(channelPkg).append("）");
+        lastChannel = chan.toString();
+        statusText.setText("已连接 · " + lastChannel
+                + (source != null ? "（配置来源 " + source + "）" : ""));
         statusText.setTextColor(IosUi.GREEN);
         hooksText.setText(hooks == null || hooks.length() == 0 ? "—" : hooks);
         // 皮肤一行的读法：ini=调用/改动，img=解码/重画；img 右侧是 0 就说明"读到了但没认出来"

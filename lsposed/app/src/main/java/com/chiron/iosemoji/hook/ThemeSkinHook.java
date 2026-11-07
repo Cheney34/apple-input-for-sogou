@@ -410,7 +410,13 @@ public final class ThemeSkinHook {
 
     /** 取当前预设（含深色判定）；{@code ctx} 只给「莫奈取色」用来读系统动态配色。 */
     private static SkinPreset preset(Context ctx, String path) {
-        return SkinPreset.of(ModuleConfig.skinPreset(), IosSkin.isDark(path, ctx), ctx);
+        boolean dark = IosSkin.isDark(path, ctx);
+        if (path != null) {
+            // 搜狗皮肤自带 black/white 时以它为准：让 MIUI 底栏跟着「实际渲染的键盘」同色
+            if (path.contains("/black/")) MiuiBottomBarHook.noteSkinDark(true);
+            else if (path.contains("/white/")) MiuiBottomBarHook.noteSkinDark(false);
+        }
+        return SkinPreset.of(ModuleConfig.skinPreset(), dark, ctx);
     }
 
     /**
@@ -457,6 +463,7 @@ public final class ThemeSkinHook {
             if (cache == null) return;
             XposedHelpers.callMethod(cache, "clear");
             HookRegistry.log("skin caches dropped (preset switch)");
+            MiuiBottomBarHook.reapply();
         } catch (Throwable t) {
             HookRegistry.log("skin cache drop failed: " + t);
         }

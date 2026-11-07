@@ -1,3 +1,48 @@
+## v2.0.3-beta3 — MIUI「全面屏键盘优化」底栏跟随皮肤（H60）+ 状态里标明渠道
+
+基线：v2.0.3-beta2（`0e7e4bc`），只加一条 MIUI 专属改造 + 修「看不出连的是哪个渠道」。
+
+### 1. 新增 H60：`hook/MiuiBottomBarHook.java`
+小米的「全面屏键盘优化」底栏由 `com.miui.phrase` 动态 dex 里的 `InputMethodBottomManager` 画，
+颜色走 framework 的 `InputMethodServiceInjector#customizeBottomViewColor(boolean,int,int,int)`，
+**既不读搜狗 ini 也不读搜狗位图**，所以 H40/H41 改不到它。三处 hook（全部在 boot classpath，
+用 `null` ClassLoader，不需要给 LSPosed 加 `com.miui.phrase` 作用域）：
+
+- `customizeBottomViewColor` **before 改参**（治本：搜狗每次上报颜色都会被改写成皮肤色）；
+- `addMiuiBottomView` **after** → 下一帧补一次（底栏刚创建 / 切换输入法重建的时序）；
+- `com.android.internal.policy.PhoneWindow#setNavigationBarColor` **after** → 补一次（换肤 / 深浅色切换的时序）。
+
+配色与 H40/H41 同源：`SkinPreset.kbBg` + 反色图标；`ThemeSkinHook` 解析到 `/black/`、`/white/` 时
+回调 `noteSkinDark()`，保证底栏跟「实际渲染的键盘」同色而不是猜系统夜间模式。
+只改颜色，不碰任何 View 的尺寸/padding/insets。新开关 `miui_bottom_bar_enabled`（默认开，仅小米渠道安装）。
+
+### 2. 四处保守化（避免把别人的界面改坏）
+
+- **不动 `args[0]`（isCustom）**：原实现无条件置 `TRUE`，会把某些 ROM 上本来不该出现的底栏点亮；
+- **透明/无底栏场景不接管**：调用方传 `alpha==0` 时直接放过（全屏、游戏、悬浮键盘）；
+- **`setNavigationBarColor` 节流 400ms**：它是进程级高频方法，任何窗口改色都会触发；
+- **找不到注入类不再抛异常**：非 MIUI 机型只记一行 `H60 skipped`，诊断里用 `bb=0/0;bbm=0` 表示没挂上。
+
+### 3. 状态里标明「哪个渠道连上了」
+
+`ConfigBridge.state()` 新增 `ch=<渠道名>;chpkg=<包名>`，设置页「连接状态」卡显示
+`已连接 · 小米定制版（com.sohu.inputmethod.sogou.xiaomi）`，开关生效的 Toast 也会带上渠道；
+未连接时提示作用域覆盖的四个渠道。之前只有 `v=/sg=/hooks=`，小米和 OPPO 连上都长得一样。
+
+### 4. 构建验证
+
+- `build/v203b3/AppleInputForSogou_v2.0.3-beta3.apk` = **22,750,789 B**，`versionCode=43` / `2.0.3-beta3`，证书同前（可覆盖升级）；
+- `classes.dex` 147,480 B，`dexdump -f` 116 个类**全部** `Lcom/chiron/iosemoji/*`、非 chiron 0 个、`de/robv` 定义 0 个；
+- dex 字符串确认含 `MiuiBottomBarHook` / `H60_miui_bottom_bar` / `customizeBottomViewColor` / `setNavigationBarColor` / `miui_bottom_bar_enabled` / `;ch=` / `;chpkg=`。
+
+### 5. 待验证
+
+- 小米真机：`bb=<改参次数>/<主动应用次数>` 左侧应 > 0（说明颜色上报真走了这条通道）；
+- 官方 / OPPO / vivo：H60 不装（`bbm=0` 正常），看 `H41 bitmap getters hooked on N class(es)` 与 `skini/skimg`；
+- 小米回归：键盘/中英文/候选/皮肤/表情/开关可逆。
+
+---
+
 ## v2.0.3-beta2 — 恢复资源层兜底（H50）；下线自绘键盘；修「官方版只有工具栏变色」
 
 基线：从 v2.0.3-beta1（`df2a0db`）继续，不改皮肤算法本身，只修「哪个渠道根本没被改到」与「哪条 hook 越界」。

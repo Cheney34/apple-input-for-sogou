@@ -42,6 +42,9 @@ public final class ModuleConfig {
     public static final String KEY_LOGO_TRIGGER = "logo_trigger_enabled";
     public static final String KEY_DIAGNOSTICS = "diagnostics_enabled";
 
+    /** MIUI「全面屏键盘优化」底栏是否跟随皮肤配色（H60，仅小米定制版有效）。 */
+    public static final String KEY_MIUI_BOTTOM_BAR = "miui_bottom_bar_enabled";
+
     private static volatile XSharedPreferences sPrefs;
     private static final Object LOCK = new Object();
 
@@ -143,6 +146,10 @@ public final class ModuleConfig {
 
     public static boolean diagnosticsEnabled() {
         return getBoolean(KEY_DIAGNOSTICS, false);
+    }
+
+    public static boolean miuiBottomBarEnabled() {
+        return masterEnabled() && getBoolean(KEY_MIUI_BOTTOM_BAR, true);
     }
 
     /** 设置页写入的快捷方法（由模块自己的 UI 进程调用）。 */

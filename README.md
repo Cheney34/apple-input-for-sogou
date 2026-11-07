@@ -21,6 +21,9 @@
 | OPPO 定制版 10.32.0622.x | `com.sohu.inputmethod.sogouoem` | ⏳ 类名已修（**`yy1` / `nm1`**），待实测 | ✅ 装上 | 部分（分组过滤 ✅ / 解压旁路待验证） |
 | vivo 定制版 11.41.14023 | `com.sohu.inputmethod.sogou.vivo` | ⏳ ini 入口已定位（**`gh`** `d/e/f`），位图入口未定位 | ✅ 装上 | ⏳ 类名齐全待实测 |
 
+小米定制版另有一条 **MIUI 专属**改造：`H60` 让系统「全面屏键盘优化」那条底栏也用所选皮肤的底色/图标色
+（framework 层的 `InputMethodServiceInjector`，跟搜狗自己的皮肤是两条独立通道，所以 H40/H41 改不到它）。
+
 开发优先级（2026-11-07 定）：**小米 > 搜狗官方 > OPPO == vivo**。
 逐步推进，每步都要：①小米回归通过 ②目标渠道实测 ③未测渠道一律标「未兼容」。
 
@@ -36,7 +39,8 @@ OPPO 定制版把整个主题模块用 `-repackageclasses '` 塞进了默认包�
 
 | 版本 | 适合谁 | 有什么 |
 | --- | --- | --- |
-| [**v2.0.3-beta2**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.3-beta2) | 多定制版尝鲜 | 恢复资源层皮肤 hook（H50）；**下线自绘键盘**（移除 `keyboard_replace_enabled`、删除 H01，H02 只保留「键盘弹出即对齐配置」）；`Targets` 支持多候选类/多方法名（官方 `common.g`、OPPO `nm1`、vivo `gh`）；位图过滤改按图名判定，修「官方版只有工具栏变色」 |
+| [**v2.0.3-beta3**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.3-beta3) | 小米定制版 / 多定制版尝鲜 | 新增 **H60：MIUI「全面屏键盘优化」底栏跟随皮肤**（framework 层三处 hook，只改颜色、可单独关）；设置页**明确显示连上的是哪个渠道**（`已连接 · 小米定制版（com.…xiaomi）`）；H60 保守化（不动 `isCustom`、透明场景不接管、高频方法节流） |
+| [**v2.0.3-beta2**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.3-beta2) | 存档（不含底栏适配） | 恢复资源层皮肤 hook（H50）；**下线自绘键盘**（移除 `keyboard_replace_enabled`、删除 H01，H02 只保留「键盘弹出即对齐配置」）；`Targets` 支持多候选类/多方法名（官方 `common.g`、OPPO `nm1`、vivo `gh`）；位图过滤改按图名判定，修「官方版只有工具栏变色」 |
 | [**v2.0.3-beta1**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.3-beta1) | 存档 | 删掉资源层皮肤 hook（H50）；渠道档案化：官方 20.19.0 / OPPO / vivo 各自一份 `Targets`；未知渠道不再回落小米 |
 | [**v2.0.2-beta2**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.2-beta2) | **稳定版 · 推荐** | 目前唯一在**小米定制版真机确认可用**的版本：改搜狗默认皮肤（H40 改 ini + H41 按方法名全挂位图入口）、七套皮肤、表情包完整、开关即时可逆。**当前基线。** |
 | [**v2.0.2-beta1**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.2-beta1) | 存档 | 多定制版支持：**OPPO 定制版（`com.sohu.inputmethod.sogouoem`）也能改皮肤**（该版类名不同 → 新增 `Targets` 映射表）；小米版行为不变 |
@@ -217,7 +221,8 @@ H50 与类名层共用「改皮肤」总开关：关掉就两层一起停。
 4. 冷启动走只读 `ContentProvider`（`content://com.chiron.iosemoji.config/config`）读一次，
    不依赖跨进程 prefs 的可读性。
 
-页面顶部「连接状态」卡会显示：搜狗进程是否在线、已装 hook 列表、**进程内真正生效的配置值**、搜狗版本。
+页面顶部「连接状态」卡会显示：搜狗进程是否在线、**连上的是哪个渠道**（小米定制版 / 搜狗官方版 / OPPO 定制版 / vivo 定制版，含包名）、
+已装 hook 列表、**进程内真正生效的配置值**、搜狗版本。
 所有开关都是**双向可逆**的：关掉立刻退回搜狗原行为（例如关掉「改皮肤」，下一次读皮肤就是搜狗原配色，H50 也一起停）。
 
 | 键 | 默认 | 作用 |
@@ -225,6 +230,7 @@ H50 与类名层共用「改皮肤」总开关：关掉就两层一起停。
 | `master_enabled` | 开 | 总开关，关掉后模块在搜狗进程内不做任何事 |
 | `theme_skin_enabled` | 开 | **改搜狗默认皮肤**（H40 改 ini 颜色 + H41 重绘键帽/底色）—— 外观的主路径 |
 | `skin_preset` | `ios` | 皮肤风格：`ios` / `wechat` / `google` / `monet`（莫奈需 Android 12+），见设置页「皮肤风格」 |
+| `miui_bottom_bar_enabled` | 开 | **MIUI「全面屏键盘优化」底栏跟随皮肤**（H60，仅小米定制版有效）；关掉就交回 MIUI 自己管 |
 
 | `emoji_group_filter_enabled` | 开 | 隐藏搜狗自带「组合」「拼装」分组 |
 | `emoji_swipe_enabled` | 开 | 表情面板左右滑动切分组 |

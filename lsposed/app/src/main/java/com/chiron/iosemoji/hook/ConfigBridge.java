@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 
+import com.chiron.iosemoji.compat.Targets;
 import com.chiron.iosemoji.Protocol;
 import com.chiron.iosemoji.config.ConfigValues;
 import com.chiron.iosemoji.config.ModuleConfig;
@@ -71,6 +72,7 @@ public final class ConfigBridge {
                                 + " (" + n + " keys)");
                         // 换皮肤预设后必须丢掉搜狗的位图缓存，否则还是上一套配色
                         ThemeSkinHook.dropCaches();
+                        MiuiBottomBarHook.reapply();
                                     setResultCode(Protocol.RESULT_OK);
                         setResultData(state(ctx));
                         runConfigCallback();
@@ -163,6 +165,9 @@ public final class ConfigBridge {
         sb.append("v=").append(HookState.versionName());
         sb.append(";src=").append(RuntimeConfig.hasAny() ? "broadcast" : "cold-start");
         sb.append(";hooks=").append(HookRegistry.installedIds());
+        // 到底是哪个渠道的搜狗连上来了：小米 / 官方 / OPPO / vivo —— 设置页要显示这个
+        sb.append(";ch=").append(channelLabel(ctx));
+        sb.append(";chpkg=").append(ctx.getPackageName());
         sb.append(';').append(RuntimeConfig.describe());
         sb.append(";sg=").append(sogouVersion(ctx));
         // 皮肤改动是否真的落到了搜狗的皮肤资源上 —— 这行是"改没改到"的唯一判据
@@ -173,6 +178,16 @@ public final class ConfigBridge {
         if (seen.length() > 0) sb.append(";seen=").append(seen);
         sb.append(";resync=").append(RESYNC.get());
         return sb.toString();
+    }
+
+    /** 当前连上来的渠道名（给设置页显示，避免用户分不清小米/官方/OPPO/vivo）。 */
+    private static String channelLabel(Context ctx) {
+        try {
+            Targets t = Targets.forPackage(ctx.getPackageName());
+            if (t != null) return t.label;
+        } catch (Throwable ignored) {
+        }
+        return "未知渠道";
     }
 
     private static String sogouVersion(Context ctx) {

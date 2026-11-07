@@ -15,6 +15,7 @@ import com.chiron.iosemoji.hook.CandidateProbeHook;
 import com.chiron.iosemoji.hook.ConfigBridge;
 import com.chiron.iosemoji.hook.HookRegistry;
 import com.chiron.iosemoji.hook.AssetSkinHook;
+import com.chiron.iosemoji.hook.MiuiBottomBarHook;
 import com.chiron.iosemoji.hook.SetKeyboardViewHook;
 import com.chiron.iosemoji.hook.ThemeSkinHook;
 
@@ -210,6 +211,17 @@ public class HookEntry implements IXposedHookLoadPackage {
         } catch (Throwable t) {
             HookRegistry.log("asset skin hook failed");
             HookRegistry.log(t);
+        }
+
+        // MIUI「全面屏键盘优化」底栏（H60）：framework 层，只在小米渠道装。
+        // 其它渠道/非 MIUI 机型上找不到注入类时会自己跳过，不影响任何东西。
+        if (sTargets.xiaomiInputLayer) {
+            try {
+                MiuiBottomBarHook.install(cl);
+            } catch (Throwable t) {
+                HookRegistry.log("miui bottom bar hook failed");
+                HookRegistry.log(t);
+            }
         }
     }
 

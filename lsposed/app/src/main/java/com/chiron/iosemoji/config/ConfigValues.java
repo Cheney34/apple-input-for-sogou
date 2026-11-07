@@ -12,6 +12,7 @@ public final class ConfigValues {
     public static final String[] KEYS = {
             ModuleConfig.KEY_MASTER,
             ModuleConfig.KEY_THEME_SKIN,
+            ModuleConfig.KEY_MIUI_BOTTOM_BAR,
             ModuleConfig.KEY_EMOJI_GROUPS,
             ModuleConfig.KEY_EMOJI_SWIPE,
             ModuleConfig.KEY_LOGO_TRIGGER,
@@ -28,6 +29,7 @@ public final class ConfigValues {
         switch (key) {
             case ModuleConfig.KEY_MASTER:
             case ModuleConfig.KEY_THEME_SKIN:
+            case ModuleConfig.KEY_MIUI_BOTTOM_BAR:
             case ModuleConfig.KEY_EMOJI_GROUPS:
             case ModuleConfig.KEY_EMOJI_SWIPE:
                 return true;
@@ -47,6 +49,8 @@ public final class ConfigValues {
                 return "总开关";
             case ModuleConfig.KEY_THEME_SKIN:
                 return "改皮肤";
+            case ModuleConfig.KEY_MIUI_BOTTOM_BAR:
+                return "全面屏底栏";
 
             case ModuleConfig.KEY_CANDIDATE_PROBE:
                 return "候选探针";
