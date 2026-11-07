@@ -56,24 +56,27 @@ public final class IosSkin {
     public static final int KIND_ACCENT = 4;
 
     /**
-     * 键帽圆角目标区间（v2.1.4）：**把每套皮肤的比例都拉进这一带**，而不是统一乘一个倍数。
+     * 键帽圆角目标区间（v2.1.5）：**把每套皮肤的比例都拉进这一带**，而不是统一乘一个倍数。
      *
      * <p><b>为什么不再乘倍数</b>：v2.1.3 是「最终半径 ×1.5」，可各套预设的 {@link SkinPreset#radiusRatio}
      * 本来就不一样（搜狗经典 0.10、iOS 0.12、Google 0.14、微信 0.19），乘完得到 0.15 / 0.18 / 0.21 / 0.29 ——
      * 同一台机器上换皮肤，圆润度会跟着皮肤跳；搜狗经典那套乘完只有 15%，用户观感就是"这套没生效"。
      *
-     * <p>现在的做法：先把预设比例线性放大（{@link #RATIO_GAIN}），再夹进 [{@link #RATIO_MIN}, {@link #RATIO_MAX}]。
-     * 于是每套皮肤都落在键高的 30%~35%，保留一点点预设之间的相对差（0.30 / 0.31 / 0.35），
+     * <p><b>v2.1.4 为什么也没变化</b>：区间对了，但半径还写着 {@code max(detectRadius(), spec)}，
+     * 而探测上限只有 24px，小键的 spec 恰好 ≤ 24，于是被锁死；大键也只从 36px 挪到 41px（差 5px）。
+     * v2.1.5 起半径只由本区间决定，原图不再参与。
+     *
+     * <p>现在每套皮肤都落在键高的 34%~38%，保留一点点预设之间的相对差（0.34 / 0.35 / 0.38），
      * 但不会再出现"这套圆、那套方"。
      */
-    private static final float RATIO_MIN = 0.30f;
-    private static final float RATIO_MAX = 0.35f;
+    private static final float RATIO_MIN = 0.34f;
+    private static final float RATIO_MAX = 0.38f;
 
     /**
-     * 放大系数：预设比例 × 2.6 刚好把 0.10~0.14 这一段推进目标区间
-     * （0.10→0.26 被 0.30 兜住、0.12→0.31、0.13→0.34、0.14→0.36 被 0.35 截住、0.19→0.35）。
+     * 放大系数：预设比例 × 2.9 刚好把 0.10~0.14 这一段推进目标区间
+     * （0.10→0.29 被 0.34 兜住、0.12→0.35、0.13→0.38、0.14→0.40 被 0.38 截住、0.19→0.38）。
      */
-    private static final float RATIO_GAIN = 2.6f;
+    private static final float RATIO_GAIN = 2.9f;
 
     /**
      * 圆角上限（占键帽短边的比例）—— 纯几何保险，不是设计值。
@@ -622,18 +625,29 @@ public final class IosSkin {
                 rect = new RectF(box);
             }
 
-            // 圆角：优先用搜狗自己这张图的实际圆角（保证形状不对不上），
-            // 但它本身偏方 —— 取「原图圆角」与「预设规格圆角」的较大值，既不变形也不方。
-            // v2.1.4：规格圆角改为「按区间取值」（每套皮肤都落在键高的 30%~35%），
-            // 只用 RADIUS_CAP 做几何保险（窄键不会算出超过半宽的半径）。
-            int detected = detectRadius(src, box);
+            // 圆角：**完全由规格决定**，不再和「原图探测值」取 max。
+            //
+            // v2.1.3 / v2.1.4 失效的真正原因就在这里：detectRadius() 的探测步长上限是
+            // maxProbe = min(键高/2, 24)，所以 detected 几乎恒等于 24；而
+            // radius = max(detected, spec) 一旦 spec ≤ 24，结果就被死死锁在 24，
+            // 无论 RATIO_MIN/MAX 怎么调都不动 —— 小键（键高 70~80）两版算出来完全相同，
+            // 大键也只是 36px → 41px（差 5px），肉眼当然"没有变化"。
+            //
+            // 现在的规则：半径 = 键高 × targetRatio()。原图只用来定位轮廓（opaqueBounds），
+            // 不参与半径计算，于是每套皮肤、每种键都严格落进 34%~38% 这一带。
             float ratio = targetRatio(p, kind);
-            float spec = rect.height() * ratio;
-            float radius = Math.min(Math.max(detected, spec),
-                    Math.min(rect.width(), rect.height()) * RADIUS_CAP);
-            radius = Math.max(2f, radius);
+            float shortSide = Math.min(rect.width(), rect.height());
+            float radius = rect.height() * ratio;
+            if (shortSide < 56f) {
+                // 位图本身很小（< 56px）说明它是被拉伸绘制的（9-patch / 平铺背景）。
+                // 小图上"按比例"算出的圆角在放大后会被摊平成直角边，这里直接给足，
+                // 拉伸后的形状才仍然是圆角矩形。
+                radius = rect.height() * Math.max(ratio, 0.44f);
+            }
+            radius = Math.max(2f, Math.min(radius, shortSide * RADIUS_CAP));
             if (kind == KIND_KEY) {
-                sLastRadius = String.format(Locale.US, "%.2f/%dpx", ratio, Math.round(radius));
+                sLastRadius = String.format(Locale.US, "%.2f/%dpx/%dx%d", ratio,
+                        Math.round(radius), Math.round(rect.width()), Math.round(rect.height()));
             }
 
             // 投影：iOS 键帽只有极淡的一层落影（没有描边），Material 3 用 tonal 阴影。
@@ -676,6 +690,11 @@ public final class IosSkin {
 
     /**
      * 从原图 alpha 通道估算这张资源自己的圆角半径。
+     *
+     * <p><b>v2.1.5 起不再参与半径计算</b> —— 保留仅作参照。原因：{@code maxProbe} 上限是 24px，
+     * 搜狗键帽图的真实圆角都超过这个数，于是探测值恒等于 24，把 {@code radius} 锁死在 24，
+     * 导致 v2.1.3 / v2.1.4 调整 {@code radiusRatio} 完全没有效果。要重新启用，必须先
+     * 把探测上限改成 {@code 键高/2} 并接受"原图更圆时整排会跟着变"。
      *
      * <p>做法：在包围盒顶部若干行里，从左边向内找第一个不透明像素，这个水平内缩量就约等于圆角半径。
      * 取多行最大值更稳（避开抗锯齿最上一行的误差），最后夹到 <code>[0, 高度/2]</code>。
