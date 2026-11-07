@@ -1,3 +1,37 @@
+## v2.0.3-beta5 — 皮肤拆三层开关：资源层（H50）默认关
+
+基线：v2.0.3-beta4（`a207636`）。用户反馈：**即使只开「改皮肤」，键盘也呼不出来**。
+
+### 1. 结论：小米/官方根本不需要 H50
+alpha12 时期（只有 H40 ini + H41 位图）小米上皮肤是能用的；H50 是 v2.0.2-beta1 才加进来的
+「资源层兜底」，用来救类名被重打包的 OPPO/vivo。它 hook 的是 `AssetManager#open`，属于进程级拦截，
+一旦改到结构性文件，主题解析就失败 → 键盘视图建不起来。
+
+所以改成三层各自独立：
+
+| 层 | 开关 | 默认 | 小米/官方 | OPPO/vivo |
+| --- | --- | --- | --- | --- |
+| 类名层 ini（H40） | `theme_skin_enabled` | 开 | 需要 | 类名缺失，用不到 |
+| 类名层位图（H41） | `theme_skin_enabled` | 开 | 需要 | 类名缺失，用不到 |
+| 资源层 ini（H50） | `asset_skin_enabled` | **关** | 不需要 | 需要，手动开 |
+| 资源层位图 | `asset_skin_images_enabled` | 关 | 不需要 | 可选（nine-patch 有风险） |
+
+### 2. H50 只碰四个纯颜色文件
+新增 `INI_WHITELIST = {colors.ini, cands.ini, cands_outer.ini, phoneSkin.ini}`，
+其余 ini（`file_name_mapping_*.ini`、`thememanifest.ini`、`theme.ini`、`layout/template.ini`、`keys.ini`、
+`texts.ini`、`images_config.ini`、`image_list.ini`）**全部原样放过**并计入 `iniskip` 诊断 ——
+这些是映射/模板/九宫格切边定义，改一个字节就可能让主题解析炸掉。
+
+### 3. 构建与验证
+- `build/v203b5/AppleInputForSogou_v2.0.3-beta5.apk` 22,750,789 B；`versionCode 45` / `2.0.3-beta5`；签名同上（可覆盖升级）。
+- dex：116 个类全部 `Lcom/chiron/iosemoji/*`，非 chiron 0；串 `asset_skin_enabled`、`isColorIni`、`cands_outer.ini`、
+  `iniskip`、`isNinePatch` 均在包内。
+
+### 4. 装完请确认
+1. 设置页「资源层兜底（H50）」必须是**关**；「资源层改位图」也必须是**关**；
+2. 只留「改皮肤（推荐）」开，然后点「重启输入法」；
+3. 键盘应恢复正常且键帽变色；把 `skin= / skini= / skimg= / H41 bitmap getters hooked on N class(es)` 发我。
+
 ## v2.0.3-beta4 — 紧急修复：键盘呼不出来（nine-patch 被重编码）+ H60 默认关
 
 基线：v2.0.3-beta3（`172474a`）。用户反馈「底栏颜色没应用，而且又无法呼出键盘了」。

@@ -40,7 +40,8 @@ OPPO 定制版把整个主题模块用 `-repackageclasses '` 塞进了默认包�
 | 版本 | 适合谁 | 有什么 |
 | --- | --- | --- |
 | [**v2.0.3-beta4**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.3-beta4) | 小米定制版（紧急修复） | **修「键盘呼不出来」**：H50 绝不重编码 nine-patch（`.9.png` / 带 `npTc` 切边块的图，重编码会丢切边数据导致 Inflate 崩）；资源层改位图改为**默认关**（新开关 `asset_skin_images_enabled`，ini 颜色照改）；**H60 改默认关**并去掉对 `customizeBottomViewColor` 参数的改写（只观察 + 主动下发），加 3 次失败熔断 |
-| [**v2.0.3-beta3**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.3-beta3) | 存档（H60 可能影响键盘唤起） | 新增 **H60：MIUI「全面屏键盘优化」底栏跟随皮肤**（framework 层三处 hook，只改颜色、可单独关）；设置页**明确显示连上的是哪个渠道**（`已连接 · 小米定制版（com.…xiaomi）`）；H60 保守化（不动 `isCustom`、透明场景不接管、高频方法节流） |
+| [**v2.0.3-beta5**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.3-beta5) | 小米定制版（推荐） | **皮肤拆成三层独立开关**：类名层（H40 ini + H41 位图，默认开，小米/官方只需这层）/ 资源层 ini（H50，**默认关**）/ 资源层位图（默认关）。H50 只碰 `colors.ini`/`cands.ini`/`cands_outer.ini`/`phoneSkin.ini` 四个纯颜色文件，结构性 ini（mapping/thememanifest/theme/template/keys/texts/images_config/image_list）一律不碰；修 beta3「只开改皮肤也呼不出键盘」|
+| [**v2.0.3-beta3**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.3-beta3) | 存档（H50 动到结构性 ini，可能导致键盘呼不出来） | 新增 **H60：MIUI「全面屏键盘优化」底栏跟随皮肤**（framework 层三处 hook，只改颜色、可单独关）；设置页**明确显示连上的是哪个渠道**（`已连接 · 小米定制版（com.…xiaomi）`）；H60 保守化（不动 `isCustom`、透明场景不接管、高频方法节流） |
 | [**v2.0.3-beta2**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.3-beta2) | 存档（不含底栏适配） | 恢复资源层皮肤 hook（H50）；**下线自绘键盘**（移除 `keyboard_replace_enabled`、删除 H01，H02 只保留「键盘弹出即对齐配置」）；`Targets` 支持多候选类/多方法名（官方 `common.g`、OPPO `nm1`、vivo `gh`）；位图过滤改按图名判定，修「官方版只有工具栏变色」 |
 | [**v2.0.3-beta1**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.3-beta1) | 存档 | 删掉资源层皮肤 hook（H50）；渠道档案化：官方 20.19.0 / OPPO / vivo 各自一份 `Targets`；未知渠道不再回落小米 |
 | [**v2.0.2-beta2**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.2-beta2) | **稳定版 · 推荐** | 目前唯一在**小米定制版真机确认可用**的版本：改搜狗默认皮肤（H40 改 ini + H41 按方法名全挂位图入口）、七套皮肤、表情包完整、开关即时可逆。**当前基线。** |
@@ -234,6 +235,7 @@ H50 与类名层共用「改皮肤」总开关：关掉就两层一起停。
 | `theme_skin_enabled` | 开 | **改搜狗默认皮肤**（H40 改 ini 颜色 + H41 重绘键帽/底色）—— 外观的主路径 |
 | `skin_preset` | `ios` | 皮肤风格：`ios` / `wechat` / `google` / `monet`（莫奈需 Android 12+），见设置页「皮肤风格」 |
 | `miui_bottom_bar_enabled` | **关** | **MIUI「全面屏键盘优化」底栏跟随皮肤**（H60，仅小米定制版有效）；关掉就交回 MIUI 自己管 |
+| `asset_skin_enabled` | **关** | **资源层兜底（H50）**：进程级拦 `AssetManager`，只给「类名被重打包」的 OPPO/vivo 兜底；小米/官方保持关闭 |
 | `asset_skin_images_enabled` | 关 | **资源层改位图**（H50 的位图部分）。默认关：`decode → compress` 会丢 nine-patch 切边数据，曾导致键盘呼不出来；位图交给类名层 H41 去做更安全 |
 
 | `emoji_group_filter_enabled` | 开 | 隐藏搜狗自带「组合」「拼装」分组 |

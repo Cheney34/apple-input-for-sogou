@@ -12,6 +12,7 @@ public final class ConfigValues {
     public static final String[] KEYS = {
             ModuleConfig.KEY_MASTER,
             ModuleConfig.KEY_THEME_SKIN,
+            ModuleConfig.KEY_ASSET_SKIN,
             ModuleConfig.KEY_MIUI_BOTTOM_BAR,
             ModuleConfig.KEY_ASSET_SKIN_IMAGES,
             ModuleConfig.KEY_EMOJI_GROUPS,
@@ -36,6 +37,7 @@ public final class ConfigValues {
                 return true;
             case ModuleConfig.KEY_CANDIDATE_PROBE:
             case ModuleConfig.KEY_LOGO_TRIGGER:
+            case ModuleConfig.KEY_ASSET_SKIN:
             case ModuleConfig.KEY_ASSET_SKIN_IMAGES:
             case ModuleConfig.KEY_DIAGNOSTICS:
                 return false;
@@ -53,6 +55,8 @@ public final class ConfigValues {
                 return "改皮肤";
             case ModuleConfig.KEY_MIUI_BOTTOM_BAR:
                 return "全面屏底栏";
+            case ModuleConfig.KEY_ASSET_SKIN:
+                return "资源层兜底（H50）";
             case ModuleConfig.KEY_ASSET_SKIN_IMAGES:
                 return "资源层改位图";
 

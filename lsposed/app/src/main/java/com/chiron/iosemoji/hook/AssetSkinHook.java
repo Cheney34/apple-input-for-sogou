@@ -56,6 +56,7 @@ public final class AssetSkinHook {
     private static final AtomicInteger INI_PATCHED = new AtomicInteger();
     private static final AtomicInteger IMG_PATCHED = new AtomicInteger();
     private static final AtomicInteger IMG_SKIPPED = new AtomicInteger();
+    private static final AtomicInteger INI_SKIPPED = new AtomicInteger();
     private static final AtomicInteger SKIPPED_CUSTOM = new AtomicInteger();
     private static final AtomicInteger FAILS = new AtomicInteger();
 
@@ -107,7 +108,7 @@ public final class AssetSkinHook {
 
             Object result = param.getResult();
             if (!(result instanceof InputStream)) return;
-            if (!ModuleConfig.themeSkinEnabled()) return;
+            if (!ModuleConfig.assetSkinEnabled()) return;
 
             // 铁律 1：第三方皮肤一个字都不改
             if (!isDefaultTheme(path)) {
@@ -127,6 +128,10 @@ public final class AssetSkinHook {
             if (raw == null || raw.length == 0) return;
 
             byte[] out = null;
+            if (isIni(path) && !isColorIni(path)) {
+                INI_SKIPPED.incrementAndGet();
+                return;
+            }
             if (isIni(path)) {
                 out = patchIniBytes(path, raw, presetId);
                 if (out != null) INI_PATCHED.incrementAndGet();
@@ -343,6 +348,26 @@ public final class AssetSkinHook {
 
     // -------------------------------------------------------------- utils
 
+    /**
+     * ini 白名单：只碰纯颜色/候选样式的文件。
+     * file_name_mapping_*.ini、thememanifest.ini、theme.ini、layout/template.ini、keys.ini、
+     * texts.ini、images_config.ini、image_list.ini 都是<b>结构性</b>文件（映射/模板/九宫格切边），
+     * 改写它们会让主题解析失败、键盘直接起不来 —— 一律不碰。
+     */
+    private static final String[] INI_WHITELIST = {
+            "colors.ini", "cands.ini", "cands_outer.ini", "phoneskin.ini"
+    };
+
+    private static boolean isColorIni(String path) {
+        if (path == null) return false;
+        String n = path.toLowerCase(java.util.Locale.ROOT);
+        int i = n.lastIndexOf('/');
+        if (i >= 0) n = n.substring(i + 1);
+        for (String w : INI_WHITELIST) {
+            if (n.equals(w)) return true;
+        }
+        return false;
+    }
     /** 只认皮肤相关资源，别去碰 emoji / lottie / 字体。 */
     private static boolean isThemeAsset(String path) {
         if (path == null || path.length() < 8) return false;
@@ -430,6 +455,7 @@ public final class AssetSkinHook {
                 .append("/ini").append(INI_PATCHED.get())
                 .append("/img").append(IMG_PATCHED.get());
         if (IMG_SKIPPED.get() > 0) sb.append("/skip").append(IMG_SKIPPED.get());
+        if (INI_SKIPPED.get() > 0) sb.append("/iniskip").append(INI_SKIPPED.get());
         if (SKIPPED_CUSTOM.get() > 0) sb.append("/tp").append(SKIPPED_CUSTOM.get());
         if (sTripped) sb.append("/TRIPPED");
         return sb.toString();

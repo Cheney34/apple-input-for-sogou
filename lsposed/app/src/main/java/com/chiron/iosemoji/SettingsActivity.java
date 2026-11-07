@@ -177,6 +177,10 @@ public class SettingsActivity extends Activity {
                 "MIUI「全面屏键盘优化」底部那条栏也用所选皮肤的底色/图标色（仅小米定制版）。"
                         + "仍在验证，默认关；若开关后键盘呼不出来，先关掉它再点「重启输入法」。",
                 true);
+        addSwitch(look, ModuleConfig.KEY_ASSET_SKIN, "资源层兜底（H50，OPPO/vivo 才需要）",
+                "直接拦 AssetManager 读皮肤文件，给「类名被重打包」的渠道兜底。"
+                        + "小米/官方请保持关闭：它是进程级拦截，改坏就会「键盘呼不出来」。",
+                true);
         addSwitch(look, ModuleConfig.KEY_ASSET_SKIN_IMAGES, "资源层改位图（实验）",
                 "连资源层的键帽位图也重画。默认关：重编码会丢 nine-patch 切边数据，曾导致键盘呼不出来。",
                 true);

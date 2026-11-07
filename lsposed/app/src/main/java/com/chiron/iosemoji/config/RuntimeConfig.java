@@ -95,6 +95,8 @@ public final class RuntimeConfig {
                 return "master";
             case ModuleConfig.KEY_THEME_SKIN:
                 return "skin_on";
+                case ModuleConfig.KEY_ASSET_SKIN:
+                return "asset";
             case ModuleConfig.KEY_MIUI_BOTTOM_BAR:
                 return "bb";
             case ModuleConfig.KEY_ASSET_SKIN_IMAGES:

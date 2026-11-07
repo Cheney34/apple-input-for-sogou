@@ -45,6 +45,9 @@ public final class ModuleConfig {
     /** MIUI「全面屏键盘优化」底栏是否跟随皮肤配色（H60，仅小米定制版有效）。 */
     public static final String KEY_MIUI_BOTTOM_BAR = "miui_bottom_bar_enabled";
     /** 资源层是否连位图一起重画（默认关：重编码会丢 nine-patch 数据，风险高）。 */
+    /** 资源层兜底（H50）总开关：默认关。小米/官方走类名层即可，OPPO/vivo 才需要它。 */
+    public static final String KEY_ASSET_SKIN = "asset_skin_enabled";
+
     public static final String KEY_ASSET_SKIN_IMAGES = "asset_skin_images_enabled";
 
     private static volatile XSharedPreferences sPrefs;
@@ -156,8 +159,13 @@ public final class ModuleConfig {
         return masterEnabled() && getBoolean(KEY_MIUI_BOTTOM_BAR, false);
     }
 
+    /** 资源层兜底（H50）：进程级拦 AssetManager，默认关，改坏就会「键盘呼不出来」。 */
+    public static boolean assetSkinEnabled() {
+        return themeSkinEnabled() && getBoolean(KEY_ASSET_SKIN, false);
+    }
+
     public static boolean assetSkinImagesEnabled() {
-        return themeSkinEnabled() && getBoolean(KEY_ASSET_SKIN_IMAGES, false);
+        return assetSkinEnabled() && getBoolean(KEY_ASSET_SKIN_IMAGES, false);
     }
 
     /** 设置页写入的快捷方法（由模块自己的 UI 进程调用）。 */
