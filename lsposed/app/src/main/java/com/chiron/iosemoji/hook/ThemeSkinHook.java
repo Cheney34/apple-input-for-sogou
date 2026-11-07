@@ -499,7 +499,8 @@ public final class ThemeSkinHook {
                 + ";skint=" + IosSkin.contrastFixes()
                 + ";skinse=" + SEEN.size()
                 + ";skintp=" + CUSTOM_SKIPPED.get()
-                + ";monetsrc=" + SkinPreset.monetDescribe();
+                + ";monetsrc=" + SkinPreset.monetDescribe()
+                + ";acc=" + IosSkin.accentKeys() + "/" + IosSkin.accentGlyphs();
     }
 
     /** 见到但没处理的名字（带原因 tag），诊断用。 */
