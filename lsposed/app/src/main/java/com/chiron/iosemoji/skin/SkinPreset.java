@@ -37,9 +37,16 @@ public final class SkinPreset {
     public static final String PIXEL = "pixel";
     /** 樱花粉（#FB7299，参考 WeType UI Enhanced 的示例主题色）。 */
     public static final String SAKURA = "sakura";
+    /**
+     * 搜狗经典（旧版观感）—— 直接取自搜狗自己 {@code theme_default} 的
+     * {@code 1080/layout/colors.ini} 与 {@code cands.ini}：
+     * 键帽纯白、功能键极淡、底色 #F5F5F5，正文色 #35373B、首候选/强调色 #FF6933。
+     * 选它等于"把皮肤改回搜狗原本的样子"（我们只按这些值重刷一遍，观感基本无变化）。
+     */
+    public static final String SOGOU_OLD = "sogouold";
 
     /** 顺序即设置页里的显示顺序。 */
-    public static final String[] IDS = {IOS, IOS_CLEAN, WECHAT, GOOGLE, MATERIAL, PIXEL, SAKURA, MONET};
+    public static final String[] IDS = {SOGOU_OLD, IOS, IOS_CLEAN, WECHAT, GOOGLE, MATERIAL, PIXEL, SAKURA, MONET};
 
     public final String id;
 
@@ -95,6 +102,7 @@ public final class SkinPreset {
     }
 
     public static String labelOf(String id) {
+        if (SOGOU_OLD.equals(id)) return "搜狗经典（旧版）";
         if (IOS_CLEAN.equals(id)) return "iOS 净白";
         if (WECHAT.equals(id)) return "微信";
         if (MATERIAL.equals(id)) return "幽墨 Material";
@@ -112,6 +120,7 @@ public final class SkinPreset {
      * @param ctx  仅 {@code monet} 需要（读系统动态配色），可为 null
      */
     public static SkinPreset of(String id, boolean dark, Context ctx) {
+        if (SOGOU_OLD.equals(id)) return dark ? sogouOldDark() : sogouOldLight();
         if (IOS_CLEAN.equals(id)) return dark ? iosCleanDark() : iosCleanLight();
         if (WECHAT.equals(id)) return dark ? wechatDark() : wechatLight();
         if (MATERIAL.equals(id)) return dark ? materialDark() : materialLight();
@@ -357,6 +366,47 @@ public final class SkinPreset {
                 0xFF3A2C33, 0xFF2E2228, 0xFFF7EDF1, 0xFFF7EDF1, 0xFFFB7299,
                 0.13f, 0x40000000, 2f, 1f, false, false);
     }
+    // ── 搜狗经典（旧版观感）────────────────────────────────────────────────
+    // 值直接来自搜狗自己的皮肤资源，不是我们编的：
+    //   theme_default/1080/layout/colors.ini
+    //     [DEFAULT_TEXT_COLORS] COLOR_FIRST_DEFAULT_THEME = FF6933（首候选/强调）
+    //                           COLOR_LATIN/FUNCTION/PRESSED_THEME = 35373B（正文）
+    //     [COMMON_TEXT_POPUP_COLOR(S)] TEXT_COLOR = 0xFF3482FF
+    //   theme_default/1080/layout/cands.ini
+    //     [ComposingView]/[CandidateBar] BG_COLOR = 0xFFF5F5F5（候选条底）
+    //   键帽/功能键底图 key_qwerty.png / KeyBg_Function 都是浅灰白系
+    // 所以这套预设 = "把皮肤刷回搜狗原本的颜色"，选它观感基本回到原生。
+    private static SkinPreset sogouOldLight() {
+        return new SkinPreset(SOGOU_OLD,
+                0xFFF5F5F5,   // 键盘底（cands.ini 的 BG_COLOR）
+                0xFFFFFFFF,   // 字母键帽（key_qwerty.png 主色）
+                0xFFE6E6E6,   // 按下：搜狗原图按下就是一档浅灰
+                0xFFEDEDED,   // 功能键（KeyBg_Function 极淡）
+                0xFFDDDDDD,   // 功能键按下
+                0xFFFFFFFF,   // 长按气泡（COLOR_POPUP_LONGPRESS_THEME = FFFFFF）
+                0xFFF5F5F5,   // 候选栏 / 工具条（与键盘底同一块）
+                0xFF35373B,   // 文字（colors.ini 的 35373B，偏冷近黑）
+                0xFF35373B,   // 文字按下
+                0xFFFF6933,   // 强调色 = COLOR_FIRST_DEFAULT_THEME（搜狗橙红）
+                0.10f, 0x14000000, 2f, 1f, false, false);
+    }
+
+    private static SkinPreset sogouOldDark() {
+        // 搜狗夜间皮肤（res/black）同样是"底灰、键浅灰、正文近白"的关系，只是整体压暗。
+        return new SkinPreset(SOGOU_OLD,
+                0xFF2B2B2B,   // 键盘底
+                0xFF4A4A4A,   // 字母键帽
+                0xFF585858,   // 按下
+                0xFF3C3C3C,   // 功能键
+                0xFF4A4A4A,   // 功能键按下
+                0xFF4A4A4A,   // 长按气泡
+                0xFF2B2B2B,   // 候选栏 / 工具条
+                0xFFF5F5F5,   // 文字
+                0xFFF5F5F5,   // 文字按下
+                0xFFFF7A45,   // 强调色（夜间把橙红提亮一档）
+                0.10f, 0x33000000, 2f, 1f, false, false);
+    }
+
     // ── 工具 ──────────────────────────────────────────────────────────────
 
     /** 两色按比例混合（{@code t=0} 取 a，{@code t=1} 取 b），保留 a 的 alpha。 */

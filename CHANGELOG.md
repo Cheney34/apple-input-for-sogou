@@ -1,3 +1,29 @@
+## v2.0.3-beta12 — 皮肤风格新增「搜狗经典（旧版）」；微信夜间用实拍值替换
+
+### 1. 新增预设 `sogouold`（显示名「搜狗经典（旧版）」，列表第一位）
+
+值全部来自搜狗自己的皮肤资源，不是我们编的：
+
+| 来源 | 项 | 值 |
+|---|---|---|
+| `theme_default/1080/layout/colors.ini` | 正文（LATIN/FUNCTION/PRESSED） | `#35373B` |
+| 同上 | 首候选/强调（`COLOR_FIRST_DEFAULT_THEME`） | `#FF6933` |
+| 同上 | 长按气泡（`COLOR_POPUP_LONGPRESS_THEME`） | `#FFFFFF` |
+| `theme_default/1080/layout/cands.ini` | 候选条/键盘底（`BG_COLOR`） | `#F5F5F5` |
+| `res/black` 键帽底图 | 字母键帽 | `#FFFFFF`（夜间 `#4A4A4A`） |
+
+圆角 0.10、极淡投影、无底边线 —— 选它等于「把皮肤刷回搜狗原本的样子」。
+
+### 2. 微信夜间按实拍替换（同 beta11）
+
+底 `#202020` / 键帽 `#606060` / 功能键 `#424242`（比键帽更深）/ 前往 `#5FC595` 薄荷绿 / 圆角 0.19 / 无投影。
+
+### 3. 皮肤列表顺序
+
+`搜狗经典（旧版）` → `iOS` → `iOS 净白` → `微信` → `Google` → `幽墨 Material` → `幽墨 Pixel` → `樱花粉` → `莫奈取色`（共 9 套）。
+
+- 产物 `build/v203b12/AppleInputForSogou_v2.0.3-beta12.apk`，versionCode 52，22,754,885 B。
+
 ## v2.0.3-beta11 — 微信夜间配色按实拍重取（beta10 源码的增量）
 
 用户给回的源码里相对 beta10 的唯一改动是 `wechatDark()`，这里原样落库：
