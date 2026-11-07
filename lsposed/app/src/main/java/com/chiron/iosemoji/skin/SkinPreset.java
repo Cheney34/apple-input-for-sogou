@@ -10,6 +10,8 @@ import android.os.Build;
  * <p>预设（顺序见 {@link #IDS}）：
  * <ul>
  *   <li>{@code ios}：iOS 系统键盘（灰底 + 纯白键帽 + 功能键明显更灰 + 键帽底边分隔线）；</li>
+ *   <li>{@code iosclean}：iOS 净白（参考截图的实测配色 —— 更亮的蓝灰底、功能键只暗一档、
+ *       回车是亮蓝 #3482FF，整体从"灰塑料"变成"纸白"）；</li>
  *   <li>{@code wechat}：微信输入法观感（米灰底 #EBEBEB + 纯白键帽 + 极淡功能键 + 微信绿）；
  *       键帽是**平的**：投影只有一点点，没有 iOS 那道底边线。</li>
  *   <li>{@code google}：Gboard / Material 3（浅灰底 #F1F3F4 + 白键帽浮在上面 + Google 蓝）；</li>
@@ -23,6 +25,8 @@ import android.os.Build;
 public final class SkinPreset {
 
     public static final String IOS = "ios";
+    /** iOS 净白（照着参考图逐像素取色：底 #EDEFF2 / 键帽纯白 / 功能键 #DDE1E8 / 回车 #3482FF）。 */
+    public static final String IOS_CLEAN = "iosclean";
     public static final String WECHAT = "wechat";
     public static final String GOOGLE = "google";
     public static final String MONET = "monet";
@@ -34,7 +38,7 @@ public final class SkinPreset {
     public static final String SAKURA = "sakura";
 
     /** 顺序即设置页里的显示顺序。 */
-    public static final String[] IDS = {IOS, WECHAT, GOOGLE, MATERIAL, PIXEL, SAKURA, MONET};
+    public static final String[] IDS = {IOS, IOS_CLEAN, WECHAT, GOOGLE, MATERIAL, PIXEL, SAKURA, MONET};
 
     public final String id;
 
@@ -45,7 +49,7 @@ public final class SkinPreset {
     public final int func;          // 功能键（123 / ⌫ / ⏎）
     public final int funcPressed;
     public final int popup;         // 长按气泡底
-    public final int barBg;         // 候选栏 / 顶部工具条底色（v2.0.3-beta8 起恒等于 kbBg：要「完全一样的底色」）
+    public final int barBg;         // 候选栏 / 顶部工具条底色（可与键盘底色不同）
 
     // 文字与强调色
     public final int text;
@@ -71,9 +75,7 @@ public final class SkinPreset {
         this.func = func;
         this.funcPressed = funcPressed;
         this.popup = popup;
-        // v2.0.3-beta8：用户要求工具栏/候选条与键盘底**完全同色**，这里统一收敛到 kbBg，
-        // 传进来的 barBg 只作历史兼容，不再生效。
-        this.barBg = kbBg;
+        this.barBg = barBg;
         this.text = text;
         this.textPressed = textPressed;
         this.accent = accent;
@@ -92,6 +94,7 @@ public final class SkinPreset {
     }
 
     public static String labelOf(String id) {
+        if (IOS_CLEAN.equals(id)) return "iOS 净白";
         if (WECHAT.equals(id)) return "微信";
         if (MATERIAL.equals(id)) return "幽墨 Material";
         if (PIXEL.equals(id)) return "幽墨 Pixel";
@@ -108,6 +111,7 @@ public final class SkinPreset {
      * @param ctx  仅 {@code monet} 需要（读系统动态配色），可为 null
      */
     public static SkinPreset of(String id, boolean dark, Context ctx) {
+        if (IOS_CLEAN.equals(id)) return dark ? iosCleanDark() : iosCleanLight();
         if (WECHAT.equals(id)) return dark ? wechatDark() : wechatLight();
         if (MATERIAL.equals(id)) return dark ? materialDark() : materialLight();
         if (PIXEL.equals(id)) return dark ? pixelDark() : pixelLight();
@@ -147,6 +151,56 @@ public final class SkinPreset {
                 0xFFFDFDFE,   // 文字按下
                 0xFF0A84FF,   // 强调色 iOS 系统蓝
                 0.12f, 0x33000000, 2f, 1f, true, false);
+    }
+
+    // ── iOS 净白（照参考截图逐像素取色）──────────────────────────────────
+    // 参考图是一张 1270×1087 的 iOS 风格键盘截图，下面这些值是直接在图上点采样得到的
+    // 原始 sRGB，没有做任何"调好看一点"的二次调整：
+    //   键盘底 / 候选栏底 / 顶部工具条   #EDEFF2   ← 带一点蓝的浅灰，不是纯白
+    //   字母键帽                         #FFFFFF   ← 纯白；键与键之间只靠底色透出缝隙
+    //   功能键（分词 / 符 / 123 / 中英）  #DDE1E8   ← 只比键帽暗一档，远没有旧 iOS 那么灰
+    //   回车 / 发送                      #3482FF   ← 比系统蓝 #007AFF 更亮、更"电"
+    //   键帽文字 / 功能键文字            #151617   ← 近黑带一点蓝，不是纯 #000
+    //
+    // 几何也量了：键高 155px、圆角约 20px → 0.13（旧 ios 预设 0.12，几乎一致）；
+    // 键帽底边有 1~2px 的淡暗边（实测 #D4D8DD），但它既不是描边也不是渐变，
+    // 所以用一层 dy=1 / radius=2 的极淡投影还原 —— 比画一条实线更像真实截图。
+    //
+    // 和旧 ios 预设的差别只有三处，观感却从"灰塑料"变成"纸白"：
+    //   底色 #D1D4D9 → #EDEFF2、功能键 #ADB3BC → #DDE1E8、回车 #007AFF → #3482FF。
+    private static SkinPreset iosCleanLight() {
+        return new SkinPreset(IOS_CLEAN,
+                0xFFEDEFF2,   // 键盘底（实测）
+                0xFFFFFFFF,   // 字母键帽（实测）
+                0xFFE1E5EB,   // 按下：键帽同色阶压暗一档，仍明显亮于功能键
+                0xFFDDE1E8,   // 功能键（实测）
+                0xFFCDD3DC,   // 功能键按下：再压暗一档，保证按时有反馈
+                0xFFFFFFFF,   // 长按气泡：白底，和键帽同色
+                0xFFEDEFF2,   // 候选栏 / 工具条：截图里与键盘底是同一块底
+                0xFF151617,   // 文字（实测）
+                0xFF151617,   // 文字按下：截图不换字色，只换键底色
+                0xFF3482FF,   // 强调色 = 截图里回车那个蓝
+                0.13f, 0x14000000, 2f, 1f, false, false);
+    }
+
+    // 深色版：参考图只有浅色，所以按同一套色阶关系反推，而不是随手挑三个灰。
+    // 浅色的层级是「底 #EDEFF2 → 功能键 #DDE1E8 → 键帽 #FFFFFF」，越往上越亮；
+    // 深色把它翻过来，保持同样的三档间距：
+    //   底 #1B1D21 → 功能键 #262A2F → 键帽 #34373C
+    // 蓝同步提到 #4C93FF —— #3482FF 压在深灰上会发闷，提亮后和白字在同一亮度层。
+    private static SkinPreset iosCleanDark() {
+        return new SkinPreset(IOS_CLEAN,
+                0xFF1B1D21,   // 键盘底
+                0xFF34373C,   // 字母键帽
+                0xFF41454B,   // 按下
+                0xFF262A2F,   // 功能键
+                0xFF31353B,   // 功能键按下
+                0xFF34373C,   // 长按气泡
+                0xFF1B1D21,   // 候选栏 / 工具条
+                0xFFF2F4F7,   // 文字
+                0xFFF2F4F7,   // 文字按下
+                0xFF4C93FF,   // 强调色（提亮后的蓝）
+                0.13f, 0x33000000, 2f, 1f, false, false);
     }
 
     // ── 微信 ──────────────────────────────────────────────────────────────

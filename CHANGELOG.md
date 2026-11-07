@@ -1,3 +1,14 @@
+## v2.0.3-beta10 — 恢复旧版风格配色（含 iOS 净白预设）
+
+按用户给回的旧版 `SkinPreset` 源码原样恢复：
+
+- 预设回到 8 套：`ios` / **`iosclean`（iOS 净白，照参考截图逐像素取色：底 #EDEFF2、键帽纯白、功能键 #DDE1E8、回车 #3482FF）** / `wechat` / `google` / `material` / `pixel` / `sakura` / `monet`；
+- `barBg` 回到**各预设自己的值**（iOS 与 iOS 净白本来就是与键盘底同色；微信/Google 是白色条），即 beta8 的「全部统一」被还原；
+- 保留全部注释与色值来源说明（iPhone 17 深色三原色、莫奈掺色比例、youmo-ime Material/Pixel、樱花粉 #FB7299）。
+
+如需再次把候选条/工具条与键盘底拉到完全同色，把 `SkinPreset` 构造器里 `this.barBg = kbBg;` 改回即可（一行）。
+
+- 产物 `build/v203b10/AppleInputForSogou_v2.0.3-beta10.apk`，versionCode 50，22,754,885 B。
 ## v2.0.3-beta9 — 用 loadClass 分发 + 改掉 phrase 的默认色
 
 beta6/7 没打通的原因：phrase 的 `InputMethodBottomManager` 是**动态 dex** 里的类，
