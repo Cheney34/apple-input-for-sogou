@@ -19,6 +19,7 @@ import com.chiron.iosemoji.compat.VersionProfile;
 import com.chiron.iosemoji.config.ConfigMigration;
 import com.chiron.iosemoji.config.ConfigValues;
 import com.chiron.iosemoji.config.ModuleConfig;
+import com.chiron.iosemoji.skin.MonetPalette;
 import com.chiron.iosemoji.skin.SkinPreset;
 import com.chiron.iosemoji.ui.IosRow;
 import com.chiron.iosemoji.ui.IosSwitch;
@@ -48,6 +49,7 @@ public class SettingsActivity extends Activity {
     private TextView requestHint;
     /** 当前皮肤风格的值（见 {@link SkinPreset#IDS}）。 */
     private TextView presetValue;
+    private TextView monetSeedValue;
     /** 最近一次连上的渠道名（小米定制版 / 搜狗官方版 / …），用于状态卡与 Toast。 */
     private String lastChannel;
 
@@ -185,6 +187,7 @@ public class SettingsActivity extends Activity {
                 "连资源层的键帽位图也重画。默认关：重编码会丢 nine-patch 切边数据，曾导致键盘呼不出来。",
                 true);
         addPresetRow(look);
+        addMonetSeedRow(look);
 
 
         root.addView(IosUi.sectionHeader(this, "表情"));
@@ -233,6 +236,54 @@ public class SettingsActivity extends Activity {
         row.setOnClickListener(v -> showPresetDialog());
         card.addView(row);
         card.addView(IosUi.separator(this, 16));
+    }
+
+    /** 「莫奈主色」行：只在皮肤风格选「莫奈取色」时起作用，但一直显示，方便用户先配色再换风格。 */
+    private void addMonetSeedRow(LinearLayout card) {
+        String cur = prefs.getString(ModuleConfig.KEY_MONET_SEED, ModuleConfig.DEFAULT_MONET_SEED);
+        LinearLayout row = IosRow.base(this);
+        row.addView(IosRow.textColumn(this, "莫奈主色",
+                "只在「莫奈取色」下生效；不想跟壁纸走就锁一个固定主色"), IosRow.weight());
+        monetSeedValue = IosUi.text(this, MonetPalette.seedLabel(cur), 15f, IosUi.label2(this), false);
+        monetSeedValue.setPadding(IosUi.dp(this, 12), 0, 0, 0);
+        row.addView(monetSeedValue);
+        row.addView(IosRow.chevron(this));
+        row.setClickable(true);
+        row.setOnClickListener(v -> showMonetSeedDialog());
+        card.addView(row);
+        card.addView(IosUi.separator(this, 16));
+    }
+
+    private void showMonetSeedDialog() {
+        final String[] ids = MonetPalette.SEED_IDS;
+        final String[] labels = MonetPalette.seedLabels();
+        new AlertDialog.Builder(this)
+                .setTitle("莫奈主色")
+                .setItems(labels, (dialog, which) -> applyMonetSeed(ids[which]))
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    /** 锁定/放开主色：落盘 + 下发（搜狗进程清缓存后按新主色重画）。 */
+    private void applyMonetSeed(String seedKey) {
+        prefs.edit().putString(ModuleConfig.KEY_MONET_SEED, seedKey).commit();
+        if (monetSeedValue != null) monetSeedValue.setText(MonetPalette.seedLabel(seedKey));
+        final int[] ok = {0};
+        for (String pkg : Protocol.TARGETS) {
+            sendConfigIntent(pkg, ok);
+        }
+        final String label = MonetPalette.seedLabel(seedKey);
+        main.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (ok[0] > 0) {
+                    toast("已换莫奈主色：" + label);
+                } else {
+                    toast("已保存：" + label + "（搜狗进程未运行，切回输入法后生效）");
+                }
+                queryStatus(false);
+            }
+        }, 500L);
     }
 
     private void showPresetDialog() {
@@ -335,6 +386,9 @@ public class SettingsActivity extends Activity {
             // 皮肤预设是字符串，一起带过去（搜狗进程据此换配色并清位图缓存）
             intent.putExtra(ModuleConfig.KEY_SKIN_PRESET,
                     prefs.getString(ModuleConfig.KEY_SKIN_PRESET, ModuleConfig.DEFAULT_SKIN_PRESET));
+            // 莫奈主色（auto / pink / purple / blue / green / orange / teal）
+            intent.putExtra(ModuleConfig.KEY_MONET_SEED,
+                    prefs.getString(ModuleConfig.KEY_MONET_SEED, ModuleConfig.DEFAULT_MONET_SEED));
             sendOrderedBroadcast(intent, null, new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context c, Intent i) {

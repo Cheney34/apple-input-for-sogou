@@ -1,3 +1,27 @@
+## v2.0.3-beta15 — 莫奈主色可锁死（粉 / 紫 / 蓝 / 绿 / 橙 / 青）
+
+### 为什么加
+- 自动取色只看系统动态色和壁纸主色，遇到「壁纸配色不好看」就只能忍着。
+  现在可以在设置页把莫奈的主色**钉死**，壁纸再花也不影响键盘。
+
+### 怎么用
+- 设置页 → 外观 →「莫奈主色」：`自动（跟随系统 / 壁纸）` / 樱花粉 / 薰衣草紫 / 天空蓝 / 抹茶绿 / 蜜橘橙 / 湖青。
+- 只在「皮肤风格 = 莫奈取色」下生效；选完会即时下发到搜狗进程并清位图缓存。
+
+### 实现
+- `skin/MonetPalette`：取色优先级改为 **fixed（用户主色）→ dynamic（系统动态色）→ wallpaper（壁纸主色）
+  → last（上次种子）→ default（内置紫）**；`fixed` 时整条色阶（底 / 键帽 / 按下 / 功能键 / 正文 / 强调）
+  都由该主色的 HSV 按固定亮度阶梯派生，再走 WCAG 收口。
+- 新增配置键 `monet_seed`（字符串，默认 `auto`）：`ModuleConfig.monetSeed()`、
+  `ConfigProvider` 多一列、`ConfigBridge` 冷启动读取、`RuntimeConfig.applyFromIntent` 支持下发。
+- 诊断串 `monetsrc=` 现在会显示 `src=fixed:pink,seed=#FFF06292` 这种形式，一眼看出用的是哪一路。
+
+### 构建验证
+- `build/v203b15/AppleInputForSogou_v2.0.3-beta15.apk` 22,758,981 B，versionCode 55；
+- `classes.dex` 162,360 B，126 个类全部 `Lcom/chiron/iosemoji/*`；
+- dex 内确认：`SEED_IDS`/`SEED_LABELS`/`monet_seed`/`monetSeedValue`/`monetsrc`/`fixed`
+  与「莫奈主色」「樱花粉」「薰衣草紫」「天空蓝」「抹茶绿」「蜜橘橙」「湖青」「已换莫奈主色」。
+
 ## v2.0.3-beta14 — 莫奈取色按《Keyboard Monet 动态取色系统开发手册》重做
 
 ### 为什么改

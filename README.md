@@ -38,7 +38,8 @@ OPPO 定制版把整个主题模块用 `-repackageclasses '` 塞进了默认包�
 ## 下载哪个版本？
 
 | 版本 | 适合谁 | 有什么 |
-| **v2.0.3-beta14**（最新 · 推荐） | 推荐（实验渠道版） | **莫奈取色按《Keyboard Monet 动态取色系统开发手册》重做**：`skin/MonetPalette` 分层（取色→Token 映射→渲染），优先级 系统动态色 `system_surface_container*`/`system_secondary_container`/`system_primary` → 壁纸主色 → 上次种子 → 内置种子；深色不再反色而按暗色色阶派生；WCAG 正文 4.5:1、图标 3:1 收口；状态串新增 `monetsrc=` 诊断 |
+| **v2.0.3-beta15**（最新 · 推荐） | 推荐（实验渠道版） | **莫奈主色可锁死**：设置页新增「莫奈主色」（自动 / 樱花粉 / 薰衣草紫 / 天空蓝 / 抹茶绿 / 蜜橘橙 / 湖青）；`fixed` 主色优先于系统/壁纸，整条色阶由该主色派生 + WCAG 收口；配置键 `monet_seed`，诊断 `monetsrc=` 显示 `src=fixed:<key>` |
+| v2.0.3-beta14（存档） | 推荐（实验渠道版） | **莫奈取色按《Keyboard Monet 动态取色系统开发手册》重做**：`skin/MonetPalette` 分层（取色→Token 映射→渲染），优先级 系统动态色 `system_surface_container*`/`system_secondary_container`/`system_primary` → 壁纸主色 → 上次种子 → 内置种子；深色不再反色而按暗色色阶派生；WCAG 正文 4.5:1、图标 3:1 收口；状态串新增 `monetsrc=` 诊断 |
 | v2.0.3-beta13（存档） | 实验渠道版 | 系统导航条（底栏）跟皮肤色：setNavigationBarColor 改参 + IME 窗口直刷 + 图标明暗 |
 | **v2.0.3-beta12** | 推荐（实验渠道版） | 新增「搜狗经典（旧版）」预设（取搜狗原生 colors.ini 值）；微信夜间按实拍替换 |
 | **v2.0.3-beta11** | 推荐（实验渠道版） | 8 套配色；本版按实拍重取微信夜间（中灰 + 薄荷绿 + 0.19 圆角） |

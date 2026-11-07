@@ -36,6 +36,11 @@ public final class ModuleConfig {
      */
     public static final String KEY_SKIN_PRESET = "skin_preset";
     public static final String DEFAULT_SKIN_PRESET = "ios";
+
+    /** 莫奈主色档位：auto / pink / purple / blue / green / orange / teal。
+     *  auto = 跟随系统动态色 → 壁纸主色；其余值 = 用户锁死的主色（见 skin/MonetPalette）。 */
+    public static final String KEY_MONET_SEED = "monet_seed";
+    public static final String DEFAULT_MONET_SEED = "auto";
     public static final String KEY_CANDIDATE_PROBE = "candidate_probe_enabled";
     public static final String KEY_EMOJI_GROUPS = "emoji_group_filter_enabled";
     public static final String KEY_EMOJI_SWIPE = "emoji_swipe_enabled";
@@ -131,6 +136,10 @@ public final class ModuleConfig {
         String v = getString(KEY_SKIN_PRESET, DEFAULT_SKIN_PRESET);
         if (!com.chiron.iosemoji.skin.SkinPreset.isKnown(v)) v = DEFAULT_SKIN_PRESET;
         return v;
+    }
+    public static String monetSeed() {
+        String v = getString(KEY_MONET_SEED, DEFAULT_MONET_SEED);
+        return (v == null || v.trim().length() == 0) ? DEFAULT_MONET_SEED : v.trim();
     }
 
     public static boolean candidateProbeEnabled() {

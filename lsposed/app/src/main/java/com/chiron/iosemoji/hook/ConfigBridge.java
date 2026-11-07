@@ -240,6 +240,14 @@ public final class ConfigBridge {
                                 n++;
                             }
                         }
+                        int seedIdx = cursor.getColumnIndex(ModuleConfig.KEY_MONET_SEED);
+                        if (seedIdx >= 0) {
+                            String seedKey = cursor.getString(seedIdx);
+                            if (seedKey != null && seedKey.length() > 0) {
+                                RuntimeConfig.putString(ModuleConfig.KEY_MONET_SEED, seedKey);
+                                n++;
+                            }
+                        }
                         HookRegistry.log("config provider: loaded " + n + " keys -> "
                                 + RuntimeConfig.describe());
                         PROVIDER_DONE.set(true);

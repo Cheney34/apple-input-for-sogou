@@ -66,6 +66,11 @@ public final class RuntimeConfig {
             }
         }
         try {
+            String seedKey = intent.getStringExtra(ModuleConfig.KEY_MONET_SEED);
+            if (seedKey != null && seedKey.length() > 0) {
+                STRINGS.put(ModuleConfig.KEY_MONET_SEED, seedKey);
+                n++;
+            }
             String preset = intent.getStringExtra(ModuleConfig.KEY_SKIN_PRESET);
             if (preset != null && preset.length() > 0) {
                 STRINGS.put(ModuleConfig.KEY_SKIN_PRESET, preset);
