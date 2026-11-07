@@ -55,6 +55,28 @@ public final class IosSkin {
      */
     public static final int KIND_ACCENT = 4;
 
+    /**
+     * 键帽圆角增益（v2.1.3）：取完「原图自带圆角」与「预设比例圆角」的较大值之后，再乘这个倍数。
+     *
+     * <p><b>为什么乘在最终值上，而不是逐套调 {@link SkinPreset#radiusRatio}</b>：
+     * 实际生效半径 = {@code max(detectRadius(src), 键高 × radiusRatio)}。各键尺寸不同，
+     * 有的取到"原图圆角"这一路、有的取到"预设比例"这一路，逐套调比例会出现
+     * 「大键变圆了、小键没动」的断层；乘在最终值上，所有键按同一比例变圆，
+     * 键帽 / 长按气泡 / 强调键之间的层级关系（气泡 1.5× 于键帽）也原样保留 —— 这才是"不失去协调"。
+     *
+     * <p>1.5 = 相对 v2.1.2 及以前圆润 +50%（之前键帽圆角大约落在键高的 16%~25%，
+     * 提升后约 24%~34%，与微信风格那颗 0.19 的 squircle 处在同一条曲率线上）。
+     */
+    public static final float RADIUS_BOOST = 1.5f;
+
+    /**
+     * 圆角上限（占键帽短边的比例）。
+     *
+     * <p>0.46 的含义：再往上就是"胶囊"（短边的一半 = 0.5 时两侧完全半圆），
+     * 留 4% 的直边，方键帽看起来仍是"圆角矩形"而不是"药丸"，这是协调性的下限也是上限。
+     */
+    private static final float RADIUS_CAP = 0.46f;
+
     private IosSkin() {
     }
 
@@ -519,8 +541,8 @@ public final class IosSkin {
                 int gA = Math.max(1, Math.round(box.height() * 0.02f));
                 RectF rA = new RectF(box.left + gA, box.top + gA, box.right - gA, box.bottom - gA);
                 if (rA.width() < 2f || rA.height() < 2f) rA = new RectF(box);
-                float radA = Math.max(2f, Math.min(rA.height() * p.radiusRatio,
-                        Math.min(rA.width(), rA.height()) * 0.5f));
+                float radA = Math.max(2f, Math.min(rA.height() * p.radiusRatio * RADIUS_BOOST,
+                        Math.min(rA.width(), rA.height()) * RADIUS_CAP));
                 paint.setColor(color);
                 canvas.drawRoundRect(rA, radA, radA, paint);
                 Bitmap glyph = glyphMask(src);
@@ -569,9 +591,12 @@ public final class IosSkin {
 
             // 圆角：优先用搜狗自己这张图的实际圆角（保证形状不对不上），
             // 但它本身偏方 —— 取「原图圆角」与「预设规格圆角」的较大值，既不变形也不方。
+            // v2.1.3：这个最终值再乘 RADIUS_BOOST（整体圆润 +50%），并以短边 RADIUS_CAP 封顶，
+            // 保证小键（功能键 / 数字键）不会被撑成胶囊，各键曲率仍是一条连续曲线。
             int detected = detectRadius(src, box);
             float spec = rect.height() * ((kind == KIND_POPUP) ? p.radiusRatio * 1.5f : p.radiusRatio);
-            float radius = Math.min(Math.max(detected, spec), Math.min(rect.width(), rect.height()) * 0.5f);
+            float radius = Math.min(Math.max(detected, spec) * RADIUS_BOOST,
+                    Math.min(rect.width(), rect.height()) * RADIUS_CAP);
             radius = Math.max(2f, radius);
 
             // 投影：iOS 键帽只有极淡的一层落影（没有描边），Material 3 用 tonal 阴影。
