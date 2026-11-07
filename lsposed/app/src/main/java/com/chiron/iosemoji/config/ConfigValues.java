@@ -26,7 +26,7 @@ public final class ConfigValues {
     private ConfigValues() {
     }
 
-    /** 默认值：皮肤与表情相关默认开（v1.8 既有行为保留）；自绘键盘/探针/诊断默认关。 */
+    /** 默认值：皮肤、表情、快捷码默认开（v1.8 既有行为保留）；资源层重绘/探针/诊断默认关。 */
     public static boolean defaultValue(String key) {
         switch (key) {
             case ModuleConfig.KEY_MASTER:
@@ -34,9 +34,9 @@ public final class ConfigValues {
             case ModuleConfig.KEY_MIUI_BOTTOM_BAR:
             case ModuleConfig.KEY_EMOJI_GROUPS:
             case ModuleConfig.KEY_EMOJI_SWIPE:
+            case ModuleConfig.KEY_LOGO_TRIGGER:
                 return true;
             case ModuleConfig.KEY_CANDIDATE_PROBE:
-            case ModuleConfig.KEY_LOGO_TRIGGER:
             case ModuleConfig.KEY_ASSET_SKIN:
             case ModuleConfig.KEY_ASSET_SKIN_IMAGES:
             case ModuleConfig.KEY_DIAGNOSTICS:
@@ -67,7 +67,7 @@ public final class ConfigValues {
             case ModuleConfig.KEY_EMOJI_SWIPE:
                 return "分组滑动";
             case ModuleConfig.KEY_LOGO_TRIGGER:
-                return "Logo 触发词";
+                return "快捷码";
             case ModuleConfig.KEY_DIAGNOSTICS:
                 return "视图树诊断";
             default:

@@ -8,7 +8,7 @@
 - 目标包名：`com.sohu.inputmethod.sogou.xiaomi`（同时兼容 `com.sohu.inputmethod.sogou`）
 - 目标版本：`10.32.21.202607061714`（versionCode `2147483647`，5 个 dex，arm64-v8a）
 - 目标 APK SHA-256：`90B4A1945D28427A50CC6DF8FA1FE0E29977A0053622FA7A05FBDCFF01F6B09C`
-- 模块包名：`com.chiron.iosemoji` · 版本：`2.1.1`（versionCode 61）
+- 模块包名：`com.chiron.iosemoji` · 版本：`2.1.2`（versionCode 62）
 - 最低支持：Android 8.0（API 26）· 只在 LSPosed / EdXposed 等 Xposed 框架下工作
 
 
@@ -38,7 +38,8 @@ OPPO 定制版把整个主题模块用 `-repackageclasses '` 塞进了默认包�
 ## 下载哪个版本？
 
 | 版本 | 适合谁 | 有什么 |
-| **v2.1.1**（正式版 · 最新） | 所有人（推荐） | **表情包升到 Emoji 17.0 / iOS 26**：`info.xml` 补 8 条新条目（🫪 变形脸 / 🫯 打斗云团 / 🫈 毛怪 / 🫍 虎鲸 / 🛘 山体滑坡 / 🪊 长号 / 🪎 宝箱 / 🧑‍🩰 芭蕾舞者），给 👯 兔耳、🤼 摔跤 六条老表情打开肤色；payload 3868 → 3911 条目（2075 张表情图，源图从 emoji-datasource 16.0 换成 17.0）；其余功能与 v2.1.0 一致 |
+| **v2.1.2**（正式版 · 最新） | 所有人（推荐） | **新增「快捷码」：终于能把 17.0 的新表情打出来了**。设置 → 表情 → 快捷码（默认开），打 `pg1`–`pg8` 上屏就是 🫪 🫯 🫈 🫍 🛘 🪊 🪎 🧑‍🩰。走的还是 `commitText` 改写这一层（跟 `苹果logo` →  同一条链路），不碰搜狗候选对象，全等匹配不误伤正常句子；行尾空格会保留，英文模式下连着打不会粘连。另外补了 [`docs/怎么打出新表情.md`](docs/怎么打出新表情.md)：说清「字体只管显示、面板才管输入」，以及三条能打出来的路（快捷码 / 搜狗面板 / 自定义短语）|
+| **v2.1.1**（正式版 · 上一版） | 所有人（推荐） | **表情包升到 Emoji 17.0 / iOS 26**：`info.xml` 补 8 条新条目（🫪 变形脸 / 🫯 打斗云团 / 🫈 毛怪 / 🫍 虎鲸 / 🛘 山体滑坡 / 🪊 长号 / 🪎 宝箱 / 🧑‍🩰 芭蕾舞者），给 👯 兔耳、🤼 摔跤 六条老表情打开肤色；payload 3868 → 3911 条目（2075 张表情图，源图从 emoji-datasource 16.0 换成 17.0）；其余功能与 v2.1.0 一致 |
 | **v2.1.0**（正式版 · 上一版） | 所有人（推荐） | **第一个正式版**：小米 / 官方 / OPPO / vivo 四渠道各自一份能力档案，默认只改皮肤颜色不动布局；九套皮肤风格（搜狗经典 / iOS / iOS 净白 / 微信 / Google / 幽墨 Material / 幽墨 Pixel / 樱花粉 / 莫奈）；莫奈按 Material 3 Expressive 色阶、可锁定主色；系统导航条 / MIUI 全面屏底栏跟色；表情替换 3868 条目全对齐 v1.8 |
 | v2.0.3-beta18（存档） | 推荐（实验渠道版） | **莫奈改按 Material 3 Expressive（2025）色阶**：容器色不再压成近中性（底色取主色色度 42%、功能键 85%），靠明度分层拉开对比（键帽=surfaceContainerLowest、底=surfaceContainer、功能键=secondaryContainer），并强制「键帽 vs 底」亮度比 ≥1.28（浅）/1.55（深）；系统动态色拉不开时自动退回自派生色阶 |
 | v2.0.3-beta17（存档） | 推荐（实验渠道版） | **微信风格：发送键刷成强调绿**：新增 `SkinPreset.accentEnter`（仅微信 true），`IosSkin.KIND_ACCENT` 铺 accent 圆角底并用 `glyphMask` 把键上原字形抠成对比色盖回，ini 侧同时把 `*Enter*/*Send*` 段底色与文字改成 accent；其余预设行为完全不变 |

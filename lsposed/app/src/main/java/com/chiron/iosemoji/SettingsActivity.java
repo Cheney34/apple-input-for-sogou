@@ -197,8 +197,9 @@ public class SettingsActivity extends Activity {
                 "隐藏「组合」和「拼装」两个内置分组，让位给 Apple 风格分组。", true);
         addSwitch(emoji, ModuleConfig.KEY_EMOJI_SWIPE, "左右滑动切换分组",
                 "放开 NoScrollViewPager 的滑动限制。", true);
-        addSwitch(emoji, ModuleConfig.KEY_LOGO_TRIGGER, "Logo 触发词",
-                "把「苹果logo」等触发词替换为 Apple  Logo 字符。", false);
+        addSwitch(emoji, ModuleConfig.KEY_LOGO_TRIGGER, "快捷码（Logo / 新表情）",
+                "打完直接上屏，不经过候选。苹果logo →  Logo；pg1–pg8 → 变形的脸 / 打斗云团 / 毛怪 / "
+                        + "虎鲸 / 山体滑坡 / 长号 / 宝箱 / 芭蕾舞者。全等匹配，不误伤正常句子。", false);
 
         root.addView(IosUi.sectionHeader(this, "诊断"));
         LinearLayout diag = IosUi.card(this);

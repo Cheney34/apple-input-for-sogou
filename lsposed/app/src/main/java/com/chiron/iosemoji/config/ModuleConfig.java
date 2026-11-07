@@ -155,7 +155,7 @@ public final class ModuleConfig {
     }
 
     public static boolean logoTriggerEnabled() {
-        return masterEnabled() && getBoolean(KEY_LOGO_TRIGGER, false);
+        return masterEnabled() && getBoolean(KEY_LOGO_TRIGGER, true);
     }
 
     public static boolean diagnosticsEnabled() {
