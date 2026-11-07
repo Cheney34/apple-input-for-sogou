@@ -438,7 +438,7 @@ public final class MiuiBottomBarHook {
             dark = IosSkin.isDark(null, ctx);
         }
         SkinPreset p = SkinPreset.of(ModuleConfig.skinPreset(), dark, ctx);
-        int bg = p.barBg != 0 && !FORCE_TRANSPARENT ? p.barBg : p.kbBg;
+        int bg = p.kbBg;   // v2.0.3-beta8：底栏与键盘底完全同色
         if (FORCE_TRANSPARENT) bg = Color.TRANSPARENT;
         int icon = (IosSkin.ensureContrast(p.text, bg, 3.0) & 0xFFFFFF) | 0xFF000000;
         int iconPressed = (IosSkin.ensureContrast(p.textPressed, bg, 3.0) & 0xFFFFFF) | 0xFF000000;

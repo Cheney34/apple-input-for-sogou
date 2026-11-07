@@ -1,3 +1,14 @@
+## v2.0.3-beta8 — 工具栏 / 候选条 / 全面屏底栏与键盘底**完全同色**
+
+按需求把所有「条」的底色收敛到键盘底色（`kbBg`），不再保留独立色：
+
+- `SkinPreset.barBg` 恒等于 `kbBg`（原参数保留只作兼容，不再生效）；
+- `IosSkin`：候选条/工具条的 `BG_COLOR`、条内文字对比度基准、`candidate_bg*` / `first_cand_bottom` / `more_cands_bar_bg` / `function_bg` 等底图，全部改用 `kbBg`；
+- 全面屏底栏（H61）：`colors()` 直接返回 `kbBg`，不再是 `barBg`。
+
+效果：键盘底、候选条、工具条、全面屏底栏是同一个颜色值，肉眼看不到接缝。
+
+- 产物 `build/v203b8/AppleInputForSogou_v2.0.3-beta8.apk`，versionCode 48，22,754,885 B。
 ## v2.0.3-beta7 — 底栏加第二条独立通道（视图树兜底）+ 开关默认开
 
 beta6 的 H61 只在「找到 `InputMethodBottomManager` 且它的 `sBottomView` 字段名没被混淆」时才生效；

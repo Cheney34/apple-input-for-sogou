@@ -45,7 +45,7 @@ public final class SkinPreset {
     public final int func;          // 功能键（123 / ⌫ / ⏎）
     public final int funcPressed;
     public final int popup;         // 长按气泡底
-    public final int barBg;         // 候选栏 / 顶部工具条底色（可与键盘底色不同）
+    public final int barBg;         // 候选栏 / 顶部工具条底色（v2.0.3-beta8 起恒等于 kbBg：要「完全一样的底色」）
 
     // 文字与强调色
     public final int text;
@@ -71,7 +71,9 @@ public final class SkinPreset {
         this.func = func;
         this.funcPressed = funcPressed;
         this.popup = popup;
-        this.barBg = barBg;
+        // v2.0.3-beta8：用户要求工具栏/候选条与键盘底**完全同色**，这里统一收敛到 kbBg，
+        // 传进来的 barBg 只作历史兼容，不再生效。
+        this.barBg = kbBg;
         this.text = text;
         this.textPressed = textPressed;
         this.accent = accent;
