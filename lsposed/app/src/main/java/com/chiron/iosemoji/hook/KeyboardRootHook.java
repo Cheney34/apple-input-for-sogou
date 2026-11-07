@@ -3,6 +3,7 @@ package com.chiron.iosemoji.hook;
 import android.content.Context;
 import android.view.View;
 
+import com.chiron.iosemoji.compat.Targets;
 import com.chiron.iosemoji.compat.VersionProfile;
 import com.chiron.iosemoji.config.ModuleConfig;
 import com.chiron.iosemoji.core.HookState;
@@ -32,12 +33,13 @@ public final class KeyboardRootHook {
 
     public static final String ID = "H01_keyboard_getRootView";
 
-    private static final String CLS_KEYBOARD = "com.sogou.lib.bu.ui.component.keyboard.d";
 
     private KeyboardRootHook() {
     }
 
-    public static void install(final ClassLoader classLoader) {
+    public static void install(final ClassLoader classLoader, Targets targets) {
+        final String CLS_KEYBOARD = targets == null ? null : targets.keyboardFacadeClass;
+        if (CLS_KEYBOARD == null) return;
         HookRegistry.install(ID, classLoader, new HookRegistry.Installer() {
             @Override
             public void install(ClassLoader cl) throws Throwable {

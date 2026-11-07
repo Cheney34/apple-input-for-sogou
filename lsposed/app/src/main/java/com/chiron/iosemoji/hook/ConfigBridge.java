@@ -71,8 +71,7 @@ public final class ConfigBridge {
                                 + " (" + n + " keys)");
                         // 换皮肤预设后必须丢掉搜狗的位图缓存，否则还是上一套配色
                         ThemeSkinHook.dropCaches();
-                        AssetSkinHook.reset();
-                        setResultCode(Protocol.RESULT_OK);
+                                    setResultCode(Protocol.RESULT_OK);
                         setResultData(state(ctx));
                         runConfigCallback();
                     } else if (Protocol.ACTION_CFG_QUERY.equals(action)) {
@@ -168,14 +167,10 @@ public final class ConfigBridge {
         sb.append(";sg=").append(sogouVersion(ctx));
         // 皮肤改动是否真的落到了搜狗的皮肤资源上 —— 这行是"改没改到"的唯一判据
         sb.append(';').append(ThemeSkinHook.stateFields());
-        sb.append(';').append(AssetSkinHook.stateFields());
         String unmatched = ThemeSkinHook.unmatchedNames();
         if (unmatched.length() > 0) sb.append(";skip=").append(unmatched);
         String seen = ThemeSkinHook.seenNames();
         if (seen.length() > 0) sb.append(";seen=").append(seen);
-        // 资源级（AssetManager）实际读到的皮肤路径样本：判断皮肤是走 assets 还是解包文件
-        String asamples = AssetSkinHook.samples();
-        if (asamples.length() > 0) sb.append(";asample=").append(asamples);
         sb.append(";resync=").append(RESYNC.get());
         return sb.toString();
     }

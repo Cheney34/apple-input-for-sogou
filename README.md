@@ -19,12 +19,12 @@
 | 小米定制版 10.32.21.202607061714 | `com.sohu.inputmethod.sogou.xiaomi` | ✅ 已确认 | ✅ 已确认 | ✅ 实验 |
 | 搜狗官方 20.19.0 | `com.sohu.inputmethod.sogou` | ⏳ 入口已定位（ini 入口同名同签名；位图入口 `common.j`→**`common.g`**），**待真机实测** | ⏳ 待验证 | ⏳ 有对应物（`NormalIMERootContainer`→`com.sogou.bu.basic.SogouInputArea`），未适配 |
 | OPPO 定制版 10.32.0622.x | `com.sohu.inputmethod.sogouoem` | ⏳ 待修（类名写错，见下） | 部分（分组过滤 ✅ / 解压旁路待验证） | ❌ 未适配 |
-| vivo 定制版 | ？ | ❌ 未开始（**缺 APK**） | ❌ | ❌ |
+| vivo 定制版 11.41.14023 | `com.sohu.inputmethod.sogou.vivo` | ❌ 未定位（皮肤类被重打包进默认包） | ⏳ 类名齐全待实测 | ❌ 键盘 facade 未定位 |
 
 开发优先级（2026-11-07 定）：**小米 > 搜狗官方 > OPPO == vivo**。
 逐步推进，每步都要：①小米回归通过 ②目标渠道实测 ③未测渠道一律标「未兼容」。
 
-> ⚠️ 审计更正：OPPO 的类名此前写成了 `defpackage.yy1` / `defpackage.nm1`，那是 jadx 给**默认包类**生成的伪包名；
+> ✅ 已修（v2.0.3-beta1）：OPPO 的类名已从 `defpackage.yy1` / `defpackage.nm1` 改成 **`yy1` / `nm1`**（默认包类的真实 FQCN）；
 > DEX 里的真实描述符是 `Lyy1;` / `Lnm1;`（**无包名**），运行时 FQCN 应为 `yy1` / `nm1`。
 > 这意味着 OPPO 皮肤 hook 目前**根本没挂上**（ClassNotFound 被 try/catch 吞掉）。详见 [docs/AUDIT_PHASE1.md](docs/AUDIT_PHASE1.md)。
 
@@ -36,6 +36,7 @@ OPPO 定制版把整个主题模块用 `-repackageclasses '` 塞进了默认包�
 
 | 版本 | 适合谁 | 有什么 |
 | --- | --- | --- |
+| [**v2.0.3-beta1**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.3-beta1) | 多定制版尝鲜 | 删掉资源层皮肤 hook（H50）；渠道档案化：官方 20.19.0 / OPPO / vivo 各自一份 `Targets`；未知渠道不再回落小米 |
 | [**v2.0.2-beta2**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.2-beta2) | **稳定版 · 推荐** | 目前唯一在**小米定制版真机确认可用**的版本：改搜狗默认皮肤（H40 改 ini + H41 按方法名全挂位图入口）、七套皮肤、表情包完整、开关即时可逆。**当前基线。** |
 | [**v2.0.2-beta1**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.2-beta1) | 存档 | 多定制版支持：**OPPO 定制版（`com.sohu.inputmethod.sogouoem`）也能改皮肤**（该版类名不同 → 新增 `Targets` 映射表）；小米版行为不变 |
 | [**v2.0.1-beta4**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.1-beta4) | 存档 | iOS 深色底色压到深灰 `#222223`（键 `#6D6D6F` / 字 `#FDFDFE` 不变），功能键与按下态按新色阶重推 |

@@ -172,9 +172,6 @@ public class SettingsActivity extends Activity {
                 "改搜狗**自己的默认皮肤**：配色、键帽形状、候选栏底色都按所选风格重画。"
                         + "布局、按键命中、候选栏高度全部沿用搜狗原样，所以不会错位。", true);
         addPresetRow(look);
-        addSwitch(look, ModuleConfig.KEY_RESOURCE_SKIN, "改皮肤（资源层）",
-                "在资源读取层直接改写皮肤 ini 与图 —— 对付 OEM 改了类名的版本（如 OPPO 定制版）。"
-                        + "如果打开后键盘呼不出来，把它关掉，靠上面的类名层也能改（小米版）。", true);
         addSwitch(look, ModuleConfig.KEY_KEYBOARD_REPLACE, "自绘键盘（实验）",
                 "用模块自绘的键盘盖在搜狗键盘上。可能与搜狗自己算的布局/命中区冲突（样式错乱），"
                         + "一般不需要打开。", false);
@@ -393,9 +390,7 @@ public class SettingsActivity extends Activity {
         String skinProtected = null;
         String skinContrast = null;
         String skinSkip = null;
-        String skinAsset = null;
         String skinCustom = null;
-        String skinSample = null;
         String skinResync = null;
         StringBuilder eff = new StringBuilder();
         for (String part : raw.split(";")) {
@@ -446,12 +441,6 @@ public class SettingsActivity extends Activity {
                 case "skintp":
                     skinCustom = v;
                     break;
-                case "asset":
-                    skinAsset = v;
-                    break;
-                case "asample":
-                    skinSample = v;
-                    break;
                 case "resync":
                     skinResync = v;
                     break;
@@ -473,16 +462,11 @@ public class SettingsActivity extends Activity {
         if (skinKept != null) skinLine.append("  保留=").append(skinKept);
         if (skinProtected != null) skinLine.append("  跳过图标=").append(skinProtected);
         if (skinContrast != null) skinLine.append("  对比修正=").append(skinContrast);
-        // 资源级（AssetManager）通道：这条不通，说明皮肤不是从 assets 读的（可能解包到文件了）
         if (skinCustom != null) skinLine.append("  第三方跳过=").append(skinCustom);
-        if (skinAsset != null) skinLine.append("\n资源=").append(skinAsset);
         if (skinResync != null) skinLine.append("  重读=").append(skinResync);
         if (eff.length() > 0) skinLine.append('\n').append(eff);
         if (skinSkip != null && skinSkip.length() > 0) {
             skinLine.append("\n没认出来的图：").append(skinSkip);
-        }
-        if (skinSample != null && skinSample.length() > 0) {
-            skinLine.append("\n读到的皮肤资源：").append(skinSample);
         }
         effectiveText.setText(skinLine.toString());
         requestHint.setText("搜狗版本 " + (sg == null ? "unknown" : sg)

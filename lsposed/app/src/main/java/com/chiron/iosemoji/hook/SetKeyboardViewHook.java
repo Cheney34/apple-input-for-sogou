@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.chiron.iosemoji.compat.VersionProfile;
+import com.chiron.iosemoji.compat.Targets;
 import com.chiron.iosemoji.config.ModuleConfig;
 import com.chiron.iosemoji.core.HookState;
 import com.chiron.iosemoji.keyboard.ChironKeyboardView;
@@ -33,12 +34,13 @@ public final class SetKeyboardViewHook {
 
     public static final String ID = "H02_ime_root_setKeyboardView";
 
-    private static final String CLS_ROOT_CONTAINER = "com.sohu.inputmethod.ui.frame.NormalIMERootContainer";
 
     private SetKeyboardViewHook() {
     }
 
-    public static void install(final ClassLoader classLoader) {
+    public static void install(final ClassLoader classLoader, Targets targets) {
+        final String CLS_ROOT_CONTAINER = targets == null ? null : targets.rootContainerClass;
+        if (CLS_ROOT_CONTAINER == null) return;
         HookRegistry.install(ID, classLoader, new HookRegistry.Installer() {
             @Override
             public void install(ClassLoader cl) throws Throwable {

@@ -12,7 +12,6 @@ public final class ConfigValues {
     public static final String[] KEYS = {
             ModuleConfig.KEY_MASTER,
             ModuleConfig.KEY_THEME_SKIN,
-        ModuleConfig.KEY_RESOURCE_SKIN,
             ModuleConfig.KEY_EMOJI_GROUPS,
             ModuleConfig.KEY_EMOJI_SWIPE,
             ModuleConfig.KEY_LOGO_TRIGGER,
@@ -29,7 +28,6 @@ public final class ConfigValues {
         switch (key) {
             case ModuleConfig.KEY_MASTER:
             case ModuleConfig.KEY_THEME_SKIN:
-            case ModuleConfig.KEY_RESOURCE_SKIN:
             case ModuleConfig.KEY_EMOJI_GROUPS:
             case ModuleConfig.KEY_EMOJI_SWIPE:
                 return true;
@@ -49,7 +47,6 @@ public final class ConfigValues {
             case ModuleConfig.KEY_MASTER:
                 return "总开关";
             case ModuleConfig.KEY_THEME_SKIN:
-            case ModuleConfig.KEY_RESOURCE_SKIN:
                 return "改皮肤";
             case ModuleConfig.KEY_KEYBOARD_REPLACE:
                 return "自绘键盘（实验）";

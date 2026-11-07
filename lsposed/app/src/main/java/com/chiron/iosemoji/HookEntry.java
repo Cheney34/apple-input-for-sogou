@@ -12,7 +12,6 @@ import com.chiron.iosemoji.core.HookState;
 import com.chiron.iosemoji.diagnostics.ViewTreeDumper;
 import com.chiron.iosemoji.compat.Targets;
 import com.chiron.iosemoji.hook.CandidateProbeHook;
-import com.chiron.iosemoji.hook.AssetSkinHook;
 import com.chiron.iosemoji.hook.ConfigBridge;
 import com.chiron.iosemoji.hook.HookRegistry;
 import com.chiron.iosemoji.hook.KeyboardRootHook;
@@ -53,7 +52,13 @@ public class HookEntry implements IXposedHookLoadPackage {
 
         HookRegistry.log("load " + lpparam.packageName + " process=" + lpparam.processName);
         // 定制版差异（小米 / OPPO …）都收在 Targets 里：类名一律从这里取，不再写死
-        sTargets = Targets.forPackage(lpparam.packageName);
+        Targets t2 = Targets.forPackage(lpparam.packageName);
+        if (t2 == null) {
+            // 手册原则：未识别的渠道默认不修改原始行为（宁可什么都不装）
+            HookRegistry.log("unknown channel " + lpparam.packageName + ", no hooks installed");
+            return;
+        }
+        sTargets = t2;
         HookRegistry.log("targets: " + sTargets.describe());
         ModuleConfig.reload();
 
@@ -67,7 +72,7 @@ public class HookEntry implements IXposedHookLoadPackage {
         }
         if (ModuleConfig.candidateProbeEnabled() && sTargets.supportsCandidateProbe()) {
             try {
-                CandidateProbeHook.install(lpparam.classLoader);
+                CandidateProbeHook.install(lpparam.classLoader, sTargets);
             } catch (Throwable t) {
                 HookRegistry.log(t);
             }
@@ -201,7 +206,6 @@ public class HookEntry implements IXposedHookLoadPackage {
         // 资源级兜底：直接拦 AssetManager.open()，不依赖任何混淆类名。
         // 小米版能命中就命中；OPPO 等改名字的版本靠这一层也能改到皮肤。
         try {
-            AssetSkinHook.install(cl);
         } catch (Throwable t) {
             HookRegistry.log("asset skin hook failed");
             HookRegistry.log(t);
@@ -223,12 +227,12 @@ public class HookEntry implements IXposedHookLoadPackage {
             return;
         }
         try {
-            KeyboardRootHook.install(cl);
+            KeyboardRootHook.install(cl, sTargets);
         } catch (Throwable t) {
             HookRegistry.log(t);
         }
         try {
-            SetKeyboardViewHook.install(cl);
+            SetKeyboardViewHook.install(cl, sTargets);
         } catch (Throwable t) {
             HookRegistry.log(t);
         }

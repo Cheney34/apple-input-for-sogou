@@ -30,7 +30,6 @@ public final class ModuleConfig {
     public static final String KEY_THEME_SKIN = "theme_skin_enabled";
 
     /** 资源层（H50）：直接在 AssetManager 层改写皮肤 ini/位图，对付 OEM 改了类名的版本（如 OPPO 定制版）。 */
-    public static final String KEY_RESOURCE_SKIN = "resource_skin_enabled";
     /**
      * 皮肤预设（**字符串**，不是布尔）：{@code ios} / {@code wechat} / {@code google} / {@code monet}。
      * 取值与配色见 {@link com.chiron.iosemoji.skin.SkinPreset}。
@@ -111,11 +110,6 @@ public final class ModuleConfig {
     }
 
     /** iOS 皮肤：改写搜狗默认皮肤的 ini 颜色 + 键帽/键盘底色重上色（不动布局）。默认开启。 */
-    /** 资源层（H50）：在 AssetManager 层改写皮肤 ini/位图；出问题可单独关掉，退回类名层。 */
-    public static boolean resourceSkinEnabled() {
-        return themeSkinEnabled() && getBoolean(KEY_RESOURCE_SKIN, true);
-    }
-
     public static boolean themeSkinEnabled() {
         return masterEnabled() && getBoolean(KEY_THEME_SKIN, true);
     }

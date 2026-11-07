@@ -1,3 +1,53 @@
+## v2.0.3-beta1 — 删掉资源层皮肤 hook（H50）；渠道档案化（官方 / OPPO / vivo 进 Targets）
+
+基线说明：本版从 **稳定版 beta2（`7401aa5`）** 出发，只做「多渠道档案化 + 删除越界实现」，不改 beta2 的皮肤算法。
+
+### 1. 删除 H50（资源层皮肤 hook）——你要求的
+`hook/AssetSkinHook.java`（435 行）整文件删除。它做的事情是 hook `android.content.res.AssetManager#open`，
+在**进程级**改写所有 `theme/…` 开头的 ini 与位图字节——违反手册 §6.3「不能对所有 `AssetManager.open()` 无差别替换」，
+也是 beta3/4/5 出现「键盘呼不出来」的结构性原因。
+
+连带清理（残留 grep = 0）：
+- `HookEntry`：`import AssetSkinHook` + `AssetSkinHook.install(cl)`
+- `ConfigBridge`：`AssetSkinHook.reset()`、`state()` 里的 `asset=` / `asample=`；**保留** 定时重读（2/5/10/20/40/60s）与 `resyncNow()`
+- `ModuleConfig`：`KEY_RESOURCE_SKIN` / `resourceSkinEnabled()`
+- `ConfigValues`：该键（KEYS 恢复 7 项 + 自绘键盘）
+- `SettingsActivity`：「改皮肤（资源层）」开关、`资源=` / `读到的皮肤资源` 两行状态
+
+保留下来的保护：`ThemeSkinHook` 里的第三方皮肤门控（`.ssf` / `sogou_custom` / `theme_custom` / `/themes/` / `phoneTheme`
+一律不碰，计 `第三方跳过=`）、熔断、ini 行内替换、骨架复核。
+
+### 2. 渠道档案化（Targets）
+- 修 **OPPO**：`defpackage.yy1/nm1` → **`yy1`/`nm1`**（默认包类的真实 FQCN；写成 `defpackage.` 会 ClassNotFound）
+- 新增 **`STANDARD`**（官方 20.19.0 `com.sohu.inputmethod.sogou`）：ini 入口与小米同名同签名；
+  位图入口 `com.sogou.theme.common.g`（`f(Ctx,Str,Z)` / `g(Ctx,Str,Z,Z)`）；根容器 `com.sogou.bu.basic.SogouInputArea`；
+  键盘外壳 `com.sogou.bu.ui.keyboard.controller.b`；候选视图/代理未定位 = `null`
+- 新增 **`VIVO`**（`com.sohu.inputmethod.sogou.vivo` 11.41.14023）：皮肤类被重打包（全部缺失）⇒ 皮肤层不启用；
+  根容器 `SogouInputArea` ✅、表情三件套 ✅（`ExpressionUtil` 未改名）、键盘 facade 未定位
+- **`forPackage()` 未知包返回 `null`**（不再回落小米）；`HookEntry` 遇到 null 只打一行日志、什么都不装
+- 三个原本硬编码的 hook 改为读档案：`KeyboardRootHook`（`keyboardFacadeClass`）、
+  `SetKeyboardViewHook`（`rootContainerClass`）、`CandidateProbeHook`（`candidateViewClass`/`candidateDelegateClass`）；
+  档案里为 `null` 就跳过
+- `Protocol.TARGETS` / `xposed_scope` / `<queries>` 增加 `com.sohu.inputmethod.sogou.vivo`
+
+### 3. 构建与验证
+- `versionCode 41` / `2.0.3-beta1`；`build/v203/AppleInputForSogou_v2.0.3-beta1.apk` = 22,750,789 B
+- 证书 `CN=Android Debug` SHA-256 `4fbf65ed…c207`（覆盖升级）
+- `classes.dex` 148,472 B：**117 类全部 `Lcom/chiron/iosemoji/*`**、`de/robv` 定义 0、`AssetSkinHook` 残留 0、
+  `resource_skin_enabled` 残留 0、`defpackage` 字符串 0
+- 新渠道字符串已入包：`com.sogou.bu.basic.SogouInputArea`、`com.sogou.theme.common.g`、
+  `com.sogou.bu.ui.keyboard.controller.b`、`sogou.vivo`、`unknown channel`
+
+### 4. 各渠道现在的真实能力（**未实测的一律不许说"已支持"**）
+| 渠道 | 皮肤 | 表情 | 自绘键盘 | 候选探针 |
+|---|---|---|---|---|
+| 小米（beta2 验证过） | ✅ | ✅ | 实验 | ✅ |
+| 官方 20.19.0 | ⏳ 待实测 | ⏳ | ⏳（有对应物） | ❌ 未定位 |
+| OPPO 10.32.0622 | ⏳ 待实测（本轮修好类名） | 部分 | ❌ | ❌ |
+| vivo 11.41.14023 | ❌ 未定位（皮肤类被重打包） | ⏳ | ❌ | ❌ |
+
+### 5. 回归要求
+小米版必须复测：键盘弹出 / 中英文 / 候选 / 皮肤 / 表情 / 开关即时可逆。任一不过就不算通过。
 ## v2.0.2-beta5 — 两层皮肤拆成两个开关（自救版）
 
 ### 背景

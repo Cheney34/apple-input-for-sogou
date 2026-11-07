@@ -1,5 +1,6 @@
 package com.chiron.iosemoji.hook;
 
+import com.chiron.iosemoji.compat.Targets;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
 
@@ -20,13 +21,14 @@ public final class CandidateProbeHook {
 
     public static final String ID = "H04_candidate_probe";
 
-    private static final String CLS_CANDIDATE_VIEW = "com.sohu.inputmethod.sogou.r2";
-    private static final String CLS_DELEGATE = "com.sohu.inputmethod.sogou.AbstractImeServiceDelegate";
 
     private CandidateProbeHook() {
     }
 
-    public static void install(final ClassLoader classLoader) {
+    public static void install(final ClassLoader classLoader, Targets targets) {
+        final String CLS_CANDIDATE_VIEW = targets == null ? null : targets.candidateViewClass;
+        final String CLS_DELEGATE = targets == null ? null : targets.candidateDelegateClass;
+        if (CLS_CANDIDATE_VIEW == null) return;
         HookRegistry.install(ID, classLoader, new HookRegistry.Installer() {
             @Override
             public void install(ClassLoader cl) throws Throwable {

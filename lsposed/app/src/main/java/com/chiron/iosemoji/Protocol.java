@@ -20,6 +20,7 @@ public final class Protocol {
             "com.sohu.inputmethod.sogou.xiaomi",
             "com.sohu.inputmethod.sogou",
             "com.sohu.inputmethod.sogouoem",
+            "com.sohu.inputmethod.sogou.vivo",
     };
 
     public static final String ACTION_CMD = MODULE_PKG + ".action.CMD";

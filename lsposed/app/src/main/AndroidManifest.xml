@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.chiron.iosemoji"
-    android:versionCode="40"
-    android:versionName="2.0.2-beta5">
+    android:versionCode="41"
+    android:versionName="2.0.3-beta1">
 
     <queries>
         <package android:name="com.sohu.inputmethod.sogou.xiaomi" />
         <package android:name="com.sohu.inputmethod.sogou" />
     <package android:name="com.sohu.inputmethod.sogouoem" />
+    <package android:name="com.sohu.inputmethod.sogou.vivo" />
     </queries>
 
     <application

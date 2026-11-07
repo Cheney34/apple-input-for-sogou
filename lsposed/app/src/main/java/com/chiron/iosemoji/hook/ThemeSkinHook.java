@@ -58,6 +58,18 @@ public final class ThemeSkinHook {
     private static final AtomicInteger PARSER_CALLS = new AtomicInteger();
     /** 被「只改内置默认皮肤」规则挡掉的资源（第三方皮肤）。 */
     private static final AtomicInteger CUSTOM_SKIPPED = new AtomicInteger();
+
+    /**
+     * 铁律：用户自己装的第三方皮肤一律不动（那是他自己挑的外观）。
+     * 只认目录特征，不依赖任何渠道类名。
+     */
+    private static boolean isThirdPartyTheme(String path) {
+        if (path == null) return false;
+        String p = path.toLowerCase();
+        return p.endsWith(".ssf") || p.contains(".ssf/")
+                || p.contains("sogou_custom") || p.contains("theme_custom")
+                || p.contains("/themes/") || p.contains("phonetheme");
+    }
     private static final AtomicInteger IMG_BYPASS = new AtomicInteger();
     /** 见过但没认出来的皮肤图名（最多留 12 个，供用户贴日志定位）。 */
     /** 见到但没处理的资源（带原因 tag），用于「到底走到了哪一步」的诊断。 */
@@ -114,7 +126,7 @@ public final class ThemeSkinHook {
                             String path = param.args[0] instanceof String ? (String) param.args[0] : "";
                             // 铁律 1：只改内置默认皮肤；用户自己装的第三方皮肤一律不碰
                             //（改坏了就是「键盘呼不出来」，beta3 的教训）
-                            if (!AssetSkinHook.isDefaultTheme(path)) {
+                            if (isThirdPartyTheme(path)) {
                                 CUSTOM_SKIPPED.incrementAndGet();
                                 return;
                             }
@@ -199,7 +211,7 @@ public final class ThemeSkinHook {
             if (src == null) return;
             String path = pickPath(param);
             if (path == null) return;
-            if (!AssetSkinHook.isDefaultTheme(path)) {
+            if (isThirdPartyTheme(path)) {
                 CUSTOM_SKIPPED.incrementAndGet();
                 return;
             }
