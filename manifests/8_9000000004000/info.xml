@@ -219,5 +219,6 @@
     <exp name="21224" other="[fire]" pinyin="" unified="1F525_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
     <exp name="21225" other="[droplet]" pinyin="" unified="1F4A7_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
     <exp name="21226" other="[water wave]" pinyin="" unified="1F30A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22072" other="[landslide]" pinyin="" unified="1F6D8_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
   </exppkg>
 </expList>

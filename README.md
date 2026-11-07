@@ -8,7 +8,7 @@
 - 目标包名：`com.sohu.inputmethod.sogou.xiaomi`（同时兼容 `com.sohu.inputmethod.sogou`）
 - 目标版本：`10.32.21.202607061714`（versionCode `2147483647`，5 个 dex，arm64-v8a）
 - 目标 APK SHA-256：`90B4A1945D28427A50CC6DF8FA1FE0E29977A0053622FA7A05FBDCFF01F6B09C`
-- 模块包名：`com.chiron.iosemoji` · 版本：`2.0.2-beta5`（versionCode 40）
+- 模块包名：`com.chiron.iosemoji` · 版本：`2.1.1`（versionCode 61）
 - 最低支持：Android 8.0（API 26）· 只在 LSPosed / EdXposed 等 Xposed 框架下工作
 
 
@@ -38,7 +38,8 @@ OPPO 定制版把整个主题模块用 `-repackageclasses '` 塞进了默认包�
 ## 下载哪个版本？
 
 | 版本 | 适合谁 | 有什么 |
-| **v2.1.0**（正式版 · 最新） | 所有人（推荐） | **第一个正式版**：小米 / 官方 / OPPO / vivo 四渠道各自一份能力档案，默认只改皮肤颜色不动布局；九套皮肤风格（搜狗经典 / iOS / iOS 净白 / 微信 / Google / 幽墨 Material / 幽墨 Pixel / 樱花粉 / 莫奈）；莫奈按 Material 3 Expressive 色阶、可锁定主色；系统导航条 / MIUI 全面屏底栏跟色；表情替换 3868 条目全对齐 v1.8 |
+| **v2.1.1**（正式版 · 最新） | 所有人（推荐） | **表情包升到 Emoji 17.0 / iOS 26**：`info.xml` 补 8 条新条目（🫪 变形脸 / 🫯 打斗云团 / 🫈 毛怪 / 🫍 虎鲸 / 🛘 山体滑坡 / 🪊 长号 / 🪎 宝箱 / 🧑‍🩰 芭蕾舞者），给 👯 兔耳、🤼 摔跤 六条老表情打开肤色；payload 3868 → 3911 条目（2075 张表情图，源图从 emoji-datasource 16.0 换成 17.0）；其余功能与 v2.1.0 一致 |
+| **v2.1.0**（正式版 · 上一版） | 所有人（推荐） | **第一个正式版**：小米 / 官方 / OPPO / vivo 四渠道各自一份能力档案，默认只改皮肤颜色不动布局；九套皮肤风格（搜狗经典 / iOS / iOS 净白 / 微信 / Google / 幽墨 Material / 幽墨 Pixel / 樱花粉 / 莫奈）；莫奈按 Material 3 Expressive 色阶、可锁定主色；系统导航条 / MIUI 全面屏底栏跟色；表情替换 3868 条目全对齐 v1.8 |
 | v2.0.3-beta18（存档） | 推荐（实验渠道版） | **莫奈改按 Material 3 Expressive（2025）色阶**：容器色不再压成近中性（底色取主色色度 42%、功能键 85%），靠明度分层拉开对比（键帽=surfaceContainerLowest、底=surfaceContainer、功能键=secondaryContainer），并强制「键帽 vs 底」亮度比 ≥1.28（浅）/1.55（深）；系统动态色拉不开时自动退回自派生色阶 |
 | v2.0.3-beta17（存档） | 推荐（实验渠道版） | **微信风格：发送键刷成强调绿**：新增 `SkinPreset.accentEnter`（仅微信 true），`IosSkin.KIND_ACCENT` 铺 accent 圆角底并用 `glyphMask` 把键上原字形抠成对比色盖回，ini 侧同时把 `*Enter*/*Send*` 段底色与文字改成 accent；其余预设行为完全不变 |
 | v2.0.3-beta16（存档） | 推荐（实验渠道版） | **莫奈底色改回近中性**：底色色度封顶（`chroma*0.06`，≤0.055），彩色只留给强调色；亮度阶梯重定标（浅色键/底对比 1.27，深色 ≈2.0）；系统动态色可用时直接用系统 surface 值不再二次染色 |
@@ -292,12 +293,12 @@ Phase 3 会用空实现补上 `s0` 来消除这两点差异。
 >    这个目录**必须放进仓库**：它是 `info.xml` 里 `exppkg.type` 对应的封面图
 >    （`smileys_emotion.png` / `people_body.png` / … / `flags.png`）。
 >    少了它，表情面板底部页签图标就是空的 —— 位图能装上，但看起来「有表情丢了」。
-> 2. 素材版本要 **emoji-datasource-apple ≥ 16.0.0**（3793 张）。15.1.2 只有 3785 张，
->    缺 8 个 Unicode 16 新表情（1FA89 竖琴 / 1FA8F 铲子 / 1FADF 溅 / 1FAE9 眼下袋 /
->    1FAC6 指纹 / 1FABE 无叶树 / 1FADC 根茎类 / 1F1E8-1F1F6 萨克岛旗），
->    这 8 个会在分组里显示成空白占位。
+> 2. 素材版本要 **Emoji 17.0**（3946 张，含肤色变体）。npm 的 `emoji-datasource-apple`
+>    停在 16.0.0（3793 张），没有 17.0 的 7 个新表情与芭蕾舞者；用
+>    [chiron-apple-emoji](https://github.com/Cheney34/chiron-apple-emoji) 里的
+>    `emoji-font/fetch17.py` 抓，产物目录直接喂给 `--src`。
 >
-> 生成完自检：`payload.zip` 内应含 **3868** 个条目（3817 张表情 + 10 个封面 + 分组目录/info.xml/version.json）。
+> 生成完自检：`payload.zip` 内应含 **3911** 个条目（3870 张表情位图 + 10 个封面 + 分组目录/info.xml/version.json）。
 
 ### 5.2 命令
 
@@ -305,7 +306,7 @@ Phase 3 会用空实现补上 `s0` 来消除这两点差异。
 # 生成表情包资源（可选）
 python3 tools/make_payload.py --src /path/to/apple_emoji_png \
         --out lsposed/app/src/main/assets/payload.zip \
-        --manifests manifests --icons icons --version 16.0
+        --manifests manifests --icons icons --version 17.0
 
 # 构建
 cd lsposed

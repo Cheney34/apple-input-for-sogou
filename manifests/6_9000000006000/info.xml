@@ -160,5 +160,6 @@
     <exp name="20875" other="[nest with eggs]" pinyin="" unified="1FABA_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
     <exp name="20876" other="[mushroom]" pinyin="" unified="1F344_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
     <exp name="20877" other="[leafless tree]" pinyin="" unified="1FABE_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22071" other="[orca]" pinyin="" unified="1FACD_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
   </exppkg>
 </expList>

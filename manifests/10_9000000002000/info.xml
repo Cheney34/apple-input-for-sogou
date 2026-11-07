@@ -265,5 +265,7 @@
     <exp name="21573" other="[moai]" pinyin="" unified="1F5FF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
     <exp name="21574" other="[placard]" pinyin="" unified="1FAA7_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
     <exp name="21575" other="[identification card]" pinyin="" unified="1FAAA_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22073" other="[trombone]" pinyin="" unified="1FA8A_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22074" other="[treasure chest]" pinyin="" unified="1FA8E_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
   </exppkg>
 </expList>

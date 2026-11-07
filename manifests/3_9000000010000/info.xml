@@ -170,5 +170,7 @@
     <exp name="20166" other="[right anger bubble]" pinyin="" unified="1F5EF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
     <exp name="20167" other="[thought balloon]" pinyin="" unified="1F4AD_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
     <exp name="20168" other="[ZZZ]" pinyin="" unified="1F4A4_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22067" other="[distorted face]" pinyin="" unified="1FAEA_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
+    <exp name="22068" other="[fight cloud]" pinyin="" unified="1FAEF_FE0F" softbank="" supportSkin="0" FE0F="0" currentColor="0" hasSelectedColor="0"/>
   </exppkg>
 </expList>
