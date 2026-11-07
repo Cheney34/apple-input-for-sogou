@@ -56,26 +56,59 @@ public final class IosSkin {
     public static final int KIND_ACCENT = 4;
 
     /**
-     * 键帽圆角增益（v2.1.3）：取完「原图自带圆角」与「预设比例圆角」的较大值之后，再乘这个倍数。
+     * 键帽圆角目标区间（v2.1.4）：**把每套皮肤的比例都拉进这一带**，而不是统一乘一个倍数。
      *
-     * <p><b>为什么乘在最终值上，而不是逐套调 {@link SkinPreset#radiusRatio}</b>：
-     * 实际生效半径 = {@code max(detectRadius(src), 键高 × radiusRatio)}。各键尺寸不同，
-     * 有的取到"原图圆角"这一路、有的取到"预设比例"这一路，逐套调比例会出现
-     * 「大键变圆了、小键没动」的断层；乘在最终值上，所有键按同一比例变圆，
-     * 键帽 / 长按气泡 / 强调键之间的层级关系（气泡 1.5× 于键帽）也原样保留 —— 这才是"不失去协调"。
+     * <p><b>为什么不再乘倍数</b>：v2.1.3 是「最终半径 ×1.5」，可各套预设的 {@link SkinPreset#radiusRatio}
+     * 本来就不一样（搜狗经典 0.10、iOS 0.12、Google 0.14、微信 0.19），乘完得到 0.15 / 0.18 / 0.21 / 0.29 ——
+     * 同一台机器上换皮肤，圆润度会跟着皮肤跳；搜狗经典那套乘完只有 15%，用户观感就是"这套没生效"。
      *
-     * <p>1.5 = 相对 v2.1.2 及以前圆润 +50%（之前键帽圆角大约落在键高的 16%~25%，
-     * 提升后约 24%~34%，与微信风格那颗 0.19 的 squircle 处在同一条曲率线上）。
+     * <p>现在的做法：先把预设比例线性放大（{@link #RATIO_GAIN}），再夹进 [{@link #RATIO_MIN}, {@link #RATIO_MAX}]。
+     * 于是每套皮肤都落在键高的 30%~35%，保留一点点预设之间的相对差（0.30 / 0.31 / 0.35），
+     * 但不会再出现"这套圆、那套方"。
      */
-    public static final float RADIUS_BOOST = 1.5f;
+    private static final float RATIO_MIN = 0.30f;
+    private static final float RATIO_MAX = 0.35f;
 
     /**
-     * 圆角上限（占键帽短边的比例）。
-     *
-     * <p>0.46 的含义：再往上就是"胶囊"（短边的一半 = 0.5 时两侧完全半圆），
-     * 留 4% 的直边，方键帽看起来仍是"圆角矩形"而不是"药丸"，这是协调性的下限也是上限。
+     * 放大系数：预设比例 × 2.6 刚好把 0.10~0.14 这一段推进目标区间
+     * （0.10→0.26 被 0.30 兜住、0.12→0.31、0.13→0.34、0.14→0.36 被 0.35 截住、0.19→0.35）。
      */
-    private static final float RADIUS_CAP = 0.46f;
+    private static final float RATIO_GAIN = 2.6f;
+
+    /**
+     * 圆角上限（占键帽短边的比例）—— 纯几何保险，不是设计值。
+     *
+     * <p>设计值已经由 0.30~0.35 的区间管住（远小于 0.5，不会变胶囊）；
+     * 这里留 0.48 只是为了不让"宽度小于高度的窄键"算出超过半宽的半径（那会画出畸形圆角）。
+     */
+    private static final float RADIUS_CAP = 0.48f;
+
+    /** 长按气泡比键帽再圆一点（×1.2），并封顶 0.42，避免气泡变成药丸。 */
+    private static final float POPUP_EXTRA = 1.2f;
+    private static final float POPUP_CAP = 0.42f;
+
+    /**
+     * 诊断用：最近一次重绘的「比例/像素」。
+     *
+     * <p>为什么要它：装机后如果觉得"圆角没生效"，看状态卡的 {@code skinr=} 就知道是
+     * ①图根本没重画（{@code skimg=调用/0}）、还是 ②重画了但比例没到位 —— 这两种情况的修法完全不同。
+     */
+    private static volatile String sLastRadius = "-";
+
+    public static String lastRadius() {
+        return sLastRadius;
+    }
+
+    /**
+     * 该键帽这一张图实际该用多少"圆角占键高的比例"。
+     *
+     * @param kind {@link #KIND_POPUP} 时比键帽再圆一档
+     */
+    private static float targetRatio(SkinPreset p, int kind) {
+        float eff = Math.max(RATIO_MIN, Math.min(RATIO_MAX, p.radiusRatio * RATIO_GAIN));
+        if (kind == KIND_POPUP) eff = Math.min(POPUP_CAP, eff * POPUP_EXTRA);
+        return eff;
+    }
 
     private IosSkin() {
     }
@@ -541,7 +574,7 @@ public final class IosSkin {
                 int gA = Math.max(1, Math.round(box.height() * 0.02f));
                 RectF rA = new RectF(box.left + gA, box.top + gA, box.right - gA, box.bottom - gA);
                 if (rA.width() < 2f || rA.height() < 2f) rA = new RectF(box);
-                float radA = Math.max(2f, Math.min(rA.height() * p.radiusRatio * RADIUS_BOOST,
+                float radA = Math.max(2f, Math.min(rA.height() * targetRatio(p, KIND_KEY),
                         Math.min(rA.width(), rA.height()) * RADIUS_CAP));
                 paint.setColor(color);
                 canvas.drawRoundRect(rA, radA, radA, paint);
@@ -591,13 +624,17 @@ public final class IosSkin {
 
             // 圆角：优先用搜狗自己这张图的实际圆角（保证形状不对不上），
             // 但它本身偏方 —— 取「原图圆角」与「预设规格圆角」的较大值，既不变形也不方。
-            // v2.1.3：这个最终值再乘 RADIUS_BOOST（整体圆润 +50%），并以短边 RADIUS_CAP 封顶，
-            // 保证小键（功能键 / 数字键）不会被撑成胶囊，各键曲率仍是一条连续曲线。
+            // v2.1.4：规格圆角改为「按区间取值」（每套皮肤都落在键高的 30%~35%），
+            // 只用 RADIUS_CAP 做几何保险（窄键不会算出超过半宽的半径）。
             int detected = detectRadius(src, box);
-            float spec = rect.height() * ((kind == KIND_POPUP) ? p.radiusRatio * 1.5f : p.radiusRatio);
-            float radius = Math.min(Math.max(detected, spec) * RADIUS_BOOST,
+            float ratio = targetRatio(p, kind);
+            float spec = rect.height() * ratio;
+            float radius = Math.min(Math.max(detected, spec),
                     Math.min(rect.width(), rect.height()) * RADIUS_CAP);
             radius = Math.max(2f, radius);
+            if (kind == KIND_KEY) {
+                sLastRadius = String.format(Locale.US, "%.2f/%dpx", ratio, Math.round(radius));
+            }
 
             // 投影：iOS 键帽只有极淡的一层落影（没有描边），Material 3 用 tonal 阴影。
             // 阴影画在 rect 之外也在位图范围内，正好落在留出的键缝里。

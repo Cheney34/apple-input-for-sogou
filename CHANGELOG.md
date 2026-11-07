@@ -1,3 +1,64 @@
+## v2.1.4 — 圆角改成「按区间取值」：九套皮肤统一 30%~35%
+
+### 为什么改（v2.1.3 的问题）
+
+v2.1.3 是「最终半径 ×1.5」。问题在于各套预设的 `radiusRatio` 本来就不是一个数
+（搜狗经典 0.10 / iOS 0.12 / iOS 净白 0.13 / Google 0.14 / 微信 0.16~0.19），乘同一个倍数之后：
+
+| 预设 | ratio | v2.1.3 生效比例 |
+| --- | --- | --- |
+| 搜狗经典 | 0.10 | 15% ← 几乎看不出变化，观感就是"这套皮肤没生效" |
+| iOS / 幽墨 Material | 0.12 | 18% |
+| iOS 净白 / 樱花粉 | 0.13 | 20% |
+| Google / 幽墨 Pixel | 0.14 | 21% |
+| 微信 | 0.16 / 0.19 | 27% / 34% |
+
+同一台机器上换皮肤，圆润度会跟着皮肤跳 —— 这不是"协调"，而是没统一。
+
+### 改法
+
+不再乘倍数，改成**先把预设比例线性放大，再夹进目标区间**（`skin/IosSkin.java`）：
+
+```java
+private static final float RATIO_MIN  = 0.30f;  // 目标区间下限（占键高）
+private static final float RATIO_MAX  = 0.35f;  // 目标区间上限
+private static final float RATIO_GAIN = 2.6f;   // 放大系数：0.10~0.14 正好推进 0.26~0.36
+
+static float targetRatio(SkinPreset p, int kind) {
+    float eff = Math.max(RATIO_MIN, Math.min(RATIO_MAX, p.radiusRatio * RATIO_GAIN));
+    if (kind == KIND_POPUP) eff = Math.min(0.42f, eff * 1.2f);   // 长按气泡再圆一档
+    return eff;
+}
+```
+
+生效结果（132px 键高）：
+
+| 预设 | v2.1.3 | v2.1.4 |
+| --- | --- | --- |
+| 搜狗经典 | 15% | **30%**（40px） |
+| iOS / 幽墨 Material | 18% | **31%**（41px） |
+| iOS 净白 / 樱花粉 | 20% | **34%**（45px） |
+| Google / 幽墨 Pixel / 微信 | 21%~34% | **35%**（46px） |
+
+- `RADIUS_CAP` 从 0.46 收到纯几何保险的 **0.48**：设计值已经由 0.30~0.35 管住，
+  这个上限只用来防止"宽度远小于高度"的窄键算出超过半宽的半径。
+- `detectRadius()` 那一路没变：搜狗原图圆角更大时仍取原图值（不会把圆角画到超出键帽轮廓）。
+
+### 新增诊断：`skinr=`
+
+状态卡多一项 `skinr=<比例>/<像素>`（最近一张键帽图的实际取值）。装机后若仍觉得"圆角没生效"，
+先看这一项就能分辨两种完全不同的情况：
+
+- `skimg=120/0` 且 `skinr=-` → **图没重画**（名字没认出来 / 第三方皮肤被跳过），看 `skip=` 里的图名；
+- `skimg=120/96` 且 `skinr=0.31/41px` → 图重画了、比例也对，那问题在"看着不够圆"，直接调 `RATIO_MIN/MAX`。
+
+### 构建验证
+
+- `build/AppleInputForSogou_v2.1.4.apk` = 25,769,541 B；badging `com.chiron.iosemoji` / `64` / `2.1.4`；
+  证书 `4fbf65ed…c207`（与 2.1.x 同一张，可直接覆盖安装）。
+- APK 内 `assets/payload.zip` 与 2.1.3 逐字节相同（3911 条目 / Emoji 17.0）—— 表情、快捷码、四渠道档案未动。
+- `classes.dex` 167,100 B（2.1.3 为 166,608 B）。
+
 ## v2.1.3 — 键帽圆角整体圆润 +50%
 
 ### 改什么（只有一处）
