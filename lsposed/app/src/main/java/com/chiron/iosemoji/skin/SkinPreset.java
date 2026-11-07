@@ -72,7 +72,7 @@ public final class SkinPreset {
     public final boolean edgeLine;  // 是否再画一条底边分隔（iOS 有，其余没有）
     public final boolean gradient;  // 底色是否画极轻的竖向渐变（莫奈用，营造氛围感）
 
-    private SkinPreset(String id, int kbBg, int key, int keyPressed, int func, int funcPressed,
+    SkinPreset(String id, int kbBg, int key, int keyPressed, int func, int funcPressed,
                        int popup, int barBg, int text, int textPressed, int accent,
                        float radiusRatio, int shadowColor, float shadowRadius, float shadowDy,
                        boolean edgeLine, boolean gradient) {
@@ -273,51 +273,16 @@ public final class SkinPreset {
                 0.14f, 0x40000000, 2.5f, 1.5f, false, false);
     }
 
-    // ── 莫奈取色（Android 12+ 动态配色）───────────────────────────────────
-    // 只把 neutral 拿来用会"很灰、很平"（用户说的"不够氛围感"）。
-    // 这里的做法：底色 = neutral1_100 与 accent1_50 混 45%，键帽 = neutral1_50 与 accent1_100 混 18%，
-    // 功能键 = neutral2_200 与 accent1_100 混 30%，再叠一层竖向渐变 —— 整块键盘带上系统强调色的色相。
+    // ── 莫奈取色（Android 12+ 系统动态配色）────────────────────────────
+    // 取色与角色映射全部在 skin/MonetPalette（按《Keyboard Monet 动态取色系统开发手册》
+    // §2–§8：系统动态色 → 壁纸主色 → 上次种子 → 内置种子，再按 Token 表映射并做 WCAG 对比度收口）；
+    // 这里只保留委托，保证 SkinPreset 仍然是唯一的 Token 出口。
     private static SkinPreset monetLight(Context ctx) {
-        int n50 = systemColor(ctx, "system_neutral1_50", 0xFFFFFBFF);
-        int n100 = systemColor(ctx, "system_neutral1_100", 0xFFEADDFF);
-        int n200 = systemColor(ctx, "system_neutral1_200", 0xFFD0BCFF);
-        int n2_200 = systemColor(ctx, "system_neutral2_200", 0xFFE8DEF8);
-        int a1_50 = systemColor(ctx, "system_accent1_50", 0xFFFFF7FF);
-        int a1_100 = systemColor(ctx, "system_accent1_100", 0xFFEADDFF);
-        int a1_200 = systemColor(ctx, "system_accent1_200", 0xFFD0BCFF);
-        int text = systemColor(ctx, "system_neutral1_900", 0xFF1C1B1F);
-        int accent = systemColor(ctx, "system_accent1_500", 0xFF6750A4);
-
-        int bg = blend(n100, a1_50, 0.45f);
-        int key = separate(bg, blend(n50, a1_100, 0.18f), 1.60);
-        int keyPressed = blend(n200, a1_200, 0.35f);
-        int func = separate(bg, blend(n2_200, a1_100, 0.30f), 1.35);
-        int funcPressed = blend(n2_200, a1_200, 0.45f);
-
-        return new SkinPreset(MONET, bg, key, keyPressed, func, funcPressed,
-                key, blend(n100, a1_50, 0.62f), text, text, accent,
-                0.16f, 0x1A000000, 2f, 1f, false, true);
+        return MonetPalette.light(ctx);
     }
 
     private static SkinPreset monetDark(Context ctx) {
-        int n900 = systemColor(ctx, "system_neutral1_900", 0xFF141218);
-        int n800 = systemColor(ctx, "system_neutral1_800", 0xFF1D1B20);
-        int n700 = systemColor(ctx, "system_neutral1_700", 0xFF2B2930);
-        int n2_800 = systemColor(ctx, "system_neutral2_800", 0xFF1D1B20);
-        int a1_900 = systemColor(ctx, "system_accent1_900", 0xFF21005D);
-        int a1_800 = systemColor(ctx, "system_accent1_800", 0xFF4F378B);
-        int text = systemColor(ctx, "system_neutral1_100", 0xFFE6E1E9);
-        int accent = systemColor(ctx, "system_accent1_200", 0xFFCFBCFF);
-
-        int bg = blend(n900, a1_900, 0.45f);
-        int key = separate(bg, blend(n800, a1_800, 0.28f), 1.60);
-        int keyPressed = blend(n700, a1_800, 0.35f);
-        int func = separate(bg, blend(n700, a1_900, 0.35f), 1.30);
-        int funcPressed = blend(n800, a1_800, 0.45f);
-
-        return new SkinPreset(MONET, bg, key, keyPressed, func, funcPressed,
-                key, blend(n800, a1_800, 0.42f), text, text, accent,
-                0.16f, 0x40000000, 2f, 1f, false, true);
+        return MonetPalette.dark(ctx);
     }
 
     // ── 幽墨 Material（取自 Sraw/youmo-ime ThemePreset.MaterialLight / MaterialDark）──
@@ -405,6 +370,11 @@ public final class SkinPreset {
                 0xFFF5F5F5,   // 文字按下
                 0xFFFF7A45,   // 强调色（夜间把橙红提亮一档）
                 0.10f, 0x33000000, 2f, 1f, false, false);
+    }
+
+    /** 莫奈取色诊断（哪一路种子、什么颜色）——给状态卡用。 */
+    public static String monetDescribe() {
+        return MonetPalette.describe();
     }
 
     // ── 工具 ──────────────────────────────────────────────────────────────

@@ -1,3 +1,34 @@
+## v2.0.3-beta14 — 莫奈取色按《Keyboard Monet 动态取色系统开发手册》重做
+
+### 为什么改
+- 旧实现是「读 `system_neutral1_*` / `system_accent1_*` 再粗暴掺色」，等于把系统灰阶当键帽色，
+  既没有 Token 角色映射，也没有对比度收口，所以看起来「氛围感不够」。
+
+### 现在的分层（照手册 §2–§8）
+- 新增 `skin/MonetPalette.java`：取色 → 角色映射 → Token（`SkinPreset`）→ 渲染（`IosSkin` / 搜狗皮肤层）。
+- **取色优先级**：① 系统动态色（`android:color/system_surface_container` / `system_surface_container_high` /
+  `system_secondary_container` / `system_on_secondary_container` / `system_on_surface` / `system_primary`，Android 12+）；
+  ② 取不到时用 `WallpaperManager.getWallpaperColors(FLAG_SYSTEM)` 的主色当种子，按固定色调表生成；
+  ③ 上次成功的种子；④ 内置紫色种子。任何一步异常都回退，**绝不影响键盘呼出**。
+- **角色映射**（手册 §4 Token 表）：键盘底←`surfaceContainer`、键帽←`surfaceContainerHigh`、
+  功能键/按下←`secondaryContainer`、强调/动作←`primary`、正文←`onSurface`、功能键文字←`onSecondaryContainer`。
+  深色模式不再靠「反色」，而是同一套种子按暗色色阶重新派生。
+- **WCAG 收口**（手册 §8.2）：正文 4.5:1、图标/强调 3:1，不达标就在调色板层把前景推向黑/白，
+  不在渲染层打补丁；派生后还会经过 `IosSkin.patchIni` 的 `ensureContrast` 二次兜底。
+
+### 诊断
+- 状态串新增 `monetsrc=`（`src=dynamic|wallpaper|last|default,seed=#AARRGGBB`），用来一眼看出
+  「到底有没有取到系统动态色」。设置页「连接状态」卡可长按复制。
+
+### 构建验证
+- `build/v203b14/AppleInputForSogou_v2.0.3-beta14.apk` 22,754,885 B，versionCode 54；
+- `classes.dex` 158,572 B，123 个类全部 `Lcom/chiron/iosemoji/*`（非本项目 0）；
+- dex 内确认包含 `MonetPalette`、`monetsrc`、`system_surface_container`、`system_secondary_container`、
+  `getWallpaperColors`、`bbnav`、`applyNavBar`。
+
+### 待真机确认
+- 莫奈在 HyperOS 上应命中 `src=dynamic`；若显示 `src=wallpaper` 说明系统动态色资源不可读（会回退到壁纸主色）。
+
 ## v2.0.3-beta13 — 系统底栏（导航条）跟皮肤色
 
 用户澄清：无效的是系统底栏（导航条），不是输入法里那条 MIUI 底栏。全面屏键盘优化开着时，键盘下方那块由系统画，颜色在 PhoneWindow#setNavigationBarColor(int) 里定。

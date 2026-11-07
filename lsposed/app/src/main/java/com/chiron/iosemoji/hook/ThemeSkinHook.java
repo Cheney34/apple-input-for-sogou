@@ -498,7 +498,8 @@ public final class ThemeSkinHook {
                 + ";skinp=" + IMG_PROTECTED.get()
                 + ";skint=" + IosSkin.contrastFixes()
                 + ";skinse=" + SEEN.size()
-                + ";skintp=" + CUSTOM_SKIPPED.get();
+                + ";skintp=" + CUSTOM_SKIPPED.get()
+                + ";monetsrc=" + SkinPreset.monetDescribe();
     }
 
     /** 见到但没处理的名字（带原因 tag），诊断用。 */
