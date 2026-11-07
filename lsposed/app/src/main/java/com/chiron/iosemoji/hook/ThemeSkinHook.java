@@ -99,8 +99,16 @@ public final class ThemeSkinHook {
             HookRegistry.log("skin hooks skipped: " + t.describe());
             return;
         }
-        HookRegistry.install("H40_theme_ini", cl, ThemeSkinHook::hookIni);
-        HookRegistry.install("H41_theme_bitmap", cl, ThemeSkinHook::hookBitmap);
+        if (t.supportsIniSkin()) {
+            HookRegistry.install("H40_theme_ini", cl, ThemeSkinHook::hookIni);
+        } else {
+            HookRegistry.log("H40 skipped: 该渠道 ini 入口未定位（" + t.label + "）");
+        }
+        if (t.supportsBitmapSkin()) {
+            HookRegistry.install("H41_theme_bitmap", cl, ThemeSkinHook::hookBitmap);
+        } else {
+            HookRegistry.log("H41 skipped: 该渠道位图入口未定位（" + t.label + "）");
+        }
         if (t.themeParserClass != null) {
             HookRegistry.install("H42_theme_ini_parser", cl, ThemeSkinHook::hookIniParser);
         }
@@ -110,7 +118,10 @@ public final class ThemeSkinHook {
 
     private static void hookIni(ClassLoader cl) {
         final Targets t = sTargets;
-        XposedHelpers.findAndHookMethod(t.themeIniClass, cl, t.themeIniMethod, String.class,
+        Class<?> iniCls = XposedHelpers.findClass(t.themeIniClass, cl);
+        for (final String iniMethod : t.themeIniMethods) {
+            try {
+                de.robv.android.xposed.XposedBridge.hookAllMethods(iniCls, iniMethod,
                 new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) {
@@ -119,7 +130,7 @@ public final class ThemeSkinHook {
                             if (!ModuleConfig.themeSkinEnabled()) return;
                             Object entity = param.getResult();
                             if (entity == null) return;
-                            Object raw = XposedHelpers.callMethod(entity, "b");
+                            Object raw = asSections(entity);
                             if (!(raw instanceof Map)) return;
                             @SuppressWarnings("unchecked")
                             Map<String, Map<String, String>> sections = (Map<String, Map<String, String>>) raw;
@@ -143,6 +154,10 @@ public final class ThemeSkinHook {
                         }
                     }
                 });
+            } catch (Throwable ignored) {
+                // 该名字在这一版不存在，换下一个
+            }
+        }
     }
 
     /** H42：ini 行解析器旁路探针 —— 只计数，用来判断"皮肤到底有没有解析 ini"。 */
@@ -182,9 +197,17 @@ public final class ThemeSkinHook {
     private static void hookBitmap(ClassLoader cl) {
         final Targets t = sTargets;
         try {
-            Class<?> cls = XposedHelpers.findClass(t.bitmapClass, cl);
             int hooked = 0;
-            for (String name : GETTER_NAMES) {
+            int classCount = 0;
+            for (String clsName : t.bitmapClasses) {
+            Class<?> cls;
+            try {
+                cls = XposedHelpers.findClass(clsName, cl);
+            } catch (Throwable notFound) {
+                continue;
+            }
+            classCount++;
+            for (String name : t.bitmapMethods) {
                 try {
                     de.robv.android.xposed.XposedBridge.hookAllMethods(cls, name, new XC_MethodHook() {
                         @Override
@@ -197,7 +220,8 @@ public final class ThemeSkinHook {
                     // 该名字在这一版不存在，换下一个
                 }
             }
-            HookRegistry.log("H41 bitmap getters hooked on " + t.bitmapClass + ": " + hooked + "/" + GETTER_NAMES.length);
+            }
+            HookRegistry.log("H41 bitmap getters hooked on " + classCount + " class(es), " + hooked + " method name(s)");
         } catch (Throwable t2) {
             HookRegistry.log("H41 install failed: " + t2);
         }
@@ -215,24 +239,25 @@ public final class ThemeSkinHook {
                 CUSTOM_SKIPPED.incrementAndGet();
                 return;
             }
-            if (!isSkinPath(path)) {
+            String name = baseName(path);
+            if (!isSkinPath(path, name)) {
                 // 诊断：把「被路径过滤掉」的图名列出来，避免「什么都没发生」这种无信息状态
                 seen("skip-path", path);
                 return;
             }
             if (!ModuleConfig.themeSkinEnabled()) return;
-            int kind = IosSkin.kindOf(path);
+            int kind = IosSkin.kindOf(name);
             if (kind == IosSkin.KIND_NONE) {
                 // 删掉「看着像键帽就当键帽」的兜底：图标是「透明底 + 单色字形」，
                 // 任何形状启发式都会把图标刷成纯色方块（设置齿轮、语言旗帜就是这么坏的）。
                 seen("unknown", path);
-                if (IosSkin.isProtected(path)) IMG_PROTECTED.incrementAndGet();
+                if (IosSkin.isProtected(name)) IMG_PROTECTED.incrementAndGet();
                 else remember(path);
                 return;
             }
             Context ctx = pickContext(param);
             SkinPreset preset = preset(ctx, path);
-            int color = IosSkin.colorOfKind(path, kind, preset);
+            int color = IosSkin.colorOfKind(name, kind, preset);
             if (color == 0) {
                 remember(path);
                 return;
@@ -329,10 +354,58 @@ public final class ThemeSkinHook {
                 || path.contains("/themes/") || path.contains("/res/black/") || path.contains("/res/white/");
     }
 
+    /** 路径不像皮肤、但<b>名字</b>像皮肤位图时也放行（官方/OPPO 会传相对名或逻辑名）。 */
+    private static boolean isSkinPath(String path, String name) {
+        if (isSkinPath(path)) return true;
+        if (looksLikeSkinImage(name)) {
+            // 名字像皮肤图，但仍要排除表情/动效等：这些名字里通常带 emoji/expression 等关键词
+            return !(path != null && (path.contains("emoji") || path.contains("expression")
+                    || path.contains("lottie") || path.contains("preview") || path.contains("face")));
+        }
+        return false;
+    }
+
     private static String baseName(String path) {
         if (path == null) return "?";
         int i = path.lastIndexOf('/');
         return i >= 0 ? path.substring(i + 1) : path;
+    }
+
+    /**
+     * 把 ini 结果统一取成「段 → 键 → 值」的可变 Map。
+     *
+     * <p>小米/官方/OPPO 返回 {@code com.sogou.theme.parse.entity.b}（要调 {@code b()} 拿 ArrayMap），
+     * vivo 直接返回 {@code ArrayMap}。两种都要吃，否则某个渠道会「一次都没改到」。
+     */
+    private static Object asSections(Object entity) {
+        if (entity instanceof Map) return entity;
+        try {
+            return XposedHelpers.callMethod(entity, "b");
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * 逻辑名像不像「皮肤位图」。
+     *
+     * <p>官方版传给位图取值器的不一定是完整路径，可能只是 {@code candidate_bg_tab}、
+     * {@code key_qwerty}、{@code key_qwerty_png} 这种逻辑名。用 {@link #isSkinPath} 那样要求
+     * 路径里含 {@code theme} 会把它们全过滤掉 —— 这正是 beta1「官方版只有工具栏变色、
+     * 键帽不动」的原因。
+     */
+    private static boolean looksLikeSkinImage(String name) {
+        if (name == null || name.isEmpty()) return false;
+        String n = name.toLowerCase(java.util.Locale.US);
+        if (n.startsWith("candidate") || n.startsWith("cand_") || n.startsWith("first_cand")
+                || n.startsWith("more_cands") || n.startsWith("function") || n.startsWith("float_function")
+                || n.startsWith("cloud") || n.startsWith("bg_cloud") || n.startsWith("bg_composing")
+                || n.startsWith("composing") || n.startsWith("toolbar") || n.startsWith("header")
+                || n.startsWith("key") || n.startsWith("popup") || n.startsWith("bg")
+                || n.startsWith("blank_shadow") || n.startsWith("container_key")) {
+            return true;
+        }
+        return false;
     }
 
     /** 取当前预设（含深色判定）；{@code ctx} 只给「莫奈取色」用来读系统动态配色。 */
@@ -351,12 +424,16 @@ public final class ThemeSkinHook {
         try {
             ClassLoader cl = ThemeSkinHook.class.getClassLoader();
             if (cl == null) return;
-            Class<?> cls;
-            try {
-                cls = XposedHelpers.findClass(sTargets.bitmapClass, cl);
-            } catch (Throwable notFound) {
-                return; // 这个版本没这个类，清缓存失败不影响任何事
+            Class<?> cls = null;
+            for (String clsName : sTargets.bitmapClasses) {
+                try {
+                    cls = XposedHelpers.findClass(clsName, cl);
+                    break;
+                } catch (Throwable ignored) {
+                    cls = null;
+                }
             }
+            if (cls == null) return; // 这个渠道没定位到位图类，清缓存失败不影响任何事
             // 单例取法 / 缓存取法各定制版不同：小米 e()/j()，OPPO 定制版 f()/n()。两个都试。
             Object mgr = null;
             for (String name : new String[]{"e", "f"}) {

@@ -172,9 +172,7 @@ public class SettingsActivity extends Activity {
                 "改搜狗**自己的默认皮肤**：配色、键帽形状、候选栏底色都按所选风格重画。"
                         + "布局、按键命中、候选栏高度全部沿用搜狗原样，所以不会错位。", true);
         addPresetRow(look);
-        addSwitch(look, ModuleConfig.KEY_KEYBOARD_REPLACE, "自绘键盘（实验）",
-                "用模块自绘的键盘盖在搜狗键盘上。可能与搜狗自己算的布局/命中区冲突（样式错乱），"
-                        + "一般不需要打开。", false);
+
 
         root.addView(IosUi.sectionHeader(this, "表情"));
         LinearLayout emoji = IosUi.card(this);

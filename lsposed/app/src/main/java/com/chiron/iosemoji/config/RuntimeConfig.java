@@ -95,8 +95,6 @@ public final class RuntimeConfig {
                 return "master";
             case ModuleConfig.KEY_THEME_SKIN:
                 return "skin_on";
-            case ModuleConfig.KEY_KEYBOARD_REPLACE:
-                return "keyboard";
             case ModuleConfig.KEY_CANDIDATE_PROBE:
                 return "probe";
             case ModuleConfig.KEY_EMOJI_GROUPS:

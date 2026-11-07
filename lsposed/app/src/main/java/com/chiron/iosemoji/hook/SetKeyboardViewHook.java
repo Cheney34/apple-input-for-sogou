@@ -1,39 +1,26 @@
 package com.chiron.iosemoji.hook;
 
-import android.content.Context;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
-import com.chiron.iosemoji.compat.VersionProfile;
 import com.chiron.iosemoji.compat.Targets;
-import com.chiron.iosemoji.config.ModuleConfig;
-import com.chiron.iosemoji.core.HookState;
-import com.chiron.iosemoji.keyboard.ChironKeyboardView;
-import com.chiron.iosemoji.keyboard.KeyboardFactory;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
 
 /**
- * H02：{@code com.sohu.inputmethod.ui.frame.NormalIMERootContainer#setKeyboardView(Landroid/view/View;)V}
+ * H02：{@code <rootContainer>#setKeyboardView(Landroid/view/View;)V}（只做配置对齐）
  *
- * <p>作用：H01 的兜底。若某个调用点没有走 {@code getRootView()}（或被别处覆盖），
- * 这里在方法执行后用同一个 z-index(3) 把我们的 View 再塞进去。
+ * <p>历史上这个 hook 用来把模块自绘的键盘塞进搜狗输入视图（z=3），
+ * 但自绘键盘会跟搜狗自己算的布局/命中区打架（样式错乱），已整体下线（v2.0.3-beta2）。
  *
- * <p>原方法行为（jadx ui/frame/NormalIMERootContainer.java:946-985）：
- * 设 id、RelativeLayout.LayoutParams(-2,-2)、按 {@code instanceof s0} 决定 rule 6/3、
- * {@code addChildView(view, 3)}、{@code updateAllChildren()}、通知 mKeyboardViewChangedListener。
- * 我们只复用最后两步，不改动它的任何逻辑。
- *
- * <p>已知限制：MVP 阶段我们的 View **没有**实现 {@code com.sohu.inputmethod.sogou.s0}，
- * 因此原方法会按"非 s0"分支设置顶边规则（rule 3），在部分主题下可能与其期望的
- * 间距不同——这在 docs/MVP_PROPOSAL.md §7 已列为已知限制，Phase 3 会实现 s0 空壳。
+ * <p>现在它只负责一件事：<b>键盘每次被装上时对齐一次模块配置</b>。
+ * 国产 ROM（HyperOS/ColorOS）会拦掉应用间广播，配置下发不可靠；
+ * 而「改完设置 → 点输入框 → 键盘重新弹出」这个动作用户一定会做，
+ * 于是把重读配置挂在这里最稳，且不改动搜狗任何行为。
  */
 public final class SetKeyboardViewHook {
 
-    public static final String ID = "H02_ime_root_setKeyboardView";
-
+    public static final String ID = "H02_input_view_resync";
 
     private SetKeyboardViewHook() {
     }
@@ -49,45 +36,9 @@ public final class SetKeyboardViewHook {
                             @Override
                             protected void afterHookedMethod(MethodHookParam param) {
                                 try {
-                                    // 键盘被装上 = 用户正准备打字：顺手对齐一次模块 App 的配置。
-                                    // 这样即使系统拦掉了配置广播（ColorOS/HyperOS 常见），
-                                    // 「改完设置 → 切回输入框 → 键盘重弹」也能生效。
                                     ConfigBridge.resyncNow();
-                                    if (!VersionProfile.allowUiReplacement()) return;
-                                    if (!ModuleConfig.keyboardReplaceEnabled()) {
-                                        // 运行中被关掉：把我们注入的键盘摘走，立刻回到搜狗原键盘
-                                        View existing = KeyboardFactory.peek();
-                                        if (existing != null
-                                                && existing.getParent() instanceof ViewGroup) {
-                                            ((ViewGroup) existing.getParent()).removeView(existing);
-                                            HookRegistry.log("H02 removed Apple keyboard (config off)");
-                                        }
-                                        return;
-                                    }
-                                    Object container = param.thisObject;
-                                    if (container == null) return;
-                                    Object arg = param.args[0];
-                                    if (arg instanceof ChironKeyboardView) return;
-
-                                    Context ctx = HookState.context();
-                                    if (ctx == null && arg instanceof View) {
-                                        ctx = ((View) arg).getContext();
-                                        HookState.setContext(ctx);
-                                    }
-                                    if (ctx == null) return;
-
-                                    View our = KeyboardFactory.obtain(ctx);
-                                    if (our == null) return;
-                                    if (our.getParent() == container) return;
-
-                                    our.setLayoutParams(new RelativeLayout.LayoutParams(
-                                            RelativeLayout.LayoutParams.MATCH_PARENT,
-                                            RelativeLayout.LayoutParams.WRAP_CONTENT));
-                                    XposedHelpers.callMethod(container, "addChildView", our, 3);
-                                    XposedHelpers.callMethod(container, "updateAllChildren");
-                                    HookRegistry.log("H02 injected Apple keyboard at z=3");
                                 } catch (Throwable t) {
-                                    HookRegistry.log("H02 after failed");
+                                    HookRegistry.log("H02 resync failed");
                                     HookRegistry.log(t);
                                 }
                             }

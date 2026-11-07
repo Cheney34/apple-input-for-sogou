@@ -27,9 +27,7 @@ public final class ConfigMigration {
                     context.getSharedPreferences(ModuleConfig.PREFS_NAME, Context.MODE_PRIVATE);
             if (prefs.getBoolean(KEY_MIGRATION_DONE, false)) return;
             SharedPreferences.Editor editor = prefs.edit();
-            // 1) 关掉会跟搜狗布局打架的自绘键盘
-            editor.putBoolean(ModuleConfig.KEY_KEYBOARD_REPLACE, false);
-            // 2) 新的皮肤方案默认开（用户没显式设置过才写）
+            // 皮肤方案默认开（用户没显式设置过才写）
             if (!prefs.contains(ModuleConfig.KEY_THEME_SKIN)) {
                 editor.putBoolean(ModuleConfig.KEY_THEME_SKIN, true);
             }

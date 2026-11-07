@@ -14,7 +14,7 @@ import com.chiron.iosemoji.compat.Targets;
 import com.chiron.iosemoji.hook.CandidateProbeHook;
 import com.chiron.iosemoji.hook.ConfigBridge;
 import com.chiron.iosemoji.hook.HookRegistry;
-import com.chiron.iosemoji.hook.KeyboardRootHook;
+import com.chiron.iosemoji.hook.AssetSkinHook;
 import com.chiron.iosemoji.hook.SetKeyboardViewHook;
 import com.chiron.iosemoji.hook.ThemeSkinHook;
 
@@ -68,7 +68,7 @@ public class HookEntry implements IXposedHookLoadPackage {
         // ---- 类级 hook（不需要 Context）----
         if (VersionProfile.allowUiReplacement() || HookState.versionName().equals("unknown")) {
             // 首次进入时还读不到版本，先尝试安装；失败由 Registry 记录，attach 后会重试
-            tryInstallKeyboardHooks(lpparam.classLoader);
+            tryInstallInputViewHooks(lpparam.classLoader);
         }
         if (ModuleConfig.candidateProbeEnabled() && sTargets.supportsCandidateProbe()) {
             try {
@@ -153,7 +153,7 @@ public class HookEntry implements IXposedHookLoadPackage {
                     public void run() {
                         // 开关变化后补装/重试：各 install() 自身幂等
                         installThemeHooks(ctx.getClassLoader());
-                        tryInstallKeyboardHooks(ctx.getClassLoader());
+                        tryInstallInputViewHooks(ctx.getClassLoader());
                         installLegacyHooks(ctx.getClassLoader());
                     }
                 });
@@ -167,7 +167,7 @@ public class HookEntry implements IXposedHookLoadPackage {
 
             // 版本已确定，重新尝试键盘 hook（Registry 幂等，失败过的会重试）
             installThemeHooks(ctx.getClassLoader());
-            tryInstallKeyboardHooks(ctx.getClassLoader());
+            tryInstallInputViewHooks(ctx.getClassLoader());
 
             installLegacyHooks(ctx.getClassLoader());
             scheduleLegacyHooks(ctx);
@@ -206,6 +206,7 @@ public class HookEntry implements IXposedHookLoadPackage {
         // 资源级兜底：直接拦 AssetManager.open()，不依赖任何混淆类名。
         // 小米版能命中就命中；OPPO 等改名字的版本靠这一层也能改到皮肤。
         try {
+            AssetSkinHook.install(cl);
         } catch (Throwable t) {
             HookRegistry.log("asset skin hook failed");
             HookRegistry.log(t);
@@ -216,21 +217,7 @@ public class HookEntry implements IXposedHookLoadPackage {
      * 键盘 hook **总是尝试安装**，是否真的替换由 {@link ModuleConfig} 在每次调用时判断 ——
      * 这样设置页关掉「iOS 键盘」立刻退回搜狗原键盘，重新打开也不用重启输入法。
      */
-    private static void tryInstallKeyboardHooks(ClassLoader cl) {
-        if (!sTargets.supportsKeyboardReplace()) {
-            HookRegistry.log("keyboard facade not located for " + sTargets.label + ", keyboard hooks skipped");
-            return;
-        }
-        if (!VersionProfile.allowUiReplacement() && !"unknown".equals(HookState.versionName())) {
-            HookRegistry.log("unsupported version, keyboard hooks skipped: "
-                    + VersionProfile.describe());
-            return;
-        }
-        try {
-            KeyboardRootHook.install(cl, sTargets);
-        } catch (Throwable t) {
-            HookRegistry.log(t);
-        }
+    private static void tryInstallInputViewHooks(ClassLoader cl) {
         try {
             SetKeyboardViewHook.install(cl, sTargets);
         } catch (Throwable t) {

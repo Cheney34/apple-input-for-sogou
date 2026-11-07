@@ -20,7 +20,7 @@ import de.robv.android.xposed.XposedHelpers;
  *   IMEView[1] WindowBackgroundLayout#7f0a0b1d vis=0 1080x1280
  *   IMEView[1] NormalIMERootContainer#7f0a0b1e vis=0 1080x900
  *     IMEView[2] IMEInputCandidateViewContainer#7f0a0b20 vis=0 1080x180
- *     IMEView[2] ChironKeyboardView#-1 vis=0 1080x640
+ *     IMEView[2] RootContainer#-1 vis=0 1080x640
  * </pre>
  */
 public final class ViewTreeDumper {

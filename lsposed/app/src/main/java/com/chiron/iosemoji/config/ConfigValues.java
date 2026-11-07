@@ -15,7 +15,7 @@ public final class ConfigValues {
             ModuleConfig.KEY_EMOJI_GROUPS,
             ModuleConfig.KEY_EMOJI_SWIPE,
             ModuleConfig.KEY_LOGO_TRIGGER,
-            ModuleConfig.KEY_KEYBOARD_REPLACE,
+
             ModuleConfig.KEY_CANDIDATE_PROBE,
             ModuleConfig.KEY_DIAGNOSTICS,
     };
@@ -31,7 +31,6 @@ public final class ConfigValues {
             case ModuleConfig.KEY_EMOJI_GROUPS:
             case ModuleConfig.KEY_EMOJI_SWIPE:
                 return true;
-            case ModuleConfig.KEY_KEYBOARD_REPLACE:
             case ModuleConfig.KEY_CANDIDATE_PROBE:
             case ModuleConfig.KEY_LOGO_TRIGGER:
             case ModuleConfig.KEY_DIAGNOSTICS:
@@ -48,8 +47,7 @@ public final class ConfigValues {
                 return "总开关";
             case ModuleConfig.KEY_THEME_SKIN:
                 return "改皮肤";
-            case ModuleConfig.KEY_KEYBOARD_REPLACE:
-                return "自绘键盘（实验）";
+
             case ModuleConfig.KEY_CANDIDATE_PROBE:
                 return "候选探针";
             case ModuleConfig.KEY_EMOJI_GROUPS:

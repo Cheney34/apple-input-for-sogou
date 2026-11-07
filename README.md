@@ -14,12 +14,12 @@
 
 ### 支持哪些定制版？
 
-| 输入法 | 包名 | 皮肤改造 | 表情分组/翻页 | 自绘键盘（实验） |
+| 输入法 | 包名 | 皮肤改造（类名层 H40/H41） | 资源层兜底（H50） | 表情分组/翻页 |
 | --- | --- | --- | --- | --- |
-| 小米定制版 10.32.21.202607061714 | `com.sohu.inputmethod.sogou.xiaomi` | ✅ 已确认 | ✅ 已确认 | ✅ 实验 |
-| 搜狗官方 20.19.0 | `com.sohu.inputmethod.sogou` | ⏳ 入口已定位（ini 入口同名同签名；位图入口 `common.j`→**`common.g`**），**待真机实测** | ⏳ 待验证 | ⏳ 有对应物（`NormalIMERootContainer`→`com.sogou.bu.basic.SogouInputArea`），未适配 |
-| OPPO 定制版 10.32.0622.x | `com.sohu.inputmethod.sogouoem` | ⏳ 待修（类名写错，见下） | 部分（分组过滤 ✅ / 解压旁路待验证） | ❌ 未适配 |
-| vivo 定制版 11.41.14023 | `com.sohu.inputmethod.sogou.vivo` | ❌ 未定位（皮肤类被重打包进默认包） | ⏳ 类名齐全待实测 | ❌ 键盘 facade 未定位 |
+| 小米定制版 10.32.21.202607061714 | `com.sohu.inputmethod.sogou.xiaomi` | ✅ 已确认 | ✅ 装上 | ✅ 已确认 |
+| 搜狗官方 20.19.0 | `com.sohu.inputmethod.sogou` | ⏳ 入口已定位（ini 同名同签名；位图 `common.j`→**`common.g`**），待实测 | ✅ 装上 | ⏳ 待验证 |
+| OPPO 定制版 10.32.0622.x | `com.sohu.inputmethod.sogouoem` | ⏳ 类名已修（**`yy1` / `nm1`**），待实测 | ✅ 装上 | 部分（分组过滤 ✅ / 解压旁路待验证） |
+| vivo 定制版 11.41.14023 | `com.sohu.inputmethod.sogou.vivo` | ⏳ ini 入口已定位（**`gh`** `d/e/f`），位图入口未定位 | ✅ 装上 | ⏳ 类名齐全待实测 |
 
 开发优先级（2026-11-07 定）：**小米 > 搜狗官方 > OPPO == vivo**。
 逐步推进，每步都要：①小米回归通过 ②目标渠道实测 ③未测渠道一律标「未兼容」。
@@ -36,7 +36,8 @@ OPPO 定制版把整个主题模块用 `-repackageclasses '` 塞进了默认包�
 
 | 版本 | 适合谁 | 有什么 |
 | --- | --- | --- |
-| [**v2.0.3-beta1**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.3-beta1) | 多定制版尝鲜 | 删掉资源层皮肤 hook（H50）；渠道档案化：官方 20.19.0 / OPPO / vivo 各自一份 `Targets`；未知渠道不再回落小米 |
+| [**v2.0.3-beta2**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.3-beta2) | 多定制版尝鲜 | 恢复资源层皮肤 hook（H50）；**下线自绘键盘**（移除 `keyboard_replace_enabled`、删除 H01，H02 只保留「键盘弹出即对齐配置」）；`Targets` 支持多候选类/多方法名（官方 `common.g`、OPPO `nm1`、vivo `gh`）；位图过滤改按图名判定，修「官方版只有工具栏变色」 |
+| [**v2.0.3-beta1**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.3-beta1) | 存档 | 删掉资源层皮肤 hook（H50）；渠道档案化：官方 20.19.0 / OPPO / vivo 各自一份 `Targets`；未知渠道不再回落小米 |
 | [**v2.0.2-beta2**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.2-beta2) | **稳定版 · 推荐** | 目前唯一在**小米定制版真机确认可用**的版本：改搜狗默认皮肤（H40 改 ini + H41 按方法名全挂位图入口）、七套皮肤、表情包完整、开关即时可逆。**当前基线。** |
 | [**v2.0.2-beta1**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.2-beta1) | 存档 | 多定制版支持：**OPPO 定制版（`com.sohu.inputmethod.sogouoem`）也能改皮肤**（该版类名不同 → 新增 `Targets` 映射表）；小米版行为不变 |
 | [**v2.0.1-beta4**](https://github.com/Cheney34/apple-input-for-sogou/releases/tag/v2.0.1-beta4) | 存档 | iOS 深色底色压到深灰 `#222223`（键 `#6D6D6F` / 字 `#FDFDFE` 不变），功能键与按下态按新色阶重推 |
@@ -75,7 +76,7 @@ OPPO 定制版把整个主题模块用 `-repackageclasses '` 塞进了默认包�
   | **莫奈取色** | 系统 `neutral1_100` | 系统 `neutral1_50` | `system_neutral2_200` | `system_accent1_500` | 圆角 0.16，取壁纸配色（Android 12+） |
 
   键盘布局、按键命中、候选栏高度、输入法 insets 全部还是搜狗自己算的，所以**不会再出现"键盘样式卡 bug"**。
-  （想试原来的自绘键盘：设置页「外观 → 自绘键盘（实验）」，默认关闭。）
+  （自绘键盘已于 v2.0.3-beta2 整体下线：它会把搜狗算好的布局与命中区打乱，得不偿失。）
 > v2.0 沿用旧版包名 `com.chiron.iosemoji`、并沿用同一张调试证书（`CN=Android Debug`），所以是**同包名覆盖升级**：装上 v2.0 会直接替换 v1.7 / v1.8，LSPosed 里原有的模块条目和作用域照旧生效，不需要重新配置。想回旧版，卸载后装 v1.7 / v1.8 即可。
 
 ---
@@ -88,7 +89,7 @@ OPPO 定制版把整个主题模块用 `-repackageclasses '` 塞进了默认包�
 | 四条核心功能的可行性结论 | ✅ 完成 —— [`docs/FEASIBILITY.md`](docs/FEASIBILITY.md) |
 | hook 点清单（30 个，含 DEX 验证描述符） | ✅ 完成 —— [`docs/HOOK_POINTS.md`](docs/HOOK_POINTS.md) |
 | MVP 方案与测试用例 | ✅ 完成 —— [`docs/MVP_PROPOSAL.md`](docs/MVP_PROPOSAL.md) |
-| 模块源码（改搜狗默认皮肤 + 可选自绘键盘 + 诊断 + 旧表情功能） | ⚠️ 已写完，**javac + aapt2 + d8 + apksigner 全链路真实构建出 APK**，未真机验证 |
+| 模块源码（改搜狗默认皮肤 + 资源层兜底 + 诊断 + 旧表情功能） | ⚠️ 已写完，**javac + aapt2 + d8 + apksigner 全链路真实构建出 APK**，未真机验证 |
 | 可安装 APK | ✅ 已构建：`AppleInputForSogou_v2.0.0-alpha4.apk`（21.75 MB，见 Releases） |
 | 候选栏 iOS 化 / 长按符号 / 表情面板 iOS 化 | ⏳ 未实现（Phase 4–6） |
 
@@ -166,29 +167,22 @@ assets/theme/thememanifest.ini             主题清单（THEME_SET=theme_defaul
 
 关掉「iOS 皮肤」开关，下一次读皮肤就回到搜狗原样（`H40`/`H41` 每次调用都判开关，不是一次性替换）。
 
-### 1.2 实验路线：自绘键盘（默认关，不推荐）
+### 1.2 资源层兜底（H50）：OEM 改了类名也能改到
 
-如果就想看「完全自绘的 iOS 键盘长什么样」，可以用下面这组 hook（`keyboard_replace_enabled`，默认关闭）：
+类名层（H40/H41）靠「每个渠道各自的类名表」，一旦某个 OEM 把主题模块 repackage 进默认包
+（OPPO / vivo 就是这样），类名层就找不到入口。这时靠 H50 兜底：
 
 | Hook | 目标 | 说明 |
 | --- | --- | --- |
-| `H01` | `com.sogou.lib.bu.ui.component.keyboard.d#getRootView()` | 返回我们的键盘 View（覆盖所有 `getRootView()` 调用点） |
-| `H02` | `com.sohu.inputmethod.ui.frame.NormalIMERootContainer#setKeyboardView(View)` | 兜底：方法执行后再把我们的 View 塞进 z=3 |
-| `H04` | `com.sohu.inputmethod.sogou.r2#Z7 / #N7` 等 | 只读诊断：打印候选列表推送情况 |
-| `H09` | `com.sogou.core.ui.a#u(View)` | 预留（默认不启用） |
+| `H50` | `android.content.res.AssetManager#open(String)` / `#open(String,int)` | 所有版本读皮肤都是 `assets/theme/…`，在资源流这一层改 |
 
-自绘键盘上的按键**不自己造字**，而是回到搜狗自己的输入通道：
+H50 的三条铁律（beta3/beta4 的教训，少一条就会「键盘呼不出来」）：
 
-```
-按键 → TextInjector
-   → com.sohu.inputmethod.input.i.m().l().onText(chars, 0)     // 主路径
-   → com.sohu.inputmethod.input.i.m().l().onKey(-5, {-5}, false, 0, 0)  // 退格
-   → 兜底：b0.f0().t0().getSogouInputConnection().commitText(...)       // 原始 IC
-```
+1. **只改内置默认皮肤**：路径命中 `sogou_custom` / `theme_custom` / `/themes/` / `.ssf` / `phonetheme` 一律原样放过 —— 用户自己装的第三方皮肤一个字都不碰。
+2. **ini 只做行内取值替换**：不重新序列化（那会毁掉第三方 ini 的注释/续行/重复键）；改完复核段名与键数，不一致就返回原文件。
+3. **熔断**：连续 3 次失败后本进程不再改写任何皮肤资源（日志 `H50 circuit breaker OPEN`），保命优先。
 
-也就是说：**英文/数字/空格/退格/回车走的是搜狗自己的 `InputLogic`**，
-中文联想、词库、云输入这些一概没动。但如上所述，自绘键盘会和搜狗自己的布局逻辑打架，
-所以它只作为实验开关存在，默认不开。
+H50 与类名层共用「改皮肤」总开关：关掉就两层一起停。
 
 ---
 
@@ -224,14 +218,14 @@ assets/theme/thememanifest.ini             主题清单（THEME_SET=theme_defaul
    不依赖跨进程 prefs 的可读性。
 
 页面顶部「连接状态」卡会显示：搜狗进程是否在线、已装 hook 列表、**进程内真正生效的配置值**、搜狗版本。
-所有开关都是**双向可逆**的：关掉立刻退回搜狗原行为（例如关掉「iOS 皮肤」，下一次读皮肤就是搜狗原配色；关掉自绘键盘会把已注入的键盘摘走）。
+所有开关都是**双向可逆**的：关掉立刻退回搜狗原行为（例如关掉「改皮肤」，下一次读皮肤就是搜狗原配色，H50 也一起停）。
 
 | 键 | 默认 | 作用 |
 | --- | --- | --- |
 | `master_enabled` | 开 | 总开关，关掉后模块在搜狗进程内不做任何事 |
 | `theme_skin_enabled` | 开 | **改搜狗默认皮肤**（H40 改 ini 颜色 + H41 重绘键帽/底色）—— 外观的主路径 |
 | `skin_preset` | `ios` | 皮肤风格：`ios` / `wechat` / `google` / `monet`（莫奈需 Android 12+），见设置页「皮肤风格」 |
-| `keyboard_replace_enabled` | 关 | 自绘键盘替换显示层（H01/H02），实验性，会和搜狗布局打架 |
+
 | `emoji_group_filter_enabled` | 开 | 隐藏搜狗自带「组合」「拼装」分组 |
 | `emoji_swipe_enabled` | 开 | 表情面板左右滑动切分组 |
 | `logo_trigger_enabled` | 关 | 触发词替换为 Apple  Logo |
@@ -398,7 +392,7 @@ javac -encoding UTF-8 -Xlint:all --release 17 \
 │       ├── core/                   # HookState（Context/版本）
 │       ├── config/                 # ModuleConfig（XSharedPreferences）
 │       ├── compat/                 # VersionProfile（版本门控）
-│       ├── hook/                   # HookRegistry / H01 / H02 / 探针 / TextInjector
+│       ├── hook/                   # HookRegistry / H02 配置对齐 / H40 H41 H50 皮肤 / 探针
 │       ├── keyboard/               # ChironKeyboardView / KeyboardFactory
 │       ├── diagnostics/            # ViewTreeDumper
 │       └── (v1.8 既有) EmojiService / GestureHook / GroupFilterHook / Groups / LogoHook / Protocol

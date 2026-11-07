@@ -1,3 +1,61 @@
+## v2.0.3-beta2 — 恢复资源层兜底（H50）；下线自绘键盘；修「官方版只有工具栏变色」
+
+基线：从 v2.0.3-beta1（`df2a0db`）继续，不改皮肤算法本身，只修「哪个渠道根本没被改到」与「哪条 hook 越界」。
+
+### 1. H50 回来了（这次带刹车）
+`hook/AssetSkinHook.java` 按原样恢复（从 `df2a0db^` 取回，435 行），并在 `HookEntry.installThemeHooks()` 里重新挂上。
+
+理由：OPPO / vivo 把主题模块整体 repackage 进默认包，类名层（H40/H41）拿不到入口；
+而所有渠道读皮肤都走 `assets/theme/…`，资源层是唯一「不依赖类名」的兜底。
+它同时受「改皮肤」总开关（`theme_skin_enabled`）控制，关掉就两层一起停。
+
+保留的三条铁律（beta3/beta4 的教训）：
+- **第三方皮肤一个字都不改**：`isDefaultTheme()` 命中 `sogou_custom` / `theme_custom` / `/themes/` / `.ssf` / `phonetheme` 一律放过；
+- **ini 只做行内取值替换**（`applyDiff`），改完 `sameSkeleton()` 复核段名/键数，不一致返回原文件；
+- **熔断**：连续 3 次失败后本进程不再改写任何皮肤资源（`H50 circuit breaker OPEN`）。
+
+### 2. 自绘键盘整体下线（你说「不生效」，直接删掉）
+删除：
+- `hook/KeyboardRootHook.java`（H01，返回自绘键盘）、`hook/TextInjector.java`（只为自绘键盘造字）
+- `keyboard/ChironKeyboardView.java`、`KeyView.java`、`KeyboardTheme.java`、`KeyboardFactory.java`
+- 配置键 `keyboard_replace_enabled`（含 `ModuleConfig` / `ConfigValues` / `RuntimeConfig` / `SettingsActivity` / `ConfigMigration` / 文档）
+
+保留并改造：`hook/SetKeyboardViewHook.java`（H02）不再注入任何 View，只做一件事 ——
+**键盘每次被装上时对齐一次模块配置**（`ConfigBridge.resyncNow()`）。
+这个时机正好覆盖「改完设置 → 点输入框 → 键盘重弹」，比依赖广播更可靠（国产 ROM 会拦广播）。
+
+### 3. 渠道档案支持多候选（这是「官方版只有工具栏变色」的真因）
+`compat/Targets.java` 数组化：
+- `themeIniMethods: String[]`（vivo 的 ini 入口有 `d/e/f` 三个重载）
+- `bitmapClasses: String[]` + `bitmapMethods: String[]`（各渠道解码入口不同：小米 `common.j`、官方 `common.g`、OPPO `nm1`、vivo 走通用图片工具）
+
+四档现状：
+| 渠道 | ini 入口 | 位图入口 | 说明 |
+| --- | --- | --- | --- |
+| 小米 | `com.sogou.theme.parse.utils.b#a` | `com.sogou.theme.common.j#{f,g,j,k,d,e}` | 已验证 |
+| 官方 20.19.0 | 同名同签名 | `com.sogou.theme.common.g` + `common.j` | 待实测 |
+| OPPO | `yy1#a` | `nm1#{j,k,e,f,g,d}` | 类名已修（默认包无 `defpackage` 前缀） |
+| vivo | `gh#{d,e,f}`（直接返回 ArrayMap） | 未定位（先用 H50 兜底） | 待实测 |
+
+`ThemeSkinHook` 侧配套：
+- H40 改 `hookAllMethods` 按方法名挂（不再写死 `(String)` 单签名），并用 `asSections()` 兼容「返回 `entity.b`（要 `b()`）」与「直接返回 ArrayMap」两种形态；
+- H41 遍历「候选类 × 方法名」，日志改成 `H41 bitmap getters hooked on N class(es), M method name(s)`；
+- **位图过滤改为按 basename 判定**（`kindOf` / `isProtected` / `colorOf` 都吃图名而非整条路径），并新增 `looksLikeSkinImage()` 放行 `candidate_bg*` / `key_qwerty*` 这类相对名或逻辑名 ——
+  官方版传进来的不是完整路径，旧的 `isSkinPath()` 要求路径里含 `theme`，于是键帽图全被过滤掉，只剩 ini 层的工具栏/候选条变色。
+
+### 4. 构建验证（本机实测）
+- 产物：`build/v203b2/AppleInputForSogou_v2.0.3-beta2.apk`，**22,746,693 B**
+- `aapt2 dump badging`：`com.chiron.iosemoji` / versionCode **42** / versionName **2.0.3-beta2** / label `Apple Input for Sogou`
+- 证书：`CN=Android Debug`，SHA-256 `4fbf65ed…c207`（同包名覆盖升级）
+- `classes.dex` 139,848 B；`dexdump -f` 列出 **110 个类全为 `Lcom/chiron/iosemoji/*`**，非 chiron 0 个
+- 字符串检查：含 `AssetSkinHook` / `circuit breaker OPEN` / `bitmapClasses` / `H41 bitmap getters hooked on` / `gh`；
+  不含 `KeyboardRootHook` / `ChironKeyboardView` / `keyboard_replace_enabled` / `resource_skin_enabled` / `defpackage`
+
+### 5. 待真机确认
+- **官方版**：键帽是否开始变色 —— 看日志 `H41 bitmap getters hooked on 3 class(es)` 与设置页 `skimg=解码/重画`
+- **vivo**：是否出现 `H40 skin ini patched`（ini 层）、`skimg` 是否非 0、`asset=…`（H50 层）
+- **OPPO**：`yy1#a` 是否命中 + H50
+- **小米回归**：键盘弹出 / 中英文 / 候选 / 皮肤 / 表情 / 开关双向可逆
 ## v2.0.3-beta1 — 删掉资源层皮肤 hook（H50）；渠道档案化（官方 / OPPO / vivo 进 Targets）
 
 基线说明：本版从 **稳定版 beta2（`7401aa5`）** 出发，只做「多渠道档案化 + 删除越界实现」，不改 beta2 的皮肤算法。
