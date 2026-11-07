@@ -1,3 +1,22 @@
+## v2.0.3-beta9 — 用 loadClass 分发 + 改掉 phrase 的默认色
+
+beta6/7 没打通的原因：phrase 的 `InputMethodBottomManager` 是**动态 dex** 里的类，
+`lpparam.classLoader` 里根本查不到（HyperCeiler 也是用 `ClassLoader#loadClass` 按包名分发才 hook 到的）。
+
+本次两条：
+
+1. `hookClassLoaderDispatch()`：hook `ClassLoader#loadClass(String)` 与 `loadClass(String,boolean)`，
+   一旦有人加载 `com.miui.inputmethod.InputMethodBottomManager` 就顺手 `attachBottomManager(cls)`（命中后靠 `sManagerHooked` 短路）。
+2. `seedDefaults(cls)`：把它的静态默认色 `sDefBottomViewColor` / `sDefIconColorUnpressed` / `sDefIconColorPressed` /
+   `currentBottomViewColor` / `sPhrasePanelBottomViewColorBackup` 直接改成皮肤色 —— 这样 `addMiuiBottomViewInner`
+   里那句 `setBottomColor(false,0,0,0)`（默认色重置）也会刷成我们的颜色。
+
+phrase 5.7.4 实证：`:599 new InputMethodBottomView(context)` → `:610-612` 取 `input_bottom_view` 设底色
+（资源名 `miuix.animation.R.color.input_bottom_background_color`）→ `:625 setBottomColor(false,0,0,0)`。
+
+状态串新增 `bbdp=`（loadClass 分发是否装上）。
+
+- 产物 `build/v203b9/AppleInputForSogou_v2.0.3-beta9.apk`，versionCode 49，22,754,885 B。
 ## v2.0.3-beta8 — 工具栏 / 候选条 / 全面屏底栏与键盘底**完全同色**
 
 按需求把所有「条」的底色收敛到键盘底色（`kbBg`），不再保留独立色：

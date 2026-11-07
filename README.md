@@ -38,6 +38,7 @@ OPPO 定制版把整个主题模块用 `-repackageclasses '` 塞进了默认包�
 ## 下载哪个版本？
 
 | 版本 | 适合谁 | 有什么 |
+| **v2.0.3-beta9** | 推荐（实验渠道版） | 底栏：loadClass 分发 + 改掉 phrase 默认色 |
 | **v2.0.3-beta8** | 推荐（实验渠道版） | 工具栏/候选条/全面屏底栏与键盘底完全同色 |
 | **v2.0.3-beta7** | 推荐（实验渠道版） | 底栏加视图树兜底通道；`miui_bottom_bar_enabled` 默认开 |
 | **v2.0.3-beta6** | 推荐（实验渠道版） | H61：底栏改为 hook `InputMethodBottomManager`（真正的颜色落点） |

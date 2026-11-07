@@ -70,6 +70,7 @@ public final class MiuiBottomBarHook {
     private static volatile boolean sInstalled;
     private static volatile boolean sFrameworkHooked;
     private static volatile boolean sManagerHooked;
+    private static volatile boolean sDispatchInstalled;
     private static volatile boolean sDisabled;
     private static volatile Boolean sSkinDark;
     private static volatile String sManagerLoader;
@@ -97,6 +98,7 @@ public final class MiuiBottomBarHook {
         sInstalled = true;
         hookFramework(cl);
         hookDecorCapture(cl);
+        hookClassLoaderDispatch();
         tryInstallBottomManager(cl);
         // 动态 dex 里的类要等注入完成才能 load，前几十秒反复试（失败只影响底栏配色）。
         final Handler h = new Handler(Looper.getMainLooper());
@@ -111,6 +113,41 @@ public final class MiuiBottomBarHook {
             }, d);
         }
         HookRegistry.log("H60/H61 install: framework=" + sFrameworkHooked + " manager=" + sManagerHooked);
+    }
+
+    /**
+     * ★ 关键：phrase 的 {@code InputMethodBottomManager} 在动态 dex 的 ClassLoader 里，
+     * 它不一定能通过 lpparam.classLoader 直接找到（HyperCeiler 也是用 loadClass 分发解决的）。
+     * 这里挂 {@code ClassLoader#loadClass}，一旦有人加载这个类，就地把它 hook 上。
+     * 判据只有一个 {@code name.equals(...)}，命中一次后立即卸载负担（sManagerHooked）。
+     */
+    private static void hookClassLoaderDispatch() {
+        if (sDispatchInstalled) return;
+        sDispatchInstalled = true;
+        XC_MethodHook cb = new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) {
+                if (sManagerHooked) return;
+                try {
+                    Object a0 = param.args == null || param.args.length == 0 ? null : param.args[0];
+                    if (!CLS_BOTTOM_MANAGER.equals(a0)) return;
+                    Object r = param.getResult();
+                    if (!(r instanceof Class)) return;
+                    attachBottomManager((Class<?>) r);
+                } catch (Throwable ignored) {
+                }
+            }
+        };
+        try {
+            XposedHelpers.findAndHookMethod(ClassLoader.class, "loadClass", String.class, cb);
+        } catch (Throwable t) {
+            HookRegistry.log("H61 loadClass dispatch skip: " + t);
+        }
+        try {
+            XposedHelpers.findAndHookMethod(ClassLoader.class, "loadClass", String.class, boolean.class, cb);
+        } catch (Throwable ignored) {
+        }
+        HookRegistry.log("H61 loadClass dispatch armed for " + CLS_BOTTOM_MANAGER);
     }
 
     /** 抓 IME 的 decorView：底栏是 MIUI 挂在 SoftInputWindow 上的兄弟节点。 */
@@ -188,6 +225,12 @@ public final class MiuiBottomBarHook {
         if (sManagerHooked || sDisabled) return;
         Class<?> cls = resolveBottomManager(cl);
         if (cls == null) return;
+        attachBottomManager(cls);
+    }
+
+    /** 真正挂 hook（loadClass 分发与主动查找共用的入口）。 */
+    private static synchronized void attachBottomManager(Class<?> cls) {
+        if (sManagerHooked || sDisabled || cls == null) return;
         try {
             try {
                 XposedHelpers.findAndHookMethod(cls, "customizeBottomViewColor",
@@ -230,11 +273,29 @@ public final class MiuiBottomBarHook {
             }
             sManagerHooked = true;
             HookRegistry.log("H61 hooked: " + CLS_BOTTOM_MANAGER + " via " + sManagerLoader);
+            // 顺手改掉它的默认色：addMiuiBottomViewInner 里 setBottomColor(false,0,0,0)
+            // 会拿静态字段刷底栏，改掉之后连默认路径都是我们的颜色。
+            seedDefaults(cls);
         } catch (Throwable t) {
             fail("installBottomManager", t);
         }
     }
 
+    /** 把 phrase 的静态默认色换成当前皮肤色（失败只记日志）。 */
+    private static void seedDefaults(Class<?> cls) {
+        try {
+            int[] c = colors();
+            if (c == null) return;
+            setStatic(cls, "sDefBottomViewColor", c[0]);
+            setStatic(cls, "sDefIconColorUnpressed", c[1]);
+            setStatic(cls, "sDefIconColorPressed", c[2]);
+            setStatic(cls, "currentBottomViewColor", c[0]);
+            setStatic(cls, "sPhrasePanelBottomViewColorBackup", c[0]);
+            HookRegistry.log(String.format("H61 defaults seeded -> #%08X", c[0]));
+        } catch (Throwable t) {
+            HookRegistry.log("H61 seedDefaults failed: " + t);
+        }
+    }
     private static Class<?> resolveBottomManager(ClassLoader cl) {
         ClassLoader[] candidates = new ClassLoader[]{
                 cl,
@@ -463,6 +524,7 @@ public final class MiuiBottomBarHook {
     public static String stateFields() {
         return "bb=" + PATCHED.get() + "/" + APPLIED.get()
                 + ";bbmg=" + (sManagerHooked ? 1 : 0)
+                + ";bbdp=" + (sDispatchInstalled ? 1 : 0)
                 + ";bbfw=" + (sFrameworkHooked ? 1 : 0)
                 + ";bbld=" + (sManagerLoader == null ? "-" : sManagerLoader)
                 + ";bbtree=" + TREE_HITS.get()
