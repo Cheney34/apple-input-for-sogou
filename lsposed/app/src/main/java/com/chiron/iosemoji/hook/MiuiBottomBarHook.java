@@ -78,6 +78,10 @@ public final class MiuiBottomBarHook {
     /** IME 窗口的 decorView（onWindowShown 时抓一次），用于视图树兜底。 */
     private static volatile java.lang.ref.WeakReference<View> sDecor;
     private static final AtomicInteger TREE_HITS = new AtomicInteger();
+    /** 系统导航栏（"系统底栏"）改参次数：全面屏键盘优化开着时，键盘下方那块是系统导航条。 */
+    private static final AtomicInteger NAV_PATCHED = new AtomicInteger();
+    private static volatile boolean sApplying;
+    private static volatile java.lang.ref.WeakReference<android.view.Window> sWindow;
     private static final int FAIL_MAX = 3;
     private static int sFails;
 
@@ -161,8 +165,10 @@ public final class MiuiBottomBarHook {
                                 android.inputmethodservice.InputMethodService svc =
                                         (android.inputmethodservice.InputMethodService) param.thisObject;
                                 if (svc.getWindow() == null || svc.getWindow().getWindow() == null) return;
-                                sDecor = new java.lang.ref.WeakReference<View>(
-                                        svc.getWindow().getWindow().getDecorView());
+                                android.view.Window w = svc.getWindow().getWindow();
+                                sDecor = new java.lang.ref.WeakReference<View>(w.getDecorView());
+                                sWindow = new java.lang.ref.WeakReference<android.view.Window>(w);
+                                applyNavBar(w);
                                 postApply(120L);
                             } catch (Throwable ignored) {
                             }
@@ -208,6 +214,20 @@ public final class MiuiBottomBarHook {
         try {
             XposedHelpers.findAndHookMethod("com.android.internal.policy.PhoneWindow", null,
                     "setNavigationBarColor", int.class, new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) {
+                            // 系统底栏（导航条）：全面屏键盘优化开着时，键盘下方那块是系统导航条，
+                            // 颜色就是在这个调用里定的。只替换颜色这一个参数，其余原样。
+                            if (!enabled() || sApplying || sDisabled) return;
+                            try {
+                                int[] c = colors();
+                                if (c == null) return;
+                                param.args[0] = c[0];
+                                NAV_PATCHED.incrementAndGet();
+                            } catch (Throwable ignored) {
+                            }
+                        }
+
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) {
                             long now = SystemClock.uptimeMillis();
@@ -346,8 +366,10 @@ public final class MiuiBottomBarHook {
 
     /** 主动改已存在的底栏（反射静态字段，全部判空、失败只记日志）。 */
     public static void apply() {
-        if (!enabled()) return;
+        if (!enabled() || sApplying) return;
+        sApplying = true;
         try {
+            applyNavBar(sWindow == null ? null : sWindow.get());
             Class<?> cls = resolveBottomManager(null);
             if (cls == null) return;
             int[] c = colors();
@@ -385,6 +407,8 @@ public final class MiuiBottomBarHook {
             if (n <= 4) HookRegistry.log(String.format("H60 bottom applied -> #%08X", c[0]));
         } catch (Throwable t) {
             fail("apply", t);
+        } finally {
+            sApplying = false;
         }
     }
 
@@ -530,12 +554,42 @@ public final class MiuiBottomBarHook {
                 + ";bbtree=" + TREE_HITS.get()
                 + ";bbdecor=" + (sDecor != null && sDecor.get() != null ? 1 : 0)
                 + ";bbdark=" + (sSkinDark == null ? "-" : (sSkinDark ? "1" : "0"))
+                + ";bbnav=" + NAV_PATCHED.get()
                 + ";bbdis=" + (sDisabled ? 1 : 0);
     }
 
     public static String summary() {
         return "bottom(patched=" + PATCHED.get() + ",applied=" + APPLIED.get()
                 + ",manager=" + (sManagerHooked ? "ok" : "no") + ")";
+    }
+
+    /** 把皮肤底色刷到系统导航栏（IME 窗口），并同步图标明暗；只改颜色，不动高度/手势条。 */
+    private static void applyNavBar(android.view.Window w) {
+        if (w == null || sDisabled) return;
+        try {
+            int[] c = colors();
+            if (c == null) return;
+            int bg = c[0];
+            w.setNavigationBarColor(bg);
+            boolean lightBg = IosSkin.contrast(0xFF000000, bg)
+                    > IosSkin.contrast(0xFFFFFFFF, bg);
+            View decor = w.getDecorView();
+            if (decor == null) return;
+            if (android.os.Build.VERSION.SDK_INT >= 30) {
+                android.view.WindowInsetsController ic = decor.getWindowInsetsController();
+                if (ic != null) {
+                    int mask = android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
+                    ic.setSystemBarsAppearance(lightBg ? mask : 0, mask);
+                }
+            } else if (android.os.Build.VERSION.SDK_INT >= 26) {
+                int vis = decor.getSystemUiVisibility();
+                if (lightBg) vis |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+                else vis &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+                decor.setSystemUiVisibility(vis);
+            }
+        } catch (Throwable t) {
+            fail("applyNavBar", t);
+        }
     }
 
     private static void fail(String where, Throwable t) {

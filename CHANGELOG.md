@@ -1,3 +1,20 @@
+## v2.0.3-beta13 — 系统底栏（导航条）跟皮肤色
+
+用户澄清：无效的是系统底栏（导航条），不是输入法里那条 MIUI 底栏。全面屏键盘优化开着时，键盘下方那块由系统画，颜色在 PhoneWindow#setNavigationBarColor(int) 里定。
+
+### 改动（hook/MiuiBottomBarHook.java）
+
+- setNavigationBarColor 从只观察改成 before 改参：把颜色参数换成皮肤底色（SkinPreset.kbBg），并计 bbnav= 次数；其余参数与窗口属性一概不动。
+- InputMethodService#onWindowShown 抓到 IME 窗口后立即刷一次（applyNavBar(Window)）：w.setNavigationBarColor(bg) + 图标明暗同步（API>=30 用 WindowInsetsController.setSystemBarsAppearance(APPEARANCE_LIGHT_NAVIGATION_BARS, ...)，API 26-29 退回 SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR）。
+- 加重入保护 sApplying（apply() 内部会调 setNavigationBarColor，避免自咬），apply() 用 finally 复位。
+- 仍受 miui_bottom_bar_enabled（默认开）与 3 次失败熔断保护；只改颜色，不动高度 / 手势条 / insets。
+
+### 状态串新增
+
+;bbnav=<改参次数>（和 bb= / bbmg= / bbtree= / bbdecor= 一起看）。
+
+- 产物 build/v203b13/AppleInputForSogou_v2.0.3-beta13.apk，versionCode 53，22,754,885 B。
+
 ## v2.0.3-beta12 — 皮肤风格新增「搜狗经典（旧版）」；微信夜间用实拍值替换
 
 ### 1. 新增预设 `sogouold`（显示名「搜狗经典（旧版）」，列表第一位）
