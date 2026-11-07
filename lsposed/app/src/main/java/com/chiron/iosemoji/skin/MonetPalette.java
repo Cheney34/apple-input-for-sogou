@@ -13,16 +13,17 @@ import android.os.Build;
  *
  * <p>取色优先级（手册 §2.3）：
  * <ol>
- *   <li>{@code fixed}：用户自己挑的主色（设置页「莫奈主色」：粉 / 紫 / 蓝 / 绿 / 橙 / 青）。
- *       排在最前——因为不少人觉得自家壁纸的颜色不好看，需要能锁死一个主色；</li>
+ *   <li>{@code fixed}：用户自己挑的主色（设置页「莫奈主色」：粉 / 紫 / 蓝 / 绿 / 橙 / 青）；</li>
  *   <li>{@code dynamic}：系统动态色（{@code android:color/system_surface_container} 等，Android 12+）；</li>
- *   <li>{@code wallpaper}：系统动态色缺失时，用 {@link WallpaperManager#getWallpaperColors} 主色当种子；</li>
+ *   <li>{@code wallpaper}：系统动态色缺失时用壁纸主色当种子；</li>
  *   <li>{@code last}：本进程上次成功的种子；</li>
  *   <li>{@code default}：内置紫色种子。</li>
  * </ol>
  *
- * <p>角色映射按手册 §4 Token 表；可读性按 §8.2 收口（正文 4.5:1、图标 3:1）。
- * 本类不 hook、不碰布局，任何异常都回退，绝不阻塞键盘呼出。
+ * <p><b>配色原则（v2.0.3-beta16 修正）</b>：底色与键帽必须是<strong>近中性</strong>的，
+ * 只带一点点主色倾向（Material You 里 {@code surfaceContainer} 的色度非常低），
+ * 彩色交给强调色。上一版把“主色饱和度 × 0.26”直接当底色饱和度，
+ * 结果整块键盘被染成一块色布，反而不好看。
  */
 public final class MonetPalette {
 
@@ -52,6 +53,11 @@ public final class MonetPalette {
 
     /** 内置兜底种子（Material 默认紫）。 */
     private static final int DEFAULT_SEED = 0xFF6750A4;
+
+    // 中性底色的色度上限：再高就开始"上色布"了（见类注释）。
+    private static final float BG_CHROMA_MAX = 0.10f;
+    private static final float KEY_CHROMA_MAX = 0.07f;
+    private static final float FUNC_CHROMA_MAX = 0.12f;
 
     private static volatile String sSource = SRC_DEFAULT;
     private static volatile int sSeed = DEFAULT_SEED;
@@ -118,92 +124,98 @@ public final class MonetPalette {
 
     private static SkinPreset build(Context ctx, boolean dark) {
         String key = configuredSeedKey();
-        int forced = seedValue(key);            // 用户在设置页锁死的主色
+        int forced = seedValue(key);
 
-        int bg, kc, kp, func, onFunc, text, accent;
+        int seed;
+        float hue;
+        float chroma;
 
         if (forced != 0) {
-            // ① 用户指定的主色：整条色阶都由它派生（不看壁纸，避免"壁纸颜色不舒服"）
+            // ① 用户锁死的主色：完全不看壁纸
             sSource = SRC_FIXED + ":" + key;
             sSeed = forced;
-            float[] hsl = new float[3];
-            Color.colorToHSV(forced, hsl);
-            float hue = hsl[0];
-            float chroma = clamp(hsl[1], 0.22f, 0.55f);
-            bg = tone(hue, chroma * 0.26f, dark ? 0.10f : 0.985f);
-            kc = tone(hue, chroma * 0.30f, dark ? 0.23f : 1.0f);
-            kp = tone(hue, chroma * 0.40f, dark ? 0.33f : 0.905f);
-            func = tone(hue, chroma * 0.34f, dark ? 0.27f : 0.94f);
-            onFunc = tone(hue, 0.12f, dark ? 0.95f : 0.16f);
-            text = tone(hue, 0.07f, dark ? 0.95f : 0.14f);
-            accent = hueAccent(hue, chroma, dark);
+            seed = forced;
         } else {
-            // ② 系统动态色（首选）
-            bg = sys(ctx, "system_surface_container");
-            kc = sys(ctx, "system_surface_container_high");
-            kp = sys(ctx, "system_secondary_container");
-            func = sys(ctx, "system_secondary_container");
-            onFunc = sys(ctx, "system_on_secondary_container");
-            text = sys(ctx, "system_on_surface");
-            accent = sys(ctx, "system_primary");
-
-            boolean dynamic = bg != 0 && kc != 0 && text != 0;
+            // ② 系统动态色
+            int bg = sys(ctx, "system_surface_container");
+            int kc = sys(ctx, "system_surface_container_high");
+            int text = sys(ctx, "system_on_surface");
+            int accent = sys(ctx, "system_primary");
             int wall = seedFromWallpaper(ctx);
+            boolean dynamic = bg != 0 && kc != 0 && text != 0;
+
             if (dynamic) {
                 sSource = SRC_DYNAMIC;
-                sSeed = wall != 0 ? wall : DEFAULT_SEED;
-            } else {
-                // ③ 壁纸主色 ④ 上次种子 ⑤ 内置种子
-                int seed;
-                if (wall != 0) {
-                    sSource = SRC_WALLPAPER;
-                    seed = wall;
-                } else if (sSeed != 0 && !SRC_DEFAULT.equals(sSource)) {
-                    sSource = SRC_LAST;
-                    seed = sSeed;
-                } else {
-                    sSource = SRC_DEFAULT;
-                    seed = DEFAULT_SEED;
-                }
-                sSeed = seed;
-                float[] hsl = new float[3];
-                Color.colorToHSV(seed, hsl);
-                float hue = hsl[0];
-                float chroma = clamp(hsl[1], 0.18f, 0.55f);
-                bg = tone(hue, chroma * 0.28f, dark ? 0.10f : 0.985f);
-                kc = tone(hue, chroma * 0.30f, dark ? 0.22f : 1.0f);
-                kp = tone(hue, chroma * 0.42f, dark ? 0.32f : 0.90f);
-                func = tone(hue, chroma * 0.38f, dark ? 0.26f : 0.93f);
-                onFunc = tone(hue, 0.14f, dark ? 0.95f : 0.16f);
-                text = tone(hue, 0.08f, dark ? 0.95f : 0.14f);
-                accent = hueAccent(hue, chroma, dark);
+                sSeed = accent != 0 ? accent : (wall != 0 ? wall : DEFAULT_SEED);
+                // 系统已给完整 scheme：底色/键帽直接用系统值（本身就很中性），只补功能键与文字
+                int kp = sys(ctx, "system_secondary_container");
+                int func = kp != 0 ? kp : kc;
+                int onFunc = sys(ctx, "system_on_secondary_container");
+                int t = text != 0 ? text : 0xFF1C1B1F;
+                int acc = accent != 0 ? fix(accent, bg, 3.0) : fix(kc, bg, 3.0);
+                return new SkinPreset(SkinPreset.MONET,
+                        bg, kc, kp != 0 ? kp : kc, func,
+                        tone(0f, 0f, dark ? 0.32f : 0.88f),
+                        kp != 0 ? kp : kc, bg,
+                        t, t, acc,
+                        0.16f, dark ? 0x40000000 : 0x1A000000, 2f, 1f, false, true);
             }
+
+            // ③ 壁纸主色 ④ 上次种子 ⑤ 内置种子
+            if (wall != 0) {
+                sSource = SRC_WALLPAPER;
+                seed = wall;
+            } else if (sSeed != 0 && !SRC_DEFAULT.equals(sSource)) {
+                sSource = SRC_LAST;
+                seed = sSeed;
+            } else {
+                sSource = SRC_DEFAULT;
+                seed = DEFAULT_SEED;
+            }
+            sSeed = seed;
         }
 
-        if (kp == 0) kp = fix(kc, bg, 1.6);
-        if (func == 0) func = kp;
-        if (onFunc == 0) onFunc = fix(accent, func, 3.0);
-        if (accent == 0) accent = kp;
+        float[] hsl = new float[3];
+        Color.colorToHSV(seed, hsl);
+        hue = hsl[0];
+        // 主色只决定"倾向"，不决定"染色强度"（见类注释）
+        chroma = clamp(hsl[1], 0.25f, 0.75f);
+
+        int[] c = derive(hue, chroma, dark);
+        int bg = c[0], kc2 = c[1], kp = c[2], func = c[3], onFunc = c[4], text = c[5], accent = c[6];
 
         // WCAG 收口（手册 §8.2）：正文 4.5:1、图标/强调 3:1
-        int keyText = fix(text, kc, 4.5);
+        int keyText = fix(text, kc2, 4.5);
         int funcText = fix(onFunc, func, 4.5);
         int accentSafe = fix(accent, bg, 3.0);
-        int t = (IosSkin.contrast(keyText, kc) >= IosSkin.contrast(funcText, func)) ? keyText : funcText;
+        int t = (IosSkin.contrast(keyText, kc2) >= IosSkin.contrast(funcText, func)) ? keyText : funcText;
 
         return new SkinPreset(SkinPreset.MONET,
-                bg, kc, kp, func, tone(func, 0.5f, dark ? 0.38f : 0.86f),
+                bg, kc2, kp, func, tone(hue, FUNC_CHROMA_MAX * 0.7f, dark ? 0.34f : 0.87f),
                 kp, bg,
                 t, keyText, accentSafe,
                 0.16f, dark ? 0x40000000 : 0x1A000000, 2f, 1f, false, true);
     }
 
-    // ── 工具 ───────────────────────────────────────────────────────────────
-
-    /** 强调色：浅色压下明度、深色提亮，保证在底色上够跳。 */
-    private static int hueAccent(float hue, float chroma, boolean dark) {
-        return tone(hue, clamp(chroma, 0.30f, 0.60f), dark ? 0.76f : 0.44f);
+    /**
+     * 由主色派生一套「近中性」的键盘色阶（Material You 风格）：
+     * 底色是极低色度的浅/深灰 + 一点点主色倾向，键帽再亮/暗一档，
+     * 功能键比键帽更退一步，强调色保持饱和。
+     *
+     * @return {bg, key, keyPressed, func, onFunc, text, accent}
+     */
+    private static int[] derive(float hue, float chroma, boolean dark) {
+        int bg = tone(hue, Math.min(chroma * 0.06f, BG_CHROMA_MAX * 0.55f), dark ? 0.105f : 0.895f);
+        int key = tone(hue, Math.min(chroma * 0.04f, KEY_CHROMA_MAX * 0.5f), dark ? 0.300f : 0.995f);
+        int keyPressed = tone(hue, Math.min(chroma * 0.07f, KEY_CHROMA_MAX), dark ? 0.375f : 0.845f);
+        int func = tone(hue, Math.min(chroma * 0.08f, FUNC_CHROMA_MAX), dark ? 0.245f : 0.865f);
+        int onFunc = tone(hue, 0.05f, dark ? 0.93f : 0.24f);
+        int text = tone(hue, 0.04f, dark ? 0.96f : 0.13f);
+        int accent = tone(hue, clamp(chroma, 0.45f, 0.72f), dark ? 0.74f : 0.46f);
+        return new int[]{bg, key, keyPressed, func, onFunc, text, accent};
     }
+
+    // ── 工具 ───────────────────────────────────────────────────────────────
 
     private static float clamp(float v, float lo, float hi) {
         return Math.max(lo, Math.min(hi, v));
@@ -264,6 +276,4 @@ public final class MonetPalette {
         }
         return best;
     }
-
-
 }
