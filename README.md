@@ -38,7 +38,9 @@ OPPO 定制版把整个主题模块用 `-repackageclasses '` 塞进了默认包�
 ## 下载哪个版本？
 
 | 版本 | 适合谁 | 有什么 |
-| **v2.0.3-beta16**（最新 · 推荐） | 推荐（实验渠道版） | **莫奈底色改回近中性**：底色色度封顶（`chroma*0.06`，≤0.055），彩色只留给强调色；亮度阶梯重定标（浅色键/底对比 1.27，深色 ≈2.0）；系统动态色可用时直接用系统 surface 值不再二次染色 |
+| **v2.0.3-beta18**（最新 · 推荐） | 推荐（实验渠道版） | **莫奈改按 Material 3 Expressive（2025）色阶**：容器色不再压成近中性（底色取主色色度 42%、功能键 85%），靠明度分层拉开对比（键帽=surfaceContainerLowest、底=surfaceContainer、功能键=secondaryContainer），并强制「键帽 vs 底」亮度比 ≥1.28（浅）/1.55（深）；系统动态色拉不开时自动退回自派生色阶 |
+| v2.0.3-beta17（存档） | 推荐（实验渠道版） | **微信风格：发送键刷成强调绿**：新增 `SkinPreset.accentEnter`（仅微信 true），`IosSkin.KIND_ACCENT` 铺 accent 圆角底并用 `glyphMask` 把键上原字形抠成对比色盖回，ini 侧同时把 `*Enter*/*Send*` 段底色与文字改成 accent；其余预设行为完全不变 |
+| v2.0.3-beta16（存档） | 推荐（实验渠道版） | **莫奈底色改回近中性**：底色色度封顶（`chroma*0.06`，≤0.055），彩色只留给强调色；亮度阶梯重定标（浅色键/底对比 1.27，深色 ≈2.0）；系统动态色可用时直接用系统 surface 值不再二次染色 |
 | v2.0.3-beta15（存档） | 推荐（实验渠道版） | **莫奈主色可锁死**：设置页新增「莫奈主色」（自动 / 樱花粉 / 薰衣草紫 / 天空蓝 / 抹茶绿 / 蜜橘橙 / 湖青）；`fixed` 主色优先于系统/壁纸，整条色阶由该主色派生 + WCAG 收口；配置键 `monet_seed`，诊断 `monetsrc=` 显示 `src=fixed:<key>` |
 | v2.0.3-beta14（存档） | 推荐（实验渠道版） | **莫奈取色按《Keyboard Monet 动态取色系统开发手册》重做**：`skin/MonetPalette` 分层（取色→Token 映射→渲染），优先级 系统动态色 `system_surface_container*`/`system_secondary_container`/`system_primary` → 壁纸主色 → 上次种子 → 内置种子；深色不再反色而按暗色色阶派生；WCAG 正文 4.5:1、图标 3:1 收口；状态串新增 `monetsrc=` 诊断 |
 | v2.0.3-beta13（存档） | 实验渠道版 | 系统导航条（底栏）跟皮肤色：setNavigationBarColor 改参 + IME 窗口直刷 + 图标明暗 |

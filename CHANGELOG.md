@@ -1,3 +1,63 @@
+## v2.0.3-beta18 — 莫奈改按 Material 3 Expressive（2025）色阶
+
+### 为什么改
+- beta16 把色度压到「近中性」（底色 chroma ≤0.055），用户反馈**饱和度太低、对比度不够**：
+  键盘看起来是一块灰板，键帽和底几乎分不开。这符合 M3 的 2021 baseline，但不符合 2025 的 Expressive 方向。
+
+### 改法（`skin/MonetPalette.java`）
+- 色度档重定：`BG_CHROMA_RATIO=0.42`（底色取主色色度 42%，上限 0.16）、`KEY_CHROMA_RATIO=0.10`（键帽近中性，上限 0.05）、
+  `FUNC_CHROMA_RATIO=0.85`（功能键最饱和，上限 0.30）。
+- 角色对照（Expressive）：底 = `surfaceContainer`、键帽 = `surfaceContainerLowest`、按下 = `surfaceContainerHigh`、
+  功能键 = `secondaryContainer`、功能键文字 = `onSecondaryContainer`、正文 = `onSurface`、强调 = `primary`。
+- 明度阶梯：浅色 键 1.00 / 底 0.888 / 按下 0.828 / 功能键 0.880；深色 键 0.265 / 底 0.135 / 按下 0.335 / 功能键 0.300。
+- **对比度保底**：`KEY_MIN_LIGHT=1.28`、`KEY_MIN_DARK=1.55`，不足就把底色继续压暗（最多 20 档），不靠描边凑层次。
+- 系统动态色分支改读 `system_surface_container_lowest / _low / _highest`；若系统给的底与键帽拉不开
+  （浅色系统里常见同色），**不再硬用**，直接退回自派生色阶 —— 之前「对比度太低」就是这里来的。
+- 功能键按下色也改由同一色阶派生（`funcC × 0.85`）。
+
+### 与 beta17 的关系
+- beta17（微信发送键强调色 `accentEnter` + `IosSkin.KIND_ACCENT/glyphMask`）**未单独发版**，已包含在本版内。
+
+### 构建验证
+- APK `build/v203b18/AppleInputForSogou_v2.0.3-beta18.apk` = 22,758,981 B；
+  badging `com.chiron.iosemoji` / 58 / 2.0.3-beta18 / label `Apple Input for Sogou`；证书 `4fbf65ed…c207`。
+
+### 待验证
+- 六套主色在浅色/深色下的观感（脚本实测键/底亮度比：浅色 1.28–1.30、深色 1.55–1.60）。
+- 系统动态色可用时（Android 12+ 且壁纸取色正常）是否直接用系统 surface，不再二次染色。
+## v2.0.3-beta17 — 微信风格：发送键刷成强调色（按交接包选摘移植）
+
+### 来源
+- 用户提供的 `wechat-skin-handoff.zip`（`HANDOFF.txt` + `SkinPreset.java` + `IosSkin.java`）。
+- 该交接包**没有** `MonetPalette`（自带旧版 system_neutral 掺色实现）、也没有 `SOGOU_OLD`，
+  且 wechat 的配色值与本仓库 beta11 已一致，所以**不做整文件覆盖**，只选摘两处新增能力：
+  1. `SkinPreset.accentEnter` 字段（只有微信为 true，其余预设默认 false）；
+  2. `IosSkin.KIND_ACCENT` + `glyphMask`：强调键铺 accent 圆角底、把原图字形抠成对比色盖回。
+
+### 改法（`lsposed/app/src/main/java/com/chiron/iosemoji/skin/`）
+- `SkinPreset.java`：新增 `public final boolean accentEnter`；构造器加 18 参重载（17 参版本委托、默认 false），
+  `wechatLight()/wechatDark()` 传 `true`；其余工厂方法一行未动。
+- `IosSkin.java`：新增 `KIND_ACCENT = 4`、`ACCENT_KEYS`/`GLYPH_KEPT` 计数与 `accentKeys()/accentGlyphs()`；
+  `kindOf()` 在 `isBgImage` 之后、**`isProtected` 之前**判 `isAccentKey()`（否则 enter/return 被保护名单吃掉）；
+  `colorOfKind()` 增 `case KIND_ACCENT`（`!p.accentEnter` 时返回 0，调用方跳过 ⇒ 其他预设回到旧行为）；
+  `synth()` 增强调键分支（排在 `hasInk`/`opaqueRatio` 之前，因为这两个判据是「有字形就不动」，
+  而强调键要「留住字形、只换底」）；`patchIni()` 在 `accentEnter` 时把 `isAccentSection()` 命中的段
+  底色改 accent、`TEXT_COLOR(_PRESSED)` 改成对 accent 收口后的对比色。
+- 新增 `isAccentKey()`（只看名字，排除 `icon*`/`*_icon`/`voice`/`mic`/`smile`）、
+  `isAccentSection()`（段名含 enter/send/confirm，排除 candidate/cloud/popup）、
+  `glyphMask()`（亮度中位数二分，输出白字 + 透明底的蒙版；纯色图返回 null 只铺底不盖字）。
+
+### 构建验证
+- APK `build/v203b17/AppleInputForSogou_v2.0.3-beta17.apk` = 22,758,981 B；
+  badging `com.chiron.iosemoji` / 57 / 2.0.3-beta17 / label `Apple Input for Sogou`；证书 `4fbf65ed…c207`。
+- `classes.dex` 164,768 B：126 个类全部 `Lcom/chiron/iosemoji/*`，`de/robv` 定义 0；
+  串 `KIND_ACCENT`/`accentEnter`/`isAccentKey`/`isAccentSection`/`glyphMask`/`accentKeys`/`accentGlyphs` 均在。
+
+### 待验证
+- 微信风格下回车/发送键是否变绿且**字形仍在**（对比 `accentKeys` 与 `accentGlyphs` 两个计数，
+  前者明显大于后者说明有些键只铺了底、字形没保住）。
+- iOS / Google / 莫奈 / 搜狗经典 的发送键必须**保持原样**（它们 `accentEnter=false`）。
+
 ## v2.0.3-beta16 — 莫奈底色改回「近中性」（上一版被主色染成了色布）
 
 ### 问题

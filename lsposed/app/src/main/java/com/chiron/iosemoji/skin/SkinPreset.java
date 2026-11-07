@@ -72,10 +72,28 @@ public final class SkinPreset {
     public final boolean edgeLine;  // 是否再画一条底边分隔（iOS 有，其余没有）
     public final boolean gradient;  // 底色是否画极轻的竖向渐变（莫奈用，营造氛围感）
 
+    /**
+     * 回车 / 发送键是否也刷成 accent 强调色。
+     *
+     * <p>默认 false：只有微信风格是 true（参考微信键盘「发送键是绿的」）。
+     * iOS / Google / 莫奈 / 搜狗经典的发送键跟功能键同色，不上强调色。
+     * 关闭时 IosSkin.colorOfKind 对 KIND_ACCENT 返回 0，调用方跳过，
+     * 等于回到「动作键完全不动」的旧行为。
+     */
+    public final boolean accentEnter;
+
     SkinPreset(String id, int kbBg, int key, int keyPressed, int func, int funcPressed,
                        int popup, int barBg, int text, int textPressed, int accent,
                        float radiusRatio, int shadowColor, float shadowRadius, float shadowDy,
                        boolean edgeLine, boolean gradient) {
+        this(id, kbBg, key, keyPressed, func, funcPressed, popup, barBg, text, textPressed,
+                accent, radiusRatio, shadowColor, shadowRadius, shadowDy, edgeLine, gradient, false);
+    }
+
+    SkinPreset(String id, int kbBg, int key, int keyPressed, int func, int funcPressed,
+                int popup, int barBg, int text, int textPressed, int accent,
+                float radiusRatio, int shadowColor, float shadowRadius, float shadowDy,
+                boolean edgeLine, boolean gradient, boolean accentEnter) {
         this.id = id;
         this.kbBg = kbBg;
         this.key = key;
@@ -93,6 +111,7 @@ public final class SkinPreset {
         this.shadowDy = shadowDy;
         this.edgeLine = edgeLine;
         this.gradient = gradient;
+        this.accentEnter = accentEnter;
     }
 
     public static boolean isKnown(String id) {
@@ -224,7 +243,7 @@ public final class SkinPreset {
         return new SkinPreset(WECHAT,
                 0xFFEDEDED, 0xFFFFFFFF, 0xFFDCDCDC, 0xFFEDEDED, 0xFFDCDCDC,
                 0xFFFFFFFF, 0xFFFFFFFF, 0xFF191919, 0xFF191919, 0xFF07C160,
-                0.16f, 0x12000000, 2f, 0.5f, false, false);
+                0.16f, 0x12000000, 2f, 0.5f, false, false, true);
     }
 
     private static SkinPreset wechatDark() {
@@ -251,7 +270,7 @@ public final class SkinPreset {
                 0xFFFFFFFF,   // 文字（实测）
                 0xFFFFFFFF,   // 文字按下：微信不换字色
                 0xFF5FC595,   // 强调色 = "前往"那颗薄荷绿
-                0.19f, 0x00000000, 0f, 0f, false, false);
+                0.19f, 0x00000000, 0f, 0f, false, false, true);
     }
 
     // ── Google（Gboard / Material 3）──────────────────────────────────────
