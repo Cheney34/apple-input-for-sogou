@@ -156,7 +156,8 @@ public final class ModuleConfig {
     public static boolean miuiBottomBarEnabled() {
         // v2.0.3-beta4：默认关。H60 会 hook framework 的颜色上报链路，属于「可能影响键盘能否唤起」的改动，
         // 先让它在小米上验证过再默认开。
-        return masterEnabled() && getBoolean(KEY_MIUI_BOTTOM_BAR, false);
+        // v2.0.3-beta7：H61 已改成「改参 + 建完补一次 + 视图树兜底」三条并行，默认开。
+        return masterEnabled() && getBoolean(KEY_MIUI_BOTTOM_BAR, true);
     }
 
     /** 资源层兜底（H50）：进程级拦 AssetManager，默认关，改坏就会「键盘呼不出来」。 */

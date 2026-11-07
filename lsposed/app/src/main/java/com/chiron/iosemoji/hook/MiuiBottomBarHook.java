@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -73,6 +74,9 @@ public final class MiuiBottomBarHook {
     private static volatile Boolean sSkinDark;
     private static volatile String sManagerLoader;
     private static volatile long sLastNavApply;
+    /** IME 窗口的 decorView（onWindowShown 时抓一次），用于视图树兜底。 */
+    private static volatile java.lang.ref.WeakReference<View> sDecor;
+    private static final AtomicInteger TREE_HITS = new AtomicInteger();
     private static final int FAIL_MAX = 3;
     private static int sFails;
 
@@ -92,6 +96,7 @@ public final class MiuiBottomBarHook {
         }
         sInstalled = true;
         hookFramework(cl);
+        hookDecorCapture(cl);
         tryInstallBottomManager(cl);
         // 动态 dex 里的类要等注入完成才能 load，前几十秒反复试（失败只影响底栏配色）。
         final Handler h = new Handler(Looper.getMainLooper());
@@ -106,6 +111,29 @@ public final class MiuiBottomBarHook {
             }, d);
         }
         HookRegistry.log("H60/H61 install: framework=" + sFrameworkHooked + " manager=" + sManagerHooked);
+    }
+
+    /** 抓 IME 的 decorView：底栏是 MIUI 挂在 SoftInputWindow 上的兄弟节点。 */
+    private static void hookDecorCapture(ClassLoader cl) {
+        try {
+            XposedBridge.hookAllMethods(android.inputmethodservice.InputMethodService.class, "onWindowShown",
+                    new XC_MethodHook() {
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) {
+                            try {
+                                android.inputmethodservice.InputMethodService svc =
+                                        (android.inputmethodservice.InputMethodService) param.thisObject;
+                                if (svc.getWindow() == null || svc.getWindow().getWindow() == null) return;
+                                sDecor = new java.lang.ref.WeakReference<View>(
+                                        svc.getWindow().getWindow().getDecorView());
+                                postApply(120L);
+                            } catch (Throwable ignored) {
+                            }
+                        }
+                    });
+        } catch (Throwable t) {
+            HookRegistry.log("H60 decor capture skip: " + t);
+        }
     }
 
     /** framework 侧只做「观察 + 补一次」，不再改参（改参放到 phrase 侧，出问题也只在底栏）。 */
@@ -266,7 +294,20 @@ public final class MiuiBottomBarHook {
 
             View bottom = (View) staticField(cls, "sBottomView");
             if (bottom == null) {
-                HookRegistry.log("H60 apply skipped: sBottomView == null（等 addMiuiBottomView）");
+                // 字段名被混淆 / 还没建好：走视图树兜底，不依赖 phrase 内部字段。
+                int hits = recolorByTree(c);
+                if (hits > 0) {
+                    TREE_HITS.addAndGet(hits);
+                    APPLIED.incrementAndGet();
+                    if (APPLIED.get() <= 4) {
+                        HookRegistry.log("H60 tree fallback recolored " + hits + " view(s) -> #"
+                                + Integer.toHexString(c[0]));
+                    }
+                    return;
+                }
+                if (APPLIED.get() <= 4) {
+                    HookRegistry.log("H60 apply skipped: sBottomView == null（等 addMiuiBottomView）");
+                }
                 return;
             }
             bottom.setBackgroundColor(c[0]);
@@ -286,6 +327,75 @@ public final class MiuiBottomBarHook {
         }
     }
 
+
+    /**
+     * 视图树兜底：从 IME decorView 里找出 MIUI 那条底栏并直接刷色。
+     * 判据：android.widget 的 RelativeLayout/LinearLayout、可见、高 1dp~96dp、宽度接近满宽、背景是普通色。
+     */
+    private static int recolorByTree(int[] c) {
+        View decor = sDecor == null ? null : sDecor.get();
+        if (decor == null) return 0;
+        try {
+            java.util.ArrayList<View> out = new java.util.ArrayList<>();
+            collectBars(decor, out, 0);
+            int hits = 0;
+            for (int k = 0; k < out.size(); k++) {
+                View v = out.get(k);
+                v.setBackgroundColor(c[0]);
+                tintChildren(v, c);
+                hits++;
+            }
+            return hits;
+        } catch (Throwable t) {
+            return 0;
+        }
+    }
+
+    private static void collectBars(View v, java.util.ArrayList<View> out, int depth) {
+        if (v == null || depth > 6 || out.size() >= 3) return;
+        if (v.getVisibility() != View.VISIBLE) return;
+        int hh = v.getHeight();
+        int ww = v.getWidth();
+        boolean barLike = hh > 0 && hh <= dp(96) && ww > dp(120)
+                && (v instanceof RelativeLayout || v instanceof android.widget.LinearLayout)
+                && v.getClass().getName().startsWith("android.widget");
+        if (barLike) {
+            android.graphics.drawable.Drawable bg = v.getBackground();
+            if (bg == null || bg instanceof android.graphics.drawable.ColorDrawable) {
+                out.add(v);
+                return;
+            }
+        }
+        if (v instanceof ViewGroup) {
+            ViewGroup g = (ViewGroup) v;
+            for (int k = 0; k < g.getChildCount(); k++) {
+                collectBars(g.getChildAt(k), out, depth + 1);
+            }
+        }
+    }
+
+    private static void tintChildren(View v, int[] c) {
+        if (!(v instanceof ViewGroup)) return;
+        ViewGroup g = (ViewGroup) v;
+        for (int k = 0; k < g.getChildCount(); k++) {
+            View ch = g.getChildAt(k);
+            if (ch instanceof ImageView) {
+                ((ImageView) ch).setColorFilter(c[1]);
+            } else if (ch instanceof android.widget.TextView) {
+                ((android.widget.TextView) ch).setTextColor(c[1]);
+            }
+        }
+    }
+
+    private static int dp(int v) {
+        try {
+            Context ctx = HookState.context();
+            if (ctx == null) return v * 3;
+            return (int) (v * ctx.getResources().getDisplayMetrics().density);
+        } catch (Throwable t) {
+            return v * 3;
+        }
+    }
     private static Object staticField(Class<?> cls, String name) {
         try {
             Field f = cls.getDeclaredField(name);
@@ -355,6 +465,8 @@ public final class MiuiBottomBarHook {
                 + ";bbmg=" + (sManagerHooked ? 1 : 0)
                 + ";bbfw=" + (sFrameworkHooked ? 1 : 0)
                 + ";bbld=" + (sManagerLoader == null ? "-" : sManagerLoader)
+                + ";bbtree=" + TREE_HITS.get()
+                + ";bbdecor=" + (sDecor != null && sDecor.get() != null ? 1 : 0)
                 + ";bbdark=" + (sSkinDark == null ? "-" : (sSkinDark ? "1" : "0"))
                 + ";bbdis=" + (sDisabled ? 1 : 0);
     }

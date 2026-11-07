@@ -1,3 +1,16 @@
+## v2.0.3-beta7 — 底栏加第二条独立通道（视图树兜底）+ 开关默认开
+
+beta6 的 H61 只在「找到 `InputMethodBottomManager` 且它的 `sBottomView` 字段名没被混淆」时才生效；
+实机仍是原色 ⇒ 说明这条链在用户的 ROM 上没打通。beta7 增加一条**完全不依赖 phrase 内部字段**的通路：
+
+1. 抓 IME 的 `decorView`：hook `InputMethodService#onWindowShown` 存 WeakReference。
+2. 兜底刷色：从 decor 里递归找「`android.widget` 的 RelativeLayout/LinearLayout、可见、高 ≤96dp、宽 >120dp、背景为 null 或纯色」
+   的节点（最多 3 个），直接 `setBackgroundColor(皮肤底)`，并把其中的 ImageView 染色、TextView 改文字色。
+3. `miui_bottom_bar_enabled` **默认改为开**（H61 现在三条通路并行，且带熔断）。
+
+诊断串新增 `bbtree=视图树命中数`、`bbdecor=1/0`（是否抓到 decor）。
+
+- 产物 `build/v203b7/AppleInputForSogou_v2.0.3-beta7.apk`，versionCode 47，22,754,885 B。
 ## v2.0.3-beta6 — 全面屏底栏改 hook 真正的落点 InputMethodBottomManager（H61）
 
 ### 为什么之前的 H60 改不动底栏
