@@ -1,3 +1,76 @@
+## v2.1.6 — 键帽圆角变成可调滑块（参考 WeType UI Enhanced）
+
+### 为什么做这个
+
+前几版圆角都写死在代码里：2.1.3 是 ×1.5、2.1.4 是 30%~35%、2.1.5 是 34%~38%。
+每调一次手感都要改 Java、重新打包、覆盖安装 —— 这不是"可调"，是"每次找我改一行数"。
+
+[WeType UI Enhanced](https://github.com/Xposed-Modules-Repo/com.xposed.wetypehook) 的
+`keyCornerRadius` 做对了这件事：圆角是设置页里的一个滑块。本版照这个思路给搜狗版补上。
+
+### 改了什么
+
+**1. 设置页 →「外观」新增一行「键帽圆角」滑块**
+
+- `0` = **自动**（跟随皮肤预设，落在键高的 34%~38%）
+- `10`~`50` = **锁定**，直接作为「半径 / 键高」的比例
+- 1%~9% 会被自动吸到 10%：这一段在真机上小到看不出来，留着只会让人以为"没生效"
+- 松手才落盘 + 下发，拖动过程只更新右上角数值
+
+**2. 配置链路（跨进程）**
+
+```java
+// ModuleConfig：存字符串而不是 int
+public static final String KEY_KEY_RADIUS = "key_radius_percent";   // "0" | "10".."50"
+public static int keyRadiusPercent();                               // 解析失败一律退回 0
+
+// IosSkin.targetRatio()：滑块优先，没设才走预设区间
+int user = ModuleConfig.keyRadiusPercent();
+float eff = (user > 0) ? user / 100f
+                       : Math.max(RATIO_MIN, Math.min(RATIO_MAX, p.radiusRatio * RATIO_GAIN));
+```
+
+为什么用字符串：`RuntimeConfig` 本来就有 `STRINGS` 一条通路（皮肤预设、莫奈主色都在用它），
+再为 int 开一套 map 只会多一处类型不一致的坑。`SettingsActivity.sendConfigIntent()`
+和 `RuntimeConfig.applyFromIntent()` 各加一行即可。
+
+**3. 层级关系没有丢**
+
+长按气泡仍然是 `键帽 × 1.2`、封顶 42%，所以无论滑块在哪一档，「气泡比键帽圆」的相对关系都成立。
+
+### 为什么没有把 WeType 的其它功能一起搬过来
+
+| WeType 功能 | 搜狗版能不能做 | 原因 |
+| --- | --- | --- |
+| 键帽圆角 | ✅ 本版已做 | 位图重绘时自己画圆角 |
+| 按键/背景颜色 | ✅ 已有（9 套预设） | `SkinPreset` |
+| 品牌强调色 | ✅ 已有（accent） | `colorOfKind` |
+| 背景模糊 | ❌ | 微信输入法是 Compose + RenderEffect；搜狗是解码好的位图，没有可挂模糊的视图层 |
+| 边缘高光 / 液态玻璃 | ❌ | 依赖 HyperOS 原生视效接口，且需要实时着色器 |
+| 候选栏圆角/边距 | ⚠️ 待评估 | 候选栏底图是九宫格拉伸，改圆角会破坏切边参数 |
+| 工具栏图标背景透明度 | ⚠️ 待评估 | 图标是透明底单色字形，铺色会糊成方块（已有保护名单） |
+
+模糊和高光不是"偷懒没做"，是位图皮肤这条路上没有对应的渲染时机 —— 除非改成整层自绘键盘，
+那会打乱搜狗自己算好的九宫格 insets 与按键命中区（README 里写过为什么不做）。
+
+### 生效时机（重要）
+
+改完滑块**可能不会立刻变**：搜狗会把解码后的键帽位图缓存住，`dropCaches()` 能清掉它那份缓存，
+但已经被 View 持有的 Drawable 不会自动换。所以 Toast 里直接写了"若没变化请点「重启输入法」"。
+换皮肤预设能立刻看到，是因为切主题时搜狗会整包重新解码，圆角没有这个时机。
+
+### 构建验证
+
+- `build/AppleInputForSogou_v2.1.6.apk`；badging `com.chiron.iosemoji` / `66` / `2.1.6`；
+  证书 `4fbf65ed…c207`（与 2.1.x 同一张，可直接覆盖安装）。
+- `classes.dex` 170,168 B（2.1.5 为 167,176 B）；`key_radius_percent` / `keyRadiusPercent`
+  均已在 dex 字符串池中；APK 内 `assets/payload.zip` 与 2.1.5 sha256 相同（3911 条目 / Emoji 17.0）。
+
+### 待验证
+
+- 真机上滑到 50% 时，窄键（删除键、`123`）会不会被 `RADIUS_CAP = 0.48×短边` 挡住 —— 这是刻意的几何保险，
+  挡住说明"再大就变胶囊了"。状态卡 `skinr=` 会显示实际像素，可以直接核对。
+
 ## v2.1.5 — 修掉"改了比例却没变化"：圆角不再受原图探测值压制
 
 ### 真正的病根（v2.1.3 / v2.1.4 为什么看着一样）

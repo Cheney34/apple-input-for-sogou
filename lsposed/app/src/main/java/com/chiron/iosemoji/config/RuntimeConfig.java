@@ -76,6 +76,12 @@ public final class RuntimeConfig {
                 STRINGS.put(ModuleConfig.KEY_SKIN_PRESET, preset);
                 n++;
             }
+            // 键帽圆角（v2.1.6）：和预设一样是字符串，改完滑块就能在这个进程里立刻被读到
+            String radius = intent.getStringExtra(ModuleConfig.KEY_KEY_RADIUS);
+            if (radius != null && radius.length() > 0) {
+                STRINGS.put(ModuleConfig.KEY_KEY_RADIUS, radius);
+                n++;
+            }
         } catch (Throwable ignored) {
             // 皮肤预设解析失败就用当前值
         }

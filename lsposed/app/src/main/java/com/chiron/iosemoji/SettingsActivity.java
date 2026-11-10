@@ -7,11 +7,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +53,8 @@ public class SettingsActivity extends Activity {
     /** 当前皮肤风格的值（见 {@link SkinPreset#IDS}）。 */
     private TextView presetValue;
     private TextView monetSeedValue;
+    /** 「键帽圆角」滑块右侧的数值（自动 / 34% …）。 */
+    private TextView radiusValue;
     /** 最近一次连上的渠道名（小米定制版 / 搜狗官方版 / …），用于状态卡与 Toast。 */
     private String lastChannel;
 
@@ -187,6 +192,7 @@ public class SettingsActivity extends Activity {
                 "连资源层的键帽位图也重画。默认关：重编码会丢 nine-patch 切边数据，曾导致键盘呼不出来。",
                 true);
         addPresetRow(look);
+        addRadiusRow(look);
         addMonetSeedRow(look);
 
 
@@ -237,6 +243,115 @@ public class SettingsActivity extends Activity {
         row.setOnClickListener(v -> showPresetDialog());
         card.addView(row);
         card.addView(IosUi.separator(this, 16));
+    }
+
+    // ── 键帽圆角滑块 ─────────────────────────────────────────────────────
+    //
+    // 参考 WeType UI Enhanced 的 keyCornerRadius：圆角不该是写死在代码里的常量，
+    // 否则每换一次手感都要重新打包。滑块 0 = 自动（跟随皮肤预设的 34%~38%），
+    // 10%~50% = 用户锁定，直接作为「半径 / 键高」。
+
+    private void addRadiusRow(LinearLayout card) {
+        final int cur = readRadiusPercent();
+
+        LinearLayout wrap = new LinearLayout(this);
+        wrap.setOrientation(LinearLayout.VERTICAL);
+        int padH = IosUi.dp(this, 16);
+        wrap.setPadding(padH, IosUi.dp(this, 10), padH, IosUi.dp(this, 8));
+
+        LinearLayout titleRow = new LinearLayout(this);
+        titleRow.setOrientation(LinearLayout.HORIZONTAL);
+        titleRow.setGravity(Gravity.CENTER_VERTICAL);
+        titleRow.addView(IosRow.textColumn(this, "键帽圆角",
+                "0 = 跟随皮肤（34%~38%）；拖动锁定 10%~50%，按占键高的比例算"), IosRow.weight());
+        radiusValue = IosUi.text(this, radiusLabel(cur), 15f, IosUi.label2(this), false);
+        radiusValue.setPadding(IosUi.dp(this, 12), 0, 0, 0);
+        titleRow.addView(radiusValue);
+        wrap.addView(titleRow);
+
+        SeekBar bar = new SeekBar(this);
+        bar.setMax(50);
+        bar.setProgress(cur);
+        bar.setPadding(IosUi.dp(this, 2), 0, IosUi.dp(this, 2), 0);
+        ColorStateList accent = ColorStateList.valueOf(IosUi.BLUE);
+        bar.setProgressTintList(accent);
+        bar.setThumbTintList(accent);
+        bar.setProgressBackgroundTintList(ColorStateList.valueOf(
+                IosUi.isDark(this) ? 0x33FFFFFF : 0x22000000));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, IosUi.dp(this, 34));
+        lp.topMargin = IosUi.dp(this, 2);
+        wrap.addView(bar, lp);
+
+        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar sb, int progress, boolean fromUser) {
+                // 1%~9% 是"有值但小到看不出来"的空档，直接吸到 10%，免得滑出一串无效档
+                if (fromUser && progress > 0 && progress < 10) {
+                    sb.setProgress(10);
+                    return;
+                }
+                if (radiusValue != null) radiusValue.setText(radiusLabel(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar sb) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar sb) {
+                applyRadius(sb.getProgress());
+            }
+        });
+
+        card.addView(wrap);
+        card.addView(IosUi.separator(this, 16));
+    }
+
+    /** 读滑块当前值：0 = 自动，10~50 = 锁定（脏数据一律退回自动）。 */
+    private int readRadiusPercent() {
+        String raw = prefs.getString(ModuleConfig.KEY_KEY_RADIUS, "0");
+        int n;
+        try {
+            n = Integer.parseInt(raw == null ? "0" : raw.trim());
+        } catch (Throwable ignored) {
+            n = 0;
+        }
+        if (n <= 0) return 0;
+        return Math.min(50, Math.max(10, n));
+    }
+
+    private static String radiusLabel(int percent) {
+        return percent <= 0 ? "自动" : percent + "%";
+    }
+
+    /**
+     * 落盘 + 下发。
+     *
+     * <p>为什么 Toast 里要提「重启输入法」：皮肤位图一旦被搜狗解码并缓存，
+     * 换圆角不会让已缓存的那张图重画；{@code dropCaches()} 只能丢掉模块自己那份。
+     * 换皮肤预设能立刻看到，是因为搜狗切主题时会整包重新解码 —— 圆角没有这个时机。
+     */
+    private void applyRadius(int percent) {
+        prefs.edit().putString(ModuleConfig.KEY_KEY_RADIUS, String.valueOf(percent)).commit();
+        final int[] ok = {0};
+        for (String pkg : Protocol.TARGETS) {
+            sendConfigIntent(pkg, ok);
+        }
+        final String label = radiusLabel(percent);
+        main.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (ok[0] > 0) {
+                    toast(percent <= 0
+                            ? "圆角已恢复：跟随皮肤"
+                            : "圆角已设为 " + label + "，若没变化请点「重启输入法」");
+                } else {
+                    toast("已保存：" + label + "（搜狗进程未运行，切换输入法后生效）");
+                }
+                queryStatus(false);
+            }
+        }, REPLY_TIMEOUT_MS);
     }
 
     /** 「莫奈主色」行：只在皮肤风格选「莫奈取色」时起作用，但一直显示，方便用户先配色再换风格。 */
@@ -390,6 +505,9 @@ public class SettingsActivity extends Activity {
             // 莫奈主色（auto / pink / purple / blue / green / orange / teal）
             intent.putExtra(ModuleConfig.KEY_MONET_SEED,
                     prefs.getString(ModuleConfig.KEY_MONET_SEED, ModuleConfig.DEFAULT_MONET_SEED));
+            // 键帽圆角（"0" = 自动，其余为百分比）—— 搜狗进程据此决定 radius = 键高 × 百分比
+            intent.putExtra(ModuleConfig.KEY_KEY_RADIUS,
+                    prefs.getString(ModuleConfig.KEY_KEY_RADIUS, "0"));
             sendOrderedBroadcast(intent, null, new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context c, Intent i) {

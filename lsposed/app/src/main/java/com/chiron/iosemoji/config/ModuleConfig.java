@@ -41,6 +41,21 @@ public final class ModuleConfig {
      *  auto = 跟随系统动态色 → 壁纸主色；其余值 = 用户锁死的主色（见 skin/MonetPalette）。 */
     public static final String KEY_MONET_SEED = "monet_seed";
     public static final String DEFAULT_MONET_SEED = "auto";
+
+    /**
+     * 键帽圆角（**字符串存储的百分比**，参考 WeType UI Enhanced 的 {@code keyCornerRadius}）。
+     *
+     * <ul>
+     *   <li>{@code "0"}（默认）= 自动：跟随 {@link SkinPreset#radiusRatio} 落进 34%~38% 区间；</li>
+     *   <li>{@code "10"}~{@code "50"} = 用户锁定，直接作为「半径 / 键高」的比例。</li>
+     * </ul>
+     *
+     * <p>为什么存字符串而不是 int：跨进程下发走有序广播的 extra，字符串在
+     * {@link RuntimeConfig} 里只有一条通路（{@code STRINGS}），不必再为 int 开一套 map，
+     * 也避开了 XSharedPreferences 与 ContentProvider 两边的类型不一致。
+     */
+    public static final String KEY_KEY_RADIUS = "key_radius_percent";
+    public static final int DEFAULT_KEY_RADIUS = 0;
     public static final String KEY_CANDIDATE_PROBE = "candidate_probe_enabled";
     public static final String KEY_EMOJI_GROUPS = "emoji_group_filter_enabled";
     public static final String KEY_EMOJI_SWIPE = "emoji_swipe_enabled";
@@ -140,6 +155,25 @@ public final class ModuleConfig {
     public static String monetSeed() {
         String v = getString(KEY_MONET_SEED, DEFAULT_MONET_SEED);
         return (v == null || v.trim().length() == 0) ? DEFAULT_MONET_SEED : v.trim();
+    }
+
+    /**
+     * 用户锁定的键帽圆角百分比；{@code 0} = 跟随预设（34%~38%）。
+     *
+     * <p>取值被夹在 0~50：50 是「短边一半」的几何极限，再大就不是圆角而是胶囊，
+     * 而且 {@code IosSkin.RADIUS_CAP} 也会再挡一次。解析失败一律退回 0（自动），
+     * 绝不让一个脏配置导致键帽画不出来。
+     */
+    public static int keyRadiusPercent() {
+        String v = getString(KEY_KEY_RADIUS, "0");
+        if (v == null) return DEFAULT_KEY_RADIUS;
+        try {
+            int n = Integer.parseInt(v.trim());
+            if (n <= 0) return 0;
+            return Math.min(50, n);
+        } catch (Throwable t) {
+            return DEFAULT_KEY_RADIUS;
+        }
     }
 
     public static boolean candidateProbeEnabled() {

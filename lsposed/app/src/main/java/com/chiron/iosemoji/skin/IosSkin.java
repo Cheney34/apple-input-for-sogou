@@ -12,6 +12,8 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
 
+import com.chiron.iosemoji.config.ModuleConfig;
+
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -105,10 +107,23 @@ public final class IosSkin {
     /**
      * 该键帽这一张图实际该用多少"圆角占键高的比例"。
      *
+     * <p>v2.1.6 起设置页的「键帽圆角」滑块优先：
+     * <ol>
+     *   <li>用户设了 10%~50% → 直接用它（参考 WeType UI Enhanced 的 {@code keyCornerRadius}）；</li>
+     *   <li>设成 0（自动）→ 走预设区间 {@code clamp(radiusRatio × 2.9, 0.34, 0.38)}。</li>
+     * </ol>
+     * 长按气泡始终比键帽再圆一档（×1.2），所以层级关系在两种模式下手感一致。
+     *
      * @param kind {@link #KIND_POPUP} 时比键帽再圆一档
      */
     private static float targetRatio(SkinPreset p, int kind) {
-        float eff = Math.max(RATIO_MIN, Math.min(RATIO_MAX, p.radiusRatio * RATIO_GAIN));
+        int user = ModuleConfig.keyRadiusPercent();
+        float eff;
+        if (user > 0) {
+            eff = user / 100f;
+        } else {
+            eff = Math.max(RATIO_MIN, Math.min(RATIO_MAX, p.radiusRatio * RATIO_GAIN));
+        }
         if (kind == KIND_POPUP) eff = Math.min(POPUP_CAP, eff * POPUP_EXTRA);
         return eff;
     }
