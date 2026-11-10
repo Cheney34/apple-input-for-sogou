@@ -85,10 +85,14 @@ public final class IosSkin {
     /**
      * 圆角上限（占键帽短边的比例）—— 纯几何保险，不是设计值。
      *
-     * <p>设计值已经由 0.30~0.35 的区间管住（远小于 0.5，不会变胶囊）；
-     * 这里留 0.48 只是为了不让"宽度小于高度的窄键"算出超过半宽的半径（那会画出畸形圆角）。
+     * <p>0.5 就是"胶囊"（短边一半，两侧完全半圆），超过它算出来的圆角会互相吃掉，
+     * 画出来是一坨畸形。所以滑块给到 50% 时正好停在这条线上：
+     * 用户往右拉到底，就是这颗键能有的最圆形态，不再被一个更小的常量提前挡住。
+     *
+     * <p>v2.1.7 及以前这里是 0.48，意味着滑块 48%~50% 完全无效 ——
+     * 用户拉到 50% 却和 48% 一模一样，这本身就是"滑块没用"的一种。
      */
-    private static final float RADIUS_CAP = 0.48f;
+    private static final float RADIUS_CAP = 0.5f;
 
     /** 长按气泡比键帽再圆一点（×1.2），并封顶 0.42，避免气泡变成药丸。 */
     private static final float POPUP_EXTRA = 1.2f;
@@ -672,12 +676,11 @@ public final class IosSkin {
             float ratio = targetRatio(p, kind);
             float shortSide = Math.min(rect.width(), rect.height());
             float radius = rect.height() * ratio;
-            if (shortSide < 56f) {
-                // 位图本身很小（< 56px）说明它是被拉伸绘制的（9-patch / 平铺背景）。
-                // 小图上"按比例"算出的圆角在放大后会被摊平成直角边，这里直接给足，
-                // 拉伸后的形状才仍然是圆角矩形。
-                radius = rect.height() * Math.max(ratio, 0.44f);
-            }
+            // v2.1.8：删掉「短边 < 56px 就强推 0.44」那条兜底。
+            // 它本意是救被拉伸绘制的小图，实际后果是**把小键和滑块一起架空**：
+            // 只要位图短边 < 56，半径恒等于 0.44×键高，滑块 10%~44% 拉出来完全一样 ——
+            // 用户看到的就是"调整模块没用"。宁可小图上圆角偏小（那也只是保守），
+            // 也不能让用户的每一次拖动都落空。
             radius = Math.max(2f, Math.min(radius, shortSide * RADIUS_CAP));
             if (kind == KIND_KEY) {
                 sLastRadius = String.format(Locale.US, "%.2f/%dpx/%dx%d", ratio,

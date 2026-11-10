@@ -587,6 +587,13 @@ public class SettingsActivity extends Activity {
         String skinSkip = null;
         String skinCustom = null;
         String skinResync = null;
+        // 这几项是「带值」的诊断（不是开关），以前全被 default 分支当成布尔渲染成"关"，
+        // 于是状态卡上永远只有 "skinr=关" —— 用户想看圆角到底算了多少，看到的却是个"关"。
+        String skinRadius = null;
+        String skinKeyCount = null;
+        String blurState = null;
+        String accState = null;
+        String monetState = null;
         String channel = null;
         String channelPkg = null;
         StringBuilder eff = new StringBuilder();
@@ -647,6 +654,21 @@ public class SettingsActivity extends Activity {
                 case "resync":
                     skinResync = v;
                     break;
+                case "skinr":
+                    skinRadius = v;
+                    break;
+                case "skinkey":
+                    skinKeyCount = v;
+                    break;
+                case "blur":
+                    blurState = v;
+                    break;
+                case "acc":
+                    accState = v;
+                    break;
+                case "monetsrc":
+                    monetState = v;
+                    break;
                 default:
                     if (eff.length() > 0) eff.append(' ');
                     eff.append(k).append('=').append("1".equals(v) ? "开" : "关");
@@ -672,6 +694,21 @@ public class SettingsActivity extends Activity {
         if (skinContrast != null) skinLine.append("  对比修正=").append(skinContrast);
         if (skinCustom != null) skinLine.append("  第三方跳过=").append(skinCustom);
         if (skinResync != null) skinLine.append("  重读=").append(skinResync);
+        if (monetState != null) skinLine.append("  取色=").append(monetState);
+        if (accState != null) skinLine.append("  强调键=").append(accState);
+        if (blurState != null) skinLine.append("  模糊=").append(blurState);
+        // 圆角这一行是「滑块到底有没有生效」的唯一证据：
+        //   比例/像素/图宽x高 —— 像素是画在这张位图上的真实值
+        //   键帽=0/… 说明键帽一次都没重画，滑块再怎么拉都不会有变化
+        if (skinRadius != null || skinKeyCount != null) {
+            skinLine.append('\n').append("圆角=");
+            if (skinRadius != null) skinLine.append(skinRadius);
+            if (skinKeyCount != null) skinLine.append("  键帽=").append(skinKeyCount);
+            String cnt = skinKeyCount == null ? null : skinKeyCount;
+            if (cnt != null && (cnt.startsWith("0/") || cnt.equals("0"))) {
+                skinLine.append("（键帽未重画，滑块不生效）");
+            }
+        }
         if (eff.length() > 0) skinLine.append('\n').append(eff);
         if (skinSkip != null && skinSkip.length() > 0) {
             skinLine.append("\n没认出来的图：").append(skinSkip);

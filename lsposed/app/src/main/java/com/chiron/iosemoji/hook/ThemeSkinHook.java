@@ -60,6 +60,16 @@ public final class ThemeSkinHook {
     private static final AtomicInteger CUSTOM_SKIPPED = new AtomicInteger();
 
     /**
+     * 键帽这一类的重绘计数，以及第一张键帽的「名字@宽x高」（v2.1.8 诊断）。
+     *
+     * <p>为什么单独计：圆角滑块只对 {@link IosSkin#KIND_KEY} 生效。如果这个数是 0，
+     * 说明键帽根本没走到重绘（H41 没挂上 / 名字没认出来 / 被 hasInk 挡掉），
+     * 那不管滑块拉到多少都不会有变化 —— 先把"没画"和"画了不够圆"分开，才谈得上修。
+     */
+    private static final AtomicInteger KEY_REDRAWN = new AtomicInteger();
+    private static volatile String sKeySample = "-";
+
+    /**
      * 铁律：用户自己装的第三方皮肤一律不动（那是他自己挑的外观）。
      * 只认目录特征，不依赖任何渠道类名。
      */
@@ -274,6 +284,14 @@ public final class ThemeSkinHook {
                 param.setResult(wrapDrawable(ctx, res, tinted));
             }
             int n = IMG_REDRAWN.incrementAndGet();
+            if (kind == IosSkin.KIND_KEY) {
+                KEY_REDRAWN.incrementAndGet();
+                if ("-".equals(sKeySample)) {
+                    // 原图的宽高比任何"我以为"都可靠：滑块算的是「占键高的比例」，
+                    // 而实际画出来多少像素取决于这张图本身多大。
+                    sKeySample = baseName(path) + "@" + src.getWidth() + "x" + src.getHeight();
+                }
+            }
             if (n <= LOG_LIMIT) {
                 HookRegistry.log("H41 skin bitmap redrawn: " + baseName(path)
                         + " kind=" + kind
@@ -498,6 +516,7 @@ public final class ThemeSkinHook {
                 + ";skinp=" + IMG_PROTECTED.get()
                 + ";skint=" + IosSkin.contrastFixes()
                 + ";skinr=" + IosSkin.lastRadius()
+                + ";skinkey=" + KEY_REDRAWN.get() + "/" + sKeySample
                 + ";skinse=" + SEEN.size()
                 + ";skintp=" + CUSTOM_SKIPPED.get()
                 + ";monetsrc=" + SkinPreset.monetDescribe()
