@@ -3,9 +3,11 @@ package com.chiron.iosemoji.skin;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
@@ -563,16 +565,25 @@ public final class IosSkin {
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
             paint.setStyle(Paint.Style.FILL);
 
+            // v2.1.7：两项新效果（移植自 WeType UI Enhanced）。每张位图只读一次配置，
+            // 避免在几百张图的重绘里反复走 XSharedPreferences。
+            final boolean glassOn = ModuleConfig.glassEnabled();
+            final boolean rimOn = ModuleConfig.edgeHighlightEnabled();
+            final boolean darkOn = isDarkPreset(p);
+
             if (kind == KIND_FILL) {
+                // 液态玻璃：整块底色半透明，下面的（模糊后的）背景才透得上来。
+                // 透明度见 glassAlpha()：没挂上澎湃模糊时只做"有一点点透"，避免一片灰黑。
+                int fillColor = glassOn ? withAlphaScale(color, glassAlpha(KIND_FILL)) : color;
                 // 莫奈取色：底色不是一块死板的灰，而是一层极轻的竖向渐变
                 // （顶部略提亮 6%、底部略压暗 5%），这就是"氛围感"的来源。
                 if (p.gradient && h > 4) {
                     paint.setShader(new LinearGradient(0f, 0f, 0f, h,
-                            lighten(color, 0.06f), darken(color, 0.05f), Shader.TileMode.CLAMP));
+                            lighten(fillColor, 0.06f), darken(fillColor, 0.05f), Shader.TileMode.CLAMP));
                     canvas.drawRect(0f, 0f, w, h, paint);
                     paint.setShader(null);
                 } else {
-                    paint.setColor(color);
+                    paint.setColor(fillColor);
                     canvas.drawRect(0f, 0f, w, h, paint);
                 }
                 return out;
@@ -594,8 +605,16 @@ public final class IosSkin {
                 if (rA.width() < 2f || rA.height() < 2f) rA = new RectF(box);
                 float radA = Math.max(2f, Math.min(rA.height() * targetRatio(p, KIND_KEY),
                         Math.min(rA.width(), rA.height()) * RADIUS_CAP));
-                paint.setColor(color);
-                canvas.drawRoundRect(rA, radA, radA, paint);
+                if (glassOn) {
+                    drawGlassSurface(canvas, rA, radA,
+                            withAlphaScale(color, glassAlpha(KIND_ACCENT)), darkOn);
+                } else {
+                    paint.setColor(color);
+                    canvas.drawRoundRect(rA, radA, radA, paint);
+                }
+                if (rimOn) {
+                    drawRim(canvas, rA, radA, darkOn);
+                }
                 Bitmap glyph = glyphMask(src);
                 if (glyph != null) {
                     int ink = ensureContrast(0xFFFFFFFF, color, 1.75);
@@ -674,11 +693,243 @@ public final class IosSkin {
                 paint.clearShadowLayer();
             }
 
-            paint.setColor(color);
-            canvas.drawRoundRect(rect, radius, radius, paint);
+            // 键帽本体：玻璃模式下用「半透明 + 竖向 tint 渐变」，否则维持实心平涂。
+            // 画法差异只在"面"，圆角/位置与 v2.1.6 完全一致。
+            if (glassOn) {
+                drawGlassSurface(canvas, rect, radius,
+                        withAlphaScale(color, glassAlpha(kind)), darkOn);
+            } else {
+                paint.setColor(color);
+                canvas.drawRoundRect(rect, radius, radius, paint);
+            }
+
+            // 边缘高光：最后画，永远落在最上层（和 WeType 把高光 drawable 叠在 surface 之上一致）
+            if (rimOn) {
+                drawRim(canvas, rect, radius, darkOn);
+            }
             return out;
         } catch (Throwable t) {
             return null;
+        }
+    }
+
+    // ── 4. 边缘高光 + 液态玻璃（移植自 WeType UI Enhanced）────────────────────
+    //
+    // 参照实现：
+    //   graphics/WeTypeBloomStrokeDrawable.kt  ← 边缘高光（4 层 CSS inset box-shadow）
+    //   graphics/WeTypeHyperMaterial.kt        ← 液态玻璃（澎湃 View 隐藏 API）
+    //
+    // 为什么这里能照搬：那 4 层阴影就是纯 Canvas 的"画一圈内阴影"，跟 Compose / 视图树
+    // 无关；我们重绘键帽时正好有一块空的 Bitmap Canvas，位置、圆角都已知，
+    // 所以数值可以一比一搬过来（只有单位要从 dp 换成位图 px，见 dpScale）。
+
+    /** 一层 CSS 风格的 inset box-shadow；长度单位是 dp。 */
+    private static final class InsetShadow {
+        final float ox;
+        final float oy;
+        final float blur;
+        final float spread;
+        final int color;
+
+        InsetShadow(float ox, float oy, float blur, float spread, int color) {
+            this.ox = ox;
+            this.oy = oy;
+            this.blur = blur;
+            this.spread = spread;
+            this.color = color;
+        }
+    }
+
+    /**
+     * 与 {@code WeTypeBloomStrokeDrawable.BOX_SHADOWS} 完全一致（顺序 = CSS 层叠顺序，先列的先画、盖在上面）。
+     *
+     * <pre>
+     *   inset 2px 2px 0.25px -1.5px rgba(255,255,255,0.70)   ← 上沿那道 1px 亮线
+     *   inset 1px 1px 2px   0     rgba(255,255,255,0.80)     ← 左上方向的柔光
+     *   inset -1px -1px 2px 0     rgba(255,255,255,0.60)     ← 右下方向的柔光（更弱）
+     *   inset 0 0 10px 0.5px      rgba(0,0,0,0.09)           ← 一圈极淡的内暗角，玻璃的"厚度"
+     * </pre>
+     */
+    private static final InsetShadow[] RIM_SHADOWS = {
+            new InsetShadow(2f, 2f, 0.25f, -1.5f, 0xB3FFFFFF),
+            new InsetShadow(1f, 1f, 2f, 0f, 0xCCFFFFFF),
+            new InsetShadow(-1f, -1f, 2f, 0f, 0x99FFFFFF),
+            new InsetShadow(0f, 0f, 10f, 0.5f, 0x18000000),
+    };
+
+    /** 夜间键帽本来就暗，同样的白色高光会过曝；WeType 用 0.25 倍压下来，照抄。 */
+    private static final float RIM_DARK_SCALE = 0.25f;
+
+    /**
+     * BlurMaskFilter 的 radius 与 CSS blur 的 sigma 换算。
+     *
+     * <p>Android 的 BlurMaskFilter 半径对应的 sigma ≈ 0.5773×radius，而 CSS blur 的 sigma = blur/2，
+     * 两式相等得 radius ≈ 0.866×blur —— 与 WeType 的 {@code CSS_BLUR_TO_MASK_RADIUS} 同一个数。
+     */
+    private static final float CSS_BLUR_TO_MASK_RADIUS = 0.8660f;
+
+    /**
+     * 澎湃背景模糊是否真的挂上了（由 {@code HyperGlassHook} 回写）。
+     *
+     * <p>**只用于诊断**（状态卡 {@code blur=}）。玻璃透明度不读它 ——
+     * 位图解码与 View attach 的先后顺序不保证，见 {@link #glassAlpha(int)} 的说明。
+     */
+    private static volatile boolean sBlurReady;
+
+    public static void setBlurReady(boolean ready) {
+        sBlurReady = ready;
+    }
+
+    public static boolean blurReady() {
+        return sBlurReady;
+    }
+
+    /**
+     * 位图 px ↔ dp 的换算比例。
+     *
+     * <p>WeType 的高光长度写死 dp（2dp 亮线、2dp 柔光、10dp 内暗角）。我们的画布是位图，
+     * 真机字母键位图约 96×132px 对应 44dp，即 3.0 px/dp；按 {@code 键高/44} 自适应换算，
+     * 键帽被九宫格拉伸时高光的"视觉厚度"也保持一致。
+     */
+    private static float dpScale(RectF rect) {
+        return Math.max(1.6f, Math.min(4.2f, rect.height() / 44f));
+    }
+
+    /** 键帽是否为深色（夜间）—— 决定高光要不要乘 0.25。 */
+    private static boolean isDarkPreset(SkinPreset p) {
+        return luminance(p.kbBg) < 110;
+    }
+
+    /**
+     * 当前是否夜间（供 {@code HyperGlassHook} 选玻璃 tint 用）。
+     *
+     * <p>用系统 uiMode 而不是猜配色：玻璃的 blend colors 与深浅色是绑定的，
+     * 猜错会出现"深色键盘配浅色 tint"这种发灰的组合。
+     */
+    public static boolean isDarkNow(Context ctx) {
+        if (ctx == null) return false;
+        try {
+            return (ctx.getResources().getConfiguration().uiMode
+                    & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    /**
+     * 画边缘高光：把 4 层 inset 阴影依次画进圆角矩形内部。
+     *
+     * <p>每层阴影的几何与 CSS 一致：内阴影 = 「整块」减去「向内缩 spread、再偏移 (ox,oy) 的洞」，
+     * 只保留这圈边缘带，因而阴影永远贴着内侧，不会溢出键帽轮廓。
+     */
+    private static void drawRim(Canvas canvas, RectF rect, float radius, boolean dark) {
+        float dp = dpScale(rect);
+        Path content = new Path();
+        content.addRoundRect(rect, radius, radius, Path.Direction.CW);
+        float alphaScale = dark ? RIM_DARK_SCALE : 1f;
+
+        int save = canvas.save();
+        canvas.clipPath(content);
+        for (InsetShadow s : RIM_SHADOWS) {
+            int color = withAlphaScale(s.color, alphaScale);
+            if (Color_alpha(color) == 0) continue;
+
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(color);
+            float maskRadius = s.blur * dp * CSS_BLUR_TO_MASK_RADIUS;
+            if (maskRadius > 0.05f) {
+                paint.setMaskFilter(new BlurMaskFilter(maskRadius, BlurMaskFilter.Blur.NORMAL));
+            }
+            Path band = insetBand(rect, radius, s.ox * dp, s.oy * dp, s.spread * dp);
+            if (band != null) {
+                canvas.drawPath(band, paint);
+            }
+        }
+        canvas.restoreToCount(save);
+    }
+
+    /**
+     * 构造一层内阴影的填充区域：整块矩形 **减去** 洞（缩小 spread 并偏移后的圆角矩形）。
+     *
+     * <p>与 WeType 的 {@code buildInsetShadowPath} 同一套做法。返回 null 表示这层不必画。
+     */
+    private static Path insetBand(RectF rect, float radius, float ox, float oy, float spread) {
+        RectF hole = new RectF(rect);
+        hole.inset(spread, spread);
+        if (hole.width() <= 0f || hole.height() <= 0f) {
+            // 洞被挤没了：整块都在阴影里，直接铺满内容区（外层的 clip 会收住轮廓）
+            Path all = new Path();
+            all.addRoundRect(rect, radius, radius, Path.Direction.CW);
+            return all;
+        }
+        float holeRadius = Math.max(0f, radius - spread);
+        Path holePath = new Path();
+        holePath.addRoundRect(hole, holeRadius, holeRadius, Path.Direction.CW);
+        holePath.offset(ox, oy);
+
+        // 覆盖矩形要足够大：偏移 + 模糊都可能把阴影带推到内容区之外，外层 clip 会裁掉多余部分
+        float guard = Math.abs(ox) + Math.abs(oy) + 64f;
+        RectF cover = new RectF(rect);
+        cover.inset(-guard, -guard);
+        Path fill = new Path();
+        fill.addRect(cover, Path.Direction.CW);
+        if (!fill.op(holePath, Path.Op.DIFFERENCE)) {
+            return null;
+        }
+        return fill;
+    }
+
+    /**
+     * 把颜色 alpha 乘一个系数（0~1）。玻璃面半透明、夜间高光衰减都走这里。
+     *
+     * <p>注意只动 alpha，RGB 一律保留 —— 改配色不是这一步的职责。
+     */
+    private static int withAlphaScale(int argb, float scale) {
+        int a = Math.round(Color_alpha(argb) * Math.max(0f, Math.min(1f, scale)));
+        return (a << 24) | (argb & 0x00FFFFFF);
+    }
+
+    /**
+     * 画"液态玻璃"键帽：竖向 tint 渐变 + 半透明。
+     *
+     * <p>WeType 的玻璃是交给澎湃合成器实时取背景的，我们这边没有视图层可挂，所以做同一件事的
+     * 另一半：把面做成**半透明 + 上亮下暗的 tint**（对应它 {@code setMiBackgroundBlendColors}
+     * 的三段同色系叠加），下面的背景（有 {@code HyperGlassHook} 时是实时模糊）就会透上来。
+     */
+    private static void drawGlassSurface(Canvas canvas, RectF rect, float radius, int color,
+                                         boolean dark) {
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setShader(new LinearGradient(rect.left, rect.top, rect.left, rect.bottom,
+                lighten(color, dark ? 0.10f : 0.07f),
+                darken(color, dark ? 0.04f : 0.07f), Shader.TileMode.CLAMP));
+        canvas.drawRoundRect(rect, radius, radius, paint);
+        paint.setShader(null);
+    }
+
+    /**
+     * 玻璃面的透明度（**固定值，不依赖模糊是否挂上**）。
+     *
+     * <p>为什么不按 {@link #sBlurReady} 分两档：皮肤位图是在"键盘第一次搭起来"时解码的，
+     * 而模糊要等 View attach 之后才能开 —— 两者顺序不保证。若透明度取决于模糊状态，
+     * 第一次弹键盘必然是"兜底档"，之后又不会重解码，用户看到的就是"开了没反应"。
+     * 固定透明度以后，开了就是开了，与先后顺序无关。
+     *
+     * <p>数值取向：键帽 0.74、底色 0.66 —— 比 WeType 的 50% tint 保守一点（我们的字色是
+     * 搜狗按 ini 画的，透太多会影响正文对比度），但足以让下面的模糊背景透上来。
+     */
+    private static float glassAlpha(int kind) {
+        switch (kind) {
+            case KIND_FILL:
+                return 0.66f;
+            case KIND_POPUP:
+                return 0.88f;
+            case KIND_ACCENT:
+                return 0.82f;
+            case KIND_KEY:
+            default:
+                return 0.74f;
         }
     }
 

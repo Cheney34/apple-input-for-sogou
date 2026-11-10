@@ -12,6 +12,9 @@ public final class ConfigValues {
     public static final String[] KEYS = {
             ModuleConfig.KEY_MASTER,
             ModuleConfig.KEY_THEME_SKIN,
+            ModuleConfig.KEY_EDGE_HIGHLIGHT,
+            ModuleConfig.KEY_GLASS,
+            ModuleConfig.KEY_HYPER_BLUR,
             ModuleConfig.KEY_ASSET_SKIN,
             ModuleConfig.KEY_MIUI_BOTTOM_BAR,
             ModuleConfig.KEY_ASSET_SKIN_IMAGES,
@@ -31,6 +34,9 @@ public final class ConfigValues {
         switch (key) {
             case ModuleConfig.KEY_MASTER:
             case ModuleConfig.KEY_THEME_SKIN:
+            case ModuleConfig.KEY_EDGE_HIGHLIGHT:
+            case ModuleConfig.KEY_GLASS:
+            case ModuleConfig.KEY_HYPER_BLUR:
             case ModuleConfig.KEY_MIUI_BOTTOM_BAR:
             case ModuleConfig.KEY_EMOJI_GROUPS:
             case ModuleConfig.KEY_EMOJI_SWIPE:
@@ -53,6 +59,12 @@ public final class ConfigValues {
                 return "总开关";
             case ModuleConfig.KEY_THEME_SKIN:
                 return "改皮肤";
+            case ModuleConfig.KEY_EDGE_HIGHLIGHT:
+                return "边缘高光";
+            case ModuleConfig.KEY_GLASS:
+                return "液态玻璃";
+            case ModuleConfig.KEY_HYPER_BLUR:
+                return "澎湃实时模糊";
             case ModuleConfig.KEY_MIUI_BOTTOM_BAR:
                 return "全面屏底栏";
             case ModuleConfig.KEY_ASSET_SKIN:

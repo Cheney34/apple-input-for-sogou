@@ -41,6 +41,17 @@ public final class SetKeyboardViewHook {
                                     HookRegistry.log("H02 resync failed");
                                     HookRegistry.log(t);
                                 }
+                                // H70：液态玻璃的另一半 —— 给这块面板开澎湃实时背景模糊。
+                                // 拿的正是这次装进来的键盘视图，往上找到整块面板（键盘 + 候选栏）。
+                                try {
+                                    if (param.args != null && param.args.length > 0
+                                            && param.args[0] instanceof View) {
+                                        HyperGlassHook.onInputView((View) param.args[0]);
+                                    }
+                                } catch (Throwable t) {
+                                    HookRegistry.log("H70 apply failed");
+                                    HookRegistry.log(t);
+                                }
                             }
                         });
             }

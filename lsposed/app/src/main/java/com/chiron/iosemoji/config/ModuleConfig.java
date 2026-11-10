@@ -56,6 +56,36 @@ public final class ModuleConfig {
      */
     public static final String KEY_KEY_RADIUS = "key_radius_percent";
     public static final int DEFAULT_KEY_RADIUS = 0;
+
+    /**
+     * 边缘高光（参考 WeType UI Enhanced 的 {@code WeTypeBloomStrokeDrawable}）。
+     *
+     * <p>它那套效果就是一组 CSS inset box-shadow，逐项移植过来：
+     * <pre>
+     *   inset 2px 2px 0.25px -1.5px rgba(255,255,255,0.70)
+     *   inset 1px 1px 2px   0    rgba(255,255,255,0.80)
+     *   inset -1px -1px 2px 0    rgba(255,255,255,0.60)
+     *   inset 0 0 10px 0.5px     rgba(0,0,0,0.09)
+     * </pre>
+     * 纯 Canvas 绘制，跟 ROM 无关，任何机型都能生效。
+     */
+    public static final String KEY_EDGE_HIGHLIGHT = "edge_highlight_enabled";
+
+    /**
+     * 液态玻璃：把「键盘底 / 键帽」做成半透明玻璃面（竖向 tint 渐变 + 边缘高光 + 内阴影），
+     * 让下面的背景（配合 {@link #KEY_HYPER_BLUR} 时是实时模糊）透上来。
+     */
+    public static final String KEY_GLASS = "liquid_glass_enabled";
+
+    /**
+     * 澎湃实时背景模糊（{@code View.setMiBackgroundBlurMode} 那条隐藏 API）。
+     *
+     * <p>移植自 WeType UI Enhanced 的 {@code WeTypeHyperMaterial}：只有当机型真的支持
+     * 才会调用（SDK≥33 / {@code ro.mi.os.version.code}≥3 / {@code persist.sys.background_blur_supported}
+     * / {@code background_blur_enable}=1），否则整段静默跳过 —— 不会把键盘刷成透明。
+     */
+    public static final String KEY_HYPER_BLUR = "hyper_blur_enabled";
+
     public static final String KEY_CANDIDATE_PROBE = "candidate_probe_enabled";
     public static final String KEY_EMOJI_GROUPS = "emoji_group_filter_enabled";
     public static final String KEY_EMOJI_SWIPE = "emoji_swipe_enabled";
@@ -174,6 +204,24 @@ public final class ModuleConfig {
         } catch (Throwable t) {
             return DEFAULT_KEY_RADIUS;
         }
+    }
+
+    /**
+     * 边缘高光（键帽一圈的内阴影高光）。默认开：它只在键帽内侧加 1~2dp 的高光/暗角，
+     * 不改变配色，属于"加了更像玻璃"而不是"换了一套皮肤"。
+     */
+    public static boolean edgeHighlightEnabled() {
+        return themeSkinEnabled() && getBoolean(KEY_EDGE_HIGHLIGHT, true);
+    }
+
+    /** 液态玻璃（半透明玻璃面）。默认开 —— 关闭就是回到 2.1.6 的实心键帽。 */
+    public static boolean glassEnabled() {
+        return themeSkinEnabled() && getBoolean(KEY_GLASS, true);
+    }
+
+    /** 澎湃实时背景模糊；依赖 {@link #glassEnabled()}（没有玻璃面就没有可透的东西）。 */
+    public static boolean hyperBlurEnabled() {
+        return glassEnabled() && getBoolean(KEY_HYPER_BLUR, true);
     }
 
     public static boolean candidateProbeEnabled() {

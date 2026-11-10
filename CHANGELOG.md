@@ -1,3 +1,88 @@
+## v2.1.7 — 边缘高光 + 液态玻璃（照 WeType UI Enhanced 移植）
+
+### 为什么这次是"照搬"，不是"另做一套"
+
+v2.1.6 的圆角滑块也是参考它做的，但只取了思路。这一版两个效果**数值与调用序列全部一比一移植**，
+因为那套在微信输入法上已经跑通、观感也验证过，自己再造一套只会再交一次学费。
+
+### 1. 边缘高光 —— 4 层 CSS inset box-shadow，纯 Canvas
+
+参照 `graphics/WeTypeBloomStrokeDrawable.kt`，它的效果就是这四条：
+
+```css
+inset 2px 2px 0.25px -1.5px rgba(255,255,255,0.70)   /* 上沿亮线 */
+inset 1px 1px 2px   0      rgba(255,255,255,0.80)   /* 左上柔光 */
+inset -1px -1px 2px 0      rgba(255,255,255,0.60)   /* 右下反光 */
+inset 0 0 10px 0.5px       rgba(0,0,0,0.09)         /* 内暗角 */
+```
+
+移植到 `IosSkin.drawRim()`，几何完全同构：内阴影 = 「整块」减去「缩 `spread` 再偏移 `(ox,oy)` 的洞」，
+只留贴边的那一圈（`insetBand()`）。三处换算也照抄：
+
+| 项 | WeType | 这里 |
+| --- | --- | --- |
+| 长度单位 | dp | 位图 px，`dp = 键高/44`（96×132 的键 → 3.0） |
+| 模糊半径 | `blur × 0.866`（与 CSS sigma 对齐） | 同一个系数 |
+| 夜间强度 | alpha × 0.25 | 同一个系数 |
+
+**为什么高光要配玻璃才明显**：白色键帽本身就是 255，白高光没有"可上升空间"。实测剖面：
+实心键帽 255 → 加高光后仍是 254~255（看不出），而玻璃键帽（0.74 alpha 叠在背景上，约 246）
+加高光后顶边 253、往下 246，这才有 7~9 级的可见梯度。所以两项是一对。
+
+### 2. 液态玻璃 —— 澎湃原生模糊 + 半透明玻璃面
+
+参照 `graphics/WeTypeHyperMaterial.kt`，调用序列原样：
+
+```java
+setPassWindowBlurEnabled(view, true);      // 并读 mNeedPassWindowBlur 校验是否真的准入
+setMiBackgroundBlurMode(1);
+setMiBackgroundBlurRadius(40dp);
+setMiViewBlurMode(1);
+setMiBackgroundBlendColors([light: 121/3/3 | dark: 15/3/3]);   // 三色 tint，数值照抄
+setMiBackgroundBlurType(0);
+setMixEffectEnabled(false);
+setMiBlurWinType(65536) → 500ms → 1;       // 新版 ROM 的离屏填充，早切不生效
+```
+
+落在 `hook/HyperGlassHook.java`（H70），挂在 H02 `setKeyboardView` 上 —— 每次弹键盘都会走一次，
+所以"改设置 → 再弹一次键盘"就能生效。**任何一个 API 抛异常或被拒，整段回滚**（`rollback()`），
+不会留下半套配置把键盘刷成透明。
+
+**准入条件（与 WeType 的 `isAvailable()` 同源）**：Android 13+ / 有这套 View 方法 /
+`ro.mi.os.version.code ≥ 3` / `persist.sys.background_blur_supported=true` /
+`background_blur_enable=1`。不同的是：**系统属性读不到时不拦**（hidden API 受限不等于机型不支持），
+交给实际调用去失败 —— 属性读失败一次就永久误判"不支持"，比调用失败更难查。
+
+### 3. 透明度为什么是固定值
+
+一开始写的是"模糊挂上了用 0.62、没挂上用 0.92"，画完发现是错的：皮肤位图在键盘第一次搭起来时
+就解码了，模糊要等 View attach 之后才开 —— 顺序不保证，第一次弹键盘必然拿到兜底档，而且不会重解码，
+表现就是"开了没反应"。所以改成固定 **键帽 0.74 / 底色 0.66 / 气泡 0.88 / 强调键 0.82**，
+与先后顺序无关。比 WeType 的 50% tint 保守一点（我们的正文色是搜狗按 ini 画的，透太多影响对比度）。
+
+### 4. 没有搬的部分（以及为什么）
+
+| WeType 里有的 | 这里 | 原因 |
+| --- | --- | --- |
+| `setMiGlass` / `setMiGlassBlurRadius` / `setGlassBloom` / `setMiViewMaterialType` | ✗ | 需要 `persist.sys.bionic_material_supported` + `advanced_visual_release ≥ 4`，且参数是 20+ 个浮点的原生令牌，机型差异大 |
+| `RuntimeShader` 画的外阴影 | ✗ | 只在面板外沿有用；我们是位图键帽，外面就是键盘底色 |
+| 视图层实时重绘 | ✗ | 搜狗是解码好的位图，只能"生成时决定"，不能"每帧重算" |
+
+### 构建验证
+
+- `build/AppleInputForSogou_v2.1.7.apk` = 25,777,733 B；badging `com.chiron.iosemoji` / `67` / `2.1.7`；
+  证书 `4fbf65ed…c207`（与 2.1.x 同一张，可直接覆盖安装）。
+- `classes.dex` 170,168 → 182,396 B；`HyperGlassHook` / `edge_highlight_enabled` /
+  `liquid_glass_enabled` / `hyper_blur_enabled` / `setMiBackgroundBlurMode` /
+  `mNeedPassWindowBlur` 均在 dex 字符串池中。
+- APK 内 `assets/payload.zip` 与 2.1.6 sha256 相同（3911 条目 / Emoji 17.0）—— 表情、快捷码未动。
+
+### 待验证
+
+- 状态卡新增 `blur=`：`ok` = 澎湃模糊真的挂上了；`非澎湃 3+` / `系统「背景模糊」未开` /
+  `窗口未准入` / `该机型无 View 模糊 API` = 卡在哪一步，直接照着这一行判断。
+- 若第 2 格（玻璃但无模糊）看着"太透"，把设置页的「液态玻璃」关掉即可，配色不受影响。
+
 ## v2.1.6 — 键帽圆角变成可调滑块（参考 WeType UI Enhanced）
 
 ### 为什么做这个

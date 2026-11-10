@@ -180,6 +180,16 @@ public class SettingsActivity extends Activity {
         addSwitch(look, ModuleConfig.KEY_THEME_SKIN, "改皮肤（推荐）",
                 "改搜狗**自己的默认皮肤**：配色、键帽形状、候选栏底色都按所选风格重画。"
                         + "布局、按键命中、候选栏高度全部沿用搜狗原样，所以不会错位。", true);
+        addSwitch(look, ModuleConfig.KEY_EDGE_HIGHLIGHT, "边缘高光",
+                "在键帽内侧加一圈高光：上沿一道 1px 白线 + 左上/右下柔光 + 一圈极淡内暗角。"
+                        + "照 WeType UI Enhanced 的 4 层 CSS 阴影一比一移植，纯 Canvas 绘制，任何机型都能用。", true);
+        addSwitch(look, ModuleConfig.KEY_GLASS, "液态玻璃",
+                "键盘底与键帽改成半透明玻璃面（上亮下暗的 tint 渐变），下面的背景会透上来。"
+                        + "关掉就回到实心键帽。", true);
+        addSwitch(look, ModuleConfig.KEY_HYPER_BLUR, "澎湃实时背景模糊",
+                "给键盘面板开澎湃的实时背景模糊（View 隐藏 API，移植自 WeType UI Enhanced 的 HyperMaterial）。"
+                        + "仅 Android 13+ 的澎湃 3+、且系统设置里开了「背景模糊」时生效；"
+                        + "不支持的机型会自动跳过、保持原样，状态卡里 blur= 会写明原因。", true);
         addSwitch(look, ModuleConfig.KEY_MIUI_BOTTOM_BAR, "全面屏底栏跟随皮肤（实验）",
                 "MIUI「全面屏键盘优化」底部那条栏也用所选皮肤的底色/图标色（仅小米定制版）。"
                         + "仍在验证，默认关；若开关后键盘呼不出来，先关掉它再点「重启输入法」。",

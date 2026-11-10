@@ -73,6 +73,8 @@ public final class ConfigBridge {
                         // 换皮肤预设后必须丢掉搜狗的位图缓存，否则还是上一套配色
                         ThemeSkinHook.dropCaches();
                         MiuiBottomBarHook.reapply();
+                        // 液态玻璃开了/关了要立刻在这块面板上生效（不用等下次弹键盘）
+                        HyperGlassHook.reapply();
                                     setResultCode(Protocol.RESULT_OK);
                         setResultData(state(ctx));
                         runConfigCallback();
@@ -172,6 +174,8 @@ public final class ConfigBridge {
         sb.append(";sg=").append(sogouVersion(ctx));
         // 皮肤改动是否真的落到了搜狗的皮肤资源上 —— 这行是"改没改到"的唯一判据
         sb.append(';').append(ThemeSkinHook.stateFields());
+        // 液态玻璃：blur=ok 说明澎湃实时模糊真的挂上了；其它值就是被哪一步挡住（一句话原因）
+        sb.append(";blur=").append(HyperGlassHook.status());
         String unmatched = ThemeSkinHook.unmatchedNames();
         if (unmatched.length() > 0) sb.append(";skip=").append(unmatched);
         String seen = ThemeSkinHook.seenNames();
