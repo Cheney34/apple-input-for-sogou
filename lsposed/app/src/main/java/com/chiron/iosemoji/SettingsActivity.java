@@ -591,6 +591,7 @@ public class SettingsActivity extends Activity {
         // 于是状态卡上永远只有 "skinr=关" —— 用户想看圆角到底算了多少，看到的却是个"关"。
         String skinRadius = null;
         String skinKeyCount = null;
+        String skinUnder = null;
         String blurState = null;
         String accState = null;
         String monetState = null;
@@ -660,6 +661,10 @@ public class SettingsActivity extends Activity {
                 case "skinkey":
                     skinKeyCount = v;
                     break;
+                case "skinb":
+                    // v2.1.9：底层被抽掉的按键段数「已透明/段里没有 BG_COLOR」
+                    skinUnder = v;
+                    break;
                 case "blur":
                     blurState = v;
                     break;
@@ -704,6 +709,9 @@ public class SettingsActivity extends Activity {
             skinLine.append('\n').append("圆角=");
             if (skinRadius != null) skinLine.append(skinRadius);
             if (skinKeyCount != null) skinLine.append("  键帽=").append(skinKeyCount);
+            // v2.1.9：底层（[Key*] 段的 BG_COLOR）抽掉了几段。0/0 说明按键段里根本没有这个键，
+            // 底层是别的东西（另一张底图 / 另一个图层）——那就要去 hook 那一层，调半径永远没用。
+            if (skinUnder != null) skinLine.append("  底层=").append(skinUnder);
             String cnt = skinKeyCount == null ? null : skinKeyCount;
             if (cnt != null && (cnt.startsWith("0/") || cnt.equals("0"))) {
                 skinLine.append("（键帽未重画，滑块不生效）");

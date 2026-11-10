@@ -168,6 +168,24 @@ public final class IosSkin {
 
     private static final AtomicInteger TXT_FIXED = new AtomicInteger();
 
+    /**
+     * 被「抽掉底层」的按键段数（v2.1.9 诊断）。
+     *
+     * <p>{@code UNDER_CLEARED} = 真的把 {@code BG_COLOR} 打成透明的段数；
+     * {@code UNDER_SEEN} = 有底图但段里压根没有 {@code BG_COLOR} 这个键的段数
+     * （这种只能靠 synth() 里「先铺键盘底色」那层兜住）。
+     *
+     * <p>状态卡上读 {@code skinb=已透明/无此键}：两个都是 0 说明这段代码没跑到任何按键段，
+     * 底层是别的形式（另一张底图 / 另一个图层），下一步就得去 hook 那一层而不是继续调半径。
+     */
+    private static final AtomicInteger UNDER_CLEARED = new AtomicInteger();
+    private static final AtomicInteger UNDER_SEEN = new AtomicInteger();
+
+    /** 被抽掉底色的按键段数（诊断用）。 */
+    public static String underCleared() {
+        return UNDER_CLEARED.get() + "/" + UNDER_SEEN.get();
+    }
+
     /** 因对比度不足而被改写的文字/图标颜色次数（诊断用）。 */
     public static int contrastFixes() {
         return TXT_FIXED.get();
@@ -293,7 +311,51 @@ public final class IosSkin {
             }
         }
 
+        // 键帽底层（v2.1.9）：[Key] / [Key_ABC] / [Key_Enter] 这类段自带一层实心底色，
+        // 它画在 H41 重画的圆角位图**下面**，形状是方的，而且不跟着预设走
+        // —— 圆角画成透明的四个角露出来的就是它，"怎么调半径都没变化"的真正原因。
+        // 这里把它打成全透明，让键帽的轮廓只由那张圆角位图决定。
+        //
+        // 只在段里确实声明了底图（BG_IMAGES / BG_IMAGE 非空）时才动：
+        // 没有底图的段是纯色块（"这颗键的形就是这块颜色"），抽掉颜色整颗键会消失，
+        // 宁可保持原样 —— 那种段由 synth() 里的「先铺键盘底色」兜住。
+        for (String name : sections.keySet()) {
+            if (!isKeySection(name)) continue;
+            Map<String, String> s = sections.get(name);
+            if (!hasBgImage(s)) continue;
+            boolean cleared = put(s, "BG_COLOR", "0x00000000");
+            cleared |= put(s, "BG_COLOR_PRESSED", "0x00000000");
+            if (cleared) UNDER_CLEARED.incrementAndGet();
+            else UNDER_SEEN.incrementAndGet();
+        }
+
         return changed;
+    }
+
+    /**
+     * 这一段是不是「按键」段：{@code [Key]} / {@code [Key_ABC]} / {@code [Key_Enter]} …
+     *
+     * <p>要排掉 {@code [Keyboard]}（整块键盘容器，它的 BG_IMAGE=Background 是键盘底，
+     * 打成透明会把整个键盘底抽掉，直接黑屏一片）。
+     */
+    private static boolean isKeySection(String name) {
+        if (name == null) return false;
+        String s = name.toLowerCase(Locale.ROOT);
+        if (s.startsWith("keyboard")) return false;
+        return s.equals("key") || s.startsWith("key_");
+    }
+
+    /** 段里是否声明了底图 —— 有底图才说明"形"是由图片画的，底色可以安全抽掉。 */
+    private static boolean hasBgImage(Map<String, String> s) {
+        if (s == null) return false;
+        return nonEmpty(s.get("BG_IMAGES")) || nonEmpty(s.get("BG_IMAGE"))
+                || nonEmpty(s.get("BG_IMAGES_PRESSED")) || nonEmpty(s.get("BG_IMAGE_PRESSED"));
+    }
+
+    private static boolean nonEmpty(String v) {
+        if (v == null) return false;
+        String t = v.trim();
+        return t.length() > 0 && !"0".equals(t) && !"none".equalsIgnoreCase(t);
     }
 
     /**
@@ -599,6 +661,24 @@ public final class IosSkin {
                 canvas.drawRect(0f, 0f, w, h, paint);
                 return out;
             }
+
+            // ── 先「替换底层」，再画键帽（v2.1.9）──────────────────────────────
+            //
+            // 圆角一直「看不见」的根因在这里：H41 只换掉了搜狗取到的那张键帽位图，
+            // 而这一格底下还有搜狗自己的一层实心底 —— 可能是 [Key*] 段的 BG_COLOR，
+            // 也可能是键盘/容器底图。那层是**方的**，而且完全不随预设变色（默认皮肤恒为近白）。
+            // 我们把圆角画成透明，四个角就把底下那层方的颜色露出来：
+            // 半径从 24px 调到 48px，看到的轮廓依旧是方的 —— 前几版一直在调半径公式，
+            // 量的都是上面这张图，坏的是底下那张。
+            //
+            // 做法：整张位图先铺满键盘底色，让这张图成为「这一格唯一的底」。
+            // 圆角以外那块直接就是键盘底色，底下垫着什么都盖住了。
+            // 配合 patchIni 里把 [Key*] 段的 BG_COLOR 打成透明（仅限有底图的段），两层保险：
+            // 一层保证「底下没东西」，一层保证「就算有也看不见」。
+            final int under = glassOn ? withAlphaScale(p.kbBg, glassAlpha(KIND_FILL)) : p.kbBg;
+            paint.setShader(null);
+            paint.setColor(under);
+            canvas.drawRect(0f, 0f, w, h, paint);
 
             // 强调键（回车 / 发送）：铺 accent 圆角底，再把原图字形抠出来改成对比色盖回去。
             // 必须排在 hasInk / opaqueRatio 之前 —— 那两个判据是「有字形就不动」，

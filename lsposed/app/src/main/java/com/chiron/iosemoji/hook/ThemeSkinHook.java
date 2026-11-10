@@ -517,6 +517,7 @@ public final class ThemeSkinHook {
                 + ";skint=" + IosSkin.contrastFixes()
                 + ";skinr=" + IosSkin.lastRadius()
                 + ";skinkey=" + KEY_REDRAWN.get() + "/" + sKeySample
+                + ";skinb=" + IosSkin.underCleared()
                 + ";skinse=" + SEEN.size()
                 + ";skintp=" + CUSTOM_SKIPPED.get()
                 + ";monetsrc=" + SkinPreset.monetDescribe()
