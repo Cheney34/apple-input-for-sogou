@@ -14,6 +14,7 @@ import com.chiron.iosemoji.compat.Targets;
 import com.chiron.iosemoji.hook.CandidateProbeHook;
 import com.chiron.iosemoji.hook.ConfigBridge;
 import com.chiron.iosemoji.hook.HookRegistry;
+import com.chiron.iosemoji.hook.KeyBgDrawableHook;
 import com.chiron.iosemoji.hook.KeyCapDrawHook;
 import com.chiron.iosemoji.hook.AssetSkinHook;
 import com.chiron.iosemoji.hook.MiuiBottomBarHook;
@@ -212,6 +213,18 @@ public class HookEntry implements IXposedHookLoadPackage {
             KeyCapDrawHook.install(cl);
         } catch (Throwable t) {
             HookRegistry.log("keycap draw hook failed");
+            HookRegistry.log(t);
+        }
+        // H72：键帽背景的 Drawable 层接管（v2.3.0）。
+        //
+        // 这才是键帽真正的落点：皮肤 png 从磁盘读出来 → utils.e#f 包成 Drawable →
+        // 当成元素背景画。H41 挂的是 assets 那条读图路，皮肤解包到磁盘后根本不走它，
+        // 所以前九版「改了但没变化」—— 九宫格和 26 键其实一样，都没被改到。
+        // 装不上不影响任何原有功能。
+        try {
+            KeyBgDrawableHook.install(cl);
+        } catch (Throwable t) {
+            HookRegistry.log("key bg drawable hook failed");
             HookRegistry.log(t);
         }
         // 资源级兜底：直接拦 AssetManager.open()，不依赖任何混淆类名。

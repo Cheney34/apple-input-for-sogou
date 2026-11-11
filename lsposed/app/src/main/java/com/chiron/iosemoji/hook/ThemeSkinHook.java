@@ -484,6 +484,10 @@ public final class ThemeSkinHook {
      * 全程 try/catch：清不掉只是"下次重启才换色"，不影响稳定性。
      */
     public static void dropCaches() {
+        // 先无条件把「配置代」推进一格：不管下面搜狗那份缓存清不清得掉，
+        // H72 手里那些 drawable 的参数都必须按新配色重算一遍
+        //（以前只在清缓存成功后重算，结果是「换了预设，键帽还是旧色」）。
+        KeyCapDrawableHook_bump();
         try {
             ClassLoader cl = ThemeSkinHook.class.getClassLoader();
             if (cl == null) return;
@@ -528,6 +532,55 @@ public final class ThemeSkinHook {
         }
     }
 
+    /**
+     * 配置代：换预设 / 拖圆角 / 开关玻璃之后 +1。
+     *
+     * <p>H72 把「drawable → 键帽参数」缓存在 drawable 自己身上，只比这一个整数；
+     * 变了一格就重算一次。比每次 draw 都读 SharedPreferences 便宜得多
+     * （一屏 30 颗键，每秒六十帧，重算是几千次/秒）。
+     */
+    private static final java.util.concurrent.atomic.AtomicInteger CONFIG_GEN =
+            new java.util.concurrent.atomic.AtomicInteger();
+
+    public static int configGen() {
+        return CONFIG_GEN.get();
+    }
+
+    /** 配置变了：让 H72 把每个 drawable 的参数重算一遍。 */
+    public static void bumpConfigGen() {
+        CONFIG_GEN.incrementAndGet();
+        try {
+            KeyBgDrawableHook.invalidate();
+        } catch (Throwable ignored) {
+        }
+        try {
+            IosSkin.clearCapCache();
+        } catch (Throwable ignored) {
+        }
+    }
+
+    private static void KeyCapDrawableHook_bump() {
+        try {
+            CONFIG_GEN.incrementAndGet();
+            KeyBgDrawableHook.invalidate();
+            IosSkin.clearCapCache();
+        } catch (Throwable ignored) {
+        }
+    }
+
+    /**
+     * H72 用：按图名解析当前预设（颜色 / 深色 / 圆角都从这里来）。
+     *
+     * <p>只在「登记」和「配置代变了」时调用，不在每帧里跑。
+     */
+    public static SkinPreset presetForName(String name) {
+        try {
+            return preset(HookState.context(), name);
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
     /** 诊断/状态回显用：一眼看出「改到没改到」。 */
     public static String summary() {
         return "skin(preset=" + ModuleConfig.skinPreset()
@@ -561,6 +614,7 @@ public final class ThemeSkinHook {
                 + ";sking=" + IMG_GUESSED.get() + "/" + sGuessSample
                 + ";skinb=" + IosSkin.underCleared()
                 + ";capk=" + KeyCapDrawHook.state()
+                + ";keybg=" + KeyBgDrawableHook.state()
                 + ";skinse=" + SEEN.size()
                 + ";skintp=" + CUSTOM_SKIPPED.get()
                 + ";monetsrc=" + SkinPreset.monetDescribe()

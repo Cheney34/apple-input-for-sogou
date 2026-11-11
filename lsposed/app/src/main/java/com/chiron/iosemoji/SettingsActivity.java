@@ -594,6 +594,7 @@ public class SettingsActivity extends Activity {
         String skinUnder = null;
         String skinGuess = null;
         String capDraw = null;
+        String keyBgState = null;
         String blurState = null;
         String accState = null;
         String monetState = null;
@@ -675,6 +676,10 @@ public class SettingsActivity extends Activity {
                     // v2.2.0：真实画布上的键帽实绘次数「实绘/九宫格切片/落点未知/首个落点」
                     capDraw = v;
                     break;
+                case "keybg":
+                    // v2.3.0：Drawable 那条路「接管张数/已画次数/首个名字@宽x高」
+                    keyBgState = v;
+                    break;
                 case "blur":
                     blurState = v;
                     break;
@@ -742,6 +747,21 @@ public class SettingsActivity extends Activity {
                 skinLine.append("（九宫格切片放行，键帽没实绘）");
             } else if (none) {
                 skinLine.append("（drawBitmap 没被调用）");
+            }
+        }
+        // v2.3.0：Drawable 那条路 —— 键帽背景真正的落点。
+        //   接管>0 且 已画>0 → 屏幕上就是模块画的圆角键帽（九宫格、26 键都算）
+        //   接管=0 → 一张键背景都没抓到（工厂没命中，或名字/形状没过闸）
+        //   接管>0、已画=0 → 抓到了但 draw 没被调用，说明还有第三层绘制
+        if (keyBgState != null) {
+            skinLine.append('\n').append("键底=").append(keyBgState);
+            String[] seg = keyBgState.split("/");
+            boolean taken = seg.length > 0 && !"0".equals(seg[0]);
+            boolean drawn = seg.length > 1 && !"0".equals(seg[1]);
+            if (!taken) {
+                skinLine.append("（没抓到键帽背景，键帽不可能变）");
+            } else if (!drawn) {
+                skinLine.append("（抓到了但没被绘制）");
             }
         }
         if (eff.length() > 0) skinLine.append('\n').append(eff);

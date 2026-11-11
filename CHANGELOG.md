@@ -1,3 +1,84 @@
+## v2.3.0 键帽背景改在 Drawable 层接管 —— 前九版改的那条路搜狗根本没走
+
+**先把话说清楚：前九版（v2.1.3 ~ v2.2.2）改的东西，在默认皮肤上从来没被执行过。**
+
+把 APK 重新解包、对照反编译代码之后，键帽背景的真实链路是这样的：
+
+```
+assets/theme/theme_default/1080/layout/images_config.ini
+    [key_png]      IMAGE=key.png,28,30,38,40      TYPE=1     ← 九宫格（py_9）的键面
+    [key_qwerty_png] IMAGE=key_qwerty.png,28,30,38,40 TYPE=1  ← 26 键的键面
+        ↓  com.sogou.theme.parse.frame.i#R()（ImageParserFrame）
+        ↓  com.sogou.lib.common.picture.bitmap.a.p(File)      ← 从**磁盘**读
+   com.sogou.theme.utils.e#f(Context, Bitmap, 文件名, 内边距)
+        ↓  包成 NinePatchDrawable
+   com.sogou.theme.data.drawable.l / h   →  draw(Canvas)
+```
+
+而 H41 挂的是 `com.sogou.theme.common.j#f` —— 那是 **assets** 那条读图路
+（`context.getAssets().open(str)`）。皮肤第一次启动就会解包到磁盘，之后一直走
+`bitmap.a.p(File)`，`common.j#f` **一次都不会被调用**。
+
+所以：
+
+- 换颜色能看见，是因为颜色走的是 H40 的 ini 改写（`TEXT_COLOR` / `BG_COLOR`）；
+- 圆角、液态玻璃、边缘高光全是"改位图"，位图那张函数压根没被调用 → 一律没变化；
+- 九宫格和 26 键其实**一样**都没被改到，不是只有九键有问题。
+
+这也解释了为什么半径从 24px 调到 53px、加玻璃、加高光、加滑块，屏幕上一个像素都不动：
+不是效果不明显，是那段代码没有执行。
+
+### 本版做法：在 Drawable 出口接管
+
+新增 `H72`（`hook/KeyBgDrawableHook.java`）：
+
+1. 挂 `com.sogou.theme.utils.e#f / #c`（drawable 工厂）。出厂那一刻就能拿到
+   `(Drawable, 文件名, 原位图)`，判断"这是不是键帽"后把 drawable 实例登记进表；
+2. 挂 `com.sogou.theme.data.drawable.l#draw(Canvas)` 和 `#h#draw(Canvas)`。
+   命中登记表 → 用 `IosSkin.drawCapOn()` 在 `getBounds()` 上自己画
+   圆角面 / 液态玻璃 / 4 层边缘高光 → `setResult(null)` 跳过原始绘制。
+
+键的矩形来自 `getBounds()`（搜狗自己算的），所以 **九宫格几何、26 键、横竖屏、
+空格与回车的特殊宽度全部照旧**，只有"长什么样"换成我们的。九宫格这次不需要
+任何特判 —— 它用的 `KeyBg_Default → key.png` 和 26 键的
+`KeyBg_Default_Latin → key_qwerty.png` 是同一套机制、同一个工厂。
+
+### 三道闸门（照旧兜底）
+
+- 名字：`IosSkin.kindOf()` 必须判成 `KIND_KEY`；
+- 形状：短边 ≥ 32px、高/宽 ≥ 1.15、名字不含 grid/topline/icon
+  —— `key_grid.png`（九宫格切换图标，30×30 满不透明）、`key_grid_topline.png`（6×1 分隔线）
+  名字都以 `key` 开头，靠这条挡掉；
+- 字形：`hasBakedGlyph()` 为真的图不碰（少数第三方皮肤"一颗键一张带字母的图"，
+  换掉就把字母擦了）。
+
+### 不铺底色
+
+`Cap` 新增 `under` 开关：位图那条路（H41/H71）才可能需要盖住搜狗自己的方形实心底；
+Drawable 这条路我们替换的**就是**这一格的背景本身，再铺一层 `p.kbBg` 近似色
+只会把键盘底图盖成一块方块（v2.2.1 那个"深色模式淡灰方块"就是这么来的）。
+所以这条路固定 `noUnder()`，圆角外直接透出搜狗的键盘底图，玻璃也是真的透过去。
+
+### 配置代
+
+`ThemeSkinHook.configGen()`：换预设 / 拖圆角 / 开关玻璃 → `dropCaches()` 里先把这一格 +1。
+H72 把算好的 `Cap` 缓存在 drawable 自己身上，只比这一个 int，变了一格才重算
+—— 一屏 30 颗键每秒六十帧，不能每帧读 SharedPreferences。
+
+### 状态卡
+
+新增一行 `键底=接管张数/已画次数/首个名字@宽x高`：
+
+- **接管 > 0 且已画 > 0** → 屏幕上的键帽就是模块画的（九宫格、26 键都算）；
+- **接管 = 0** → 一张键背景都没抓到，说明这个渠道连 drawable 工厂都不一样，得再定位；
+- **接管 > 0、已画 = 0** → 抓到了但 `draw()` 没被调用，说明还有第三层绘制。
+
+### 其他
+
+- `payload.zip`（Emoji 17.0 / 3911 条）与 v2.2.2 逐字节一致，sha256 `5682b683…`；
+- 签名证书不变（`4fbf65ed…c207`），可直接覆盖安装；
+- dex 192,644 → 197,684 B，多出来的就是 H72 这一套。
+
 ## v2.2.2 — 九宫格：三道闸门逐一放开
 
 ### 为什么九键一直「什么都没发生」

@@ -948,8 +948,18 @@ public final class IosSkin {
         public final boolean rim;
         /** 圆角占键高的比例（已含滑块 / 预设区间）。 */
         public final float ratio;
+        /**
+         * 画键帽之前要不要先把整格铺成键盘底色。
+         *
+         * <p>v2.3.0：这条只在「位图那条路」（H41/H71）上用 —— 那边我们拿到的是搜狗的一张图，
+         * 底下可能还垫着它自己的方形实心底，清不掉就得盖。
+         * 而「Drawable 那条路」（H72）里我们替换的<b>就是</b>这一格的背景本身，
+         * 底下是搜狗的键盘底图，再铺一层近似色只会把背景画成一块方块（深色模式那个淡灰方块）。
+         */
+        public final boolean under;
 
-        Cap(int kind, int color, int kbBg, boolean dark, boolean glass, boolean rim, float ratio) {
+        Cap(int kind, int color, int kbBg, boolean dark, boolean glass, boolean rim,
+                float ratio, boolean under) {
             this.kind = kind;
             this.color = color;
             this.kbBg = kbBg;
@@ -957,6 +967,13 @@ public final class IosSkin {
             this.glass = glass;
             this.rim = rim;
             this.ratio = ratio;
+            this.under = under;
+        }
+
+        /** 复制一份、改成「不铺底色」—— Drawable 那条路要用。 */
+        public Cap noUnder() {
+            if (!under) return this;
+            return new Cap(kind, color, kbBg, dark, glass, rim, ratio, false);
         }
     }
 
@@ -966,7 +983,7 @@ public final class IosSkin {
         try {
             return new Cap(kind, color, p.kbBg, isDarkPreset(p),
                     ModuleConfig.glassEnabled(), ModuleConfig.edgeHighlightEnabled(),
-                    targetRatio(p, kind));
+                    targetRatio(p, kind), coverNeeded());
         } catch (Throwable t) {
             return null;
         }
@@ -1029,6 +1046,7 @@ public final class IosSkin {
         return w + "x" + h + "|" + cap.kind
                 + "|" + Integer.toHexString(cap.color) + "|" + Integer.toHexString(cap.kbBg)
                 + "|" + (cap.dark ? 1 : 0) + (cap.glass ? 1 : 0) + (cap.rim ? 1 : 0)
+                + (cap.under ? "u" : "")
                 + "|" + Math.round(cap.ratio * 100f);
     }
 
@@ -1086,8 +1104,8 @@ public final class IosSkin {
         //    键盘底是图片、p.kbBg 是近似纯色，两层叠出来的差值就是那个「淡灰色小方块」。
         //    现在不铺的时候，圆角外直接透出搜狗自己的键盘底（图），既没有方块，
         //    液态玻璃也是真的"透过去"，而不是透在一层我们自己涂的假底色上。
-        if (coverNeeded()) {
-            int under = (cap.glass ? withAlphaScale(cap.kbBg, glassAlpha(KIND_FILL)) : cap.kbBg);
+        if (coverNeeded() && cap.under) {
+            final int under = cap.glass ? withAlphaScale(cap.kbBg, glassAlpha(KIND_FILL)) : cap.kbBg;
             p.setColor(applyAlpha(under, alpha));
             canvas.drawRect(dst, p);
         }
