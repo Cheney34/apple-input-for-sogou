@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.chiron.iosemoji"
     android:versionCode="74"
-    android:versionName="2.4.0">
+    android:versionName="2.3.1">
 
     <queries>
         <package android:name="com.sohu.inputmethod.sogou.xiaomi" />

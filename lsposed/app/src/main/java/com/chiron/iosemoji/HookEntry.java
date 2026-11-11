@@ -173,7 +173,7 @@ public class HookEntry implements IXposedHookLoadPackage {
             installThemeHooks(ctx.getClassLoader());
             tryInstallInputViewHooks(ctx.getClassLoader());
 
-            // v2.4.0：皮肤目录里那批「空白键面 png」提前换掉。
+            // v2.3.1：皮肤目录里那批「空白键面 png」提前换掉。
             // 放在这里是因为它只需要 Context（不需要任何搜狗类名），
             // 而且在键盘视图搭起来之前动手，图还没被解进内存，改动一定生效。
             try {
@@ -243,7 +243,7 @@ public class HookEntry implements IXposedHookLoadPackage {
             HookRegistry.log("key bg drawable hook failed");
             HookRegistry.log(t);
         }
-        // H73：盘上重绘（v2.4.0）—— 把皮肤目录里的空白键面 png 直接换成 iOS 键帽，
+        // H73：盘上重绘（v2.3.1）—— 把皮肤目录里的空白键面 png 直接换成 iOS 键帽，
         // 外加一道解码兜底（皮肤图唯一的磁盘解码出口 bitmap.a#p）。
         // 这是唯一一条不依赖"拦哪一层绘制"的路：改的是输入文件。
         try {

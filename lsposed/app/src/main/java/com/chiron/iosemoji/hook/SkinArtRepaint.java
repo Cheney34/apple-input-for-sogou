@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * H73：把皮肤里的**空白键面 png 直接重画掉**（v2.4.0）。
+ * H73：把皮肤里的**空白键面 png 直接重画掉**（v2.3.1）。
  *
  * <h3>为什么这次不拦绘制的任何一层</h3>
  * v2.1.3~v2.3.0 一直在「拦绘制」：先拦 assets 解码（H41），再拦落屏 drawBitmap（H71），
