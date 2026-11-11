@@ -629,6 +629,7 @@ public final class ThemeSkinHook {
                 + ";skinkey=" + KEY_REDRAWN.get() + "/" + sKeySample
                 + ";sking=" + IMG_GUESSED.get() + "/" + sGuessSample
                 + ";skinb=" + IosSkin.underCleared()
+                + ";9key=" + IosSkin.nineKeyFixed()
                 + ";capk=" + KeyCapDrawHook.state()
                 + ";keybg=" + KeyBgDrawableHook.state()
                 + ";art=" + SkinArtRepaint.state()

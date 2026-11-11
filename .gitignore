@@ -33,3 +33,4 @@ desktop.ini
 # 本地离线预览产物（tools/_art_preview.py 生成）
 preview_compare.png
 zoom_right.png
+zoom_cmp.png

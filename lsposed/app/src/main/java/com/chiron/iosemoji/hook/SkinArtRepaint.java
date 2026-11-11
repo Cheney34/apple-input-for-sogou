@@ -68,7 +68,7 @@ public final class SkinArtRepaint {
     };
 
     /** 画法版本：改了 {@link IosSkin#paintKeyFace} 的画法就 +1，否则旧图不会重画。 */
-    private static final String ART_VERSION = "a2";
+    private static final String ART_VERSION = "a3";
 
     private static final String MARKER = ".ioskeyart";
 

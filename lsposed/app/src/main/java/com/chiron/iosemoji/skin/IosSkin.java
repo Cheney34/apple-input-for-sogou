@@ -188,6 +188,31 @@ public final class IosSkin {
     }
 
     /**
+     * 九宫格的主键段名。
+     *
+     * <p>这 9 个是九宫格**独有**的段名（26 键用 {@code Key_Q} / {@code Key_W} …），
+     * 它们在自己那份布局文件里**没有 {@code BG_IMAGES}** —— 26 键的每个键都显式写了
+     * {@code KeyBg_Default_Latin}，九宫格一颗都没写。没有 BG_IMAGES 就不加载底图，
+     * 按键用一块纯色填充 —— 这就是「改 key.png、调圆角、加高光，九宫格全都纹丝不动」
+     * 的最终答案：<b>它根本没有那张图</b>。
+     *
+     * <p>刻意不包含 {@code Key_Enter}（该是强调色）、{@code Key_Space_py9}
+     * （宽度是一半屏，套九宫格切片会被拉成一条长条）、{@code Key_Digits}（已指定
+     * {@code KeyBg_Function}）—— 这几个保持原样更稳。
+     */
+    private static final String[] NINE_KEY_SECTIONS = {
+            "Key_PunctPY", "Key_ABC", "Key_DEF", "Key_GHI", "Key_JKL",
+            "Key_MNO", "Key_PQRS", "Key_TUV", "Key_WXYZ",
+    };
+
+    /** 本轮给九宫格补过 BG_IMAGES 的段数（诊断用）。 */
+    private static final AtomicInteger NINE_FIXED = new AtomicInteger();
+
+    public static int nineKeyFixed() {
+        return NINE_FIXED.get();
+    }
+
+    /**
      * 还需不需要「整格铺键盘底色」这层兜底（v2.2.1）。
      *
      * <p>v2.1.9 无条件铺，结果在深色模式下变成一颗颗<b>比背景略浅的小方块</b> ——
@@ -365,6 +390,20 @@ public final class IosSkin {
         // 只在段里确实声明了底图（BG_IMAGES / BG_IMAGE 非空）时才动：
         // 没有底图的段是纯色块（"这颗键的形就是这块颜色"），抽掉颜色整颗键会消失，
         // 宁可保持原样 —— 那种段由 synth() 里的「先铺键盘底色」兜住。
+        // 九宫格的主键补底图（v2.3.2）：这 9 个段在 py_9.ini 里没有 BG_IMAGES，
+        // 没有底图 = 不加载 key.png = 一块纯色。所以 26 键早就跟着预设走了，
+        // 九宫格却永远是那个死平的灰块，圆角/玻璃/高光一样都落不下去。
+        // 放在清 BG_COLOR 之前：补完之后它们就有底图了，下面那条规则会顺带把
+        // 段里可能残留的方形实心底色抽掉。
+        for (String name : NINE_KEY_SECTIONS) {
+            Map<String, String> s = sections.get(name);
+            if (s == null) continue;
+            if (hasBgImage(s)) continue;
+            s.put("BG_IMAGES", "KeyBg_Default");
+            NINE_FIXED.incrementAndGet();
+            changed = true;
+        }
+
         for (String name : sections.keySet()) {
             if (!isKeySection(name)) continue;
             Map<String, String> s = sections.get(name);
@@ -1008,26 +1047,32 @@ public final class IosSkin {
             canvas.drawPath(face, paint);
             paint.setShader(null);
 
-            // 液态玻璃：顶部一层白色受光带 + 底部一层压暗。
-            // 上界停在 30% 高度 —— 必须落在九宫格拉伸带（y=38，约 43%）之上，
-            // 跨过去的话受光带会被纵向拉成一大片，看起来像"键帽被切了一刀"。
-            if (glass) {
+            // 顶部受光 + 底部压暗：之前只在「液态玻璃」开启时才画，而且只有 0x22（13%），
+            // 这么淡的一层贴到 60×90 的小图上、再被九宫格放大 5 倍，屏幕上基本是看不见的。
+            // 现在改成「边缘高光或玻璃任一开启」就画，强度提到 0x48（28%）。
+            //
+            // 上界 24% 高度这条**别改大**：
+            //   ① 九宫格纵向拉伸带在 y=38..50（键面内约 41%~57%），跨过去会被拉成一大片；
+            //   ② 更实际的原因是显示比例 —— 九宫格纵向要拉长 2 倍多，源图上 24% 的受光带
+            //      落到屏幕上只剩顶部 12% 左右，再大就变成"整颗键蒙了一层雾"而不是"顶部受光"。
+            final boolean darkFace = isDarkPreset(p);
+            if (glass || rim) {
                 int save = canvas.save();
                 canvas.clipPath(face);
                 Paint sheen = new Paint(Paint.ANTI_ALIAS_FLAG);
-                float yEnd = rect.top + rect.height() * 0.30f;
+                float yEnd = rect.top + rect.height() * 0.24f;
                 sheen.setShader(new LinearGradient(0f, rect.top, 0f, yEnd,
-                        0x22FFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
+                        darkFace ? 0x48FFFFFF : 0x26FFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
                 canvas.drawRect(rect.left, rect.top, rect.right, yEnd, sheen);
 
                 float yStart = rect.bottom - rect.height() * 0.26f;
                 sheen.setShader(new LinearGradient(0f, yStart, 0f, rect.bottom,
-                        0x00000000, 0x1F000000, Shader.TileMode.CLAMP));
+                        0x00000000, darkFace ? 0x33000000 : 0x1A000000, Shader.TileMode.CLAMP));
                 canvas.drawRect(rect.left, yStart, rect.right, rect.bottom, sheen);
                 canvas.restoreToCount(save);
             }
 
-            if (rim) drawFaceEdge(canvas, face, rect);
+            if (rim) drawFaceEdge(canvas, face, rect, darkFace);
             return out;
         } catch (Throwable t) {
             return null;
@@ -1038,9 +1083,12 @@ public final class IosSkin {
      * 键面内沿的两道边：上沿亮线（受光）+ 下沿暗线（厚度）。
      *
      * <p>两条都**裁在轮廓里侧**画，所以九宫格怎么切都不会把它切到键外去。
-     * 上沿只画顶部 18% 那段，越往下自然淡出 —— 这就是 iOS 键帽最容易被认出来的那一笔。
+     * 上沿只画顶部 16% 那段，越往下自然淡出 —— 这就是 iOS 键帽最容易被认出来的那一笔。
+     *
+     * <p>深色键面给 0xC4（77%），浅色键面给 0x9E（62%）：白键上再叠纯白只会糊成一片，
+     * 62% 刚好让边缘"脆"起来又不发亮。早先这里是 0x66（40%），放大后基本看不见。
      */
-    private static void drawFaceEdge(Canvas canvas, Path face, RectF rect) {
+    private static void drawFaceEdge(Canvas canvas, Path face, RectF rect, boolean darkFace) {
         float sw = Math.max(1f, rect.height() * 0.022f) * 2f; // 裁掉外侧一半，所以给两倍
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
         p.setStyle(Paint.Style.STROKE);
@@ -1048,15 +1096,15 @@ public final class IosSkin {
 
         int save = canvas.save();
         canvas.clipPath(face);
-        canvas.clipRect(rect.left, rect.top, rect.right, rect.top + rect.height() * 0.13f);
-        p.setColor(0x66FFFFFF);
+        canvas.clipRect(rect.left, rect.top, rect.right, rect.top + rect.height() * 0.14f);
+        p.setColor(darkFace ? 0xC4FFFFFF : 0x9EFFFFFF);
         canvas.drawPath(face, p);
         canvas.restoreToCount(save);
 
         save = canvas.save();
         canvas.clipPath(face);
         canvas.clipRect(rect.left, rect.bottom - rect.height() * 0.10f, rect.right, rect.bottom);
-        p.setColor(0x2E000000);
+        p.setColor(darkFace ? 0x38000000 : 0x24000000);
         canvas.drawPath(face, p);
         canvas.restoreToCount(save);
     }
