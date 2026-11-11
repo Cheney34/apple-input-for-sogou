@@ -164,6 +164,9 @@ public final class KeyBgDrawableHook {
             // 数字和 ABC 是另画的 FG_STYLE，所以这条闸门不会挡住九宫格。
             if (IosSkin.hasBakedGlyph(src)) return;
             if (!ModuleConfig.themeSkinEnabled()) return;
+            // v2.4.0：盘上重绘（H73）已经把这张键面换成 iOS 键帽了。
+            // 这里再接管一次就是"玻璃叠玻璃"，所以让它先。
+            if (SkinArtRepaint.active()) return;
 
             SkinPreset p = ThemeSkinHook.presetForName(name);
             if (p == null) return;

@@ -917,6 +917,150 @@ public final class IosSkin {
         }
     }
 
+    // ── 3.4 「空白键面」重画（v2.4.0）──────────────────────────────────────
+    //
+    // 这一节是给 **盘上重绘** 用的：把 key.png / key_qwerty.png 这类**空白键面位图**
+    // 直接换成 iOS 键帽，再写回磁盘。搜狗自己会把它读上来、做九宫格切片、当成键底画 ——
+    // 我们只管把这张图的像素做对，不参与它的任何绘制流程。
+    //
+    // 为什么又换赛道：前三版都是「拦绘制」，可九宫格的键底到底经哪一层落屏，
+    // 从外部看始终有歧义（H41 的 assets 路 / H72 的 Drawable 路 / 容器底板 / 按下态覆盖）。
+    // 拦错一层，整版就是"没有变化"。改文件没有这个问题 —— 文件是唯一的输入，
+    // 而且一份文件同时管住 26 键、九宫格、功能键、按下态和长按气泡。
+    //
+    // 九宫格切片的约束（直接决定下面的画法，别乱改）：
+    //   images_config.ini  [key_png] IMAGE=key.png,28,30,38,40 TYPE=1
+    //   → 横向固定 28 / 30，纵向固定 38 / 50，只有宽 2px、高 2px 的十字会被拉伸。
+    //   所以 ① 圆角不能越过左侧 28px（否则弧线被拉成斜边）；
+    //        ② 渐变不能跨过 y=38..40（否则画面上会出现一道横向色阶断层）。
+
+    /**
+     * 圆角占「键面宽度」的比例（0.12~0.55）。
+     *
+     * <p>盘上重绘的源图只有 48~54px 宽，却要铺到 100~150px 的键上（约 1.9 倍），
+     * 所以**只看比例**，不看像素：比例对，放大后手感才对。
+     * 滑块 10%~50% 映射到 0.12~0.55（从"接近原样"到"胶囊"），自动档落在 0.335。
+     */
+    public static float keyRadiusFrac(SkinPreset p) {
+        int user = ModuleConfig.keyRadiusPercent();
+        float t = user > 0 ? Math.max(0f, Math.min(1f, (user - 10) / 40f)) : 0.53f;
+        return 0.22f + 0.30f * t;
+    }
+
+    /**
+     * 把一张**空白键面**重画成 iOS 键帽（保留原图尺寸与透明外边距）。
+     *
+     * <p>不做任何"这是不是键帽"的判断：调用方已经按文件名认准了。
+     * 这批图（key.png / key_qwerty.png / key_func.png …）都是同一张空面，
+     * 圆角、玻璃、高光全都由这里给。
+     *
+     * @param pressed 按下态：整体压暗一档，且不画落影
+     * @return 新的位图；失败返回 null（调用方保持原样）
+     */
+    public static Bitmap paintKeyFace(Bitmap src, int color, SkinPreset p, boolean pressed) {
+        if (src == null || src.isRecycled() || p == null) return null;
+        final int w = src.getWidth();
+        final int h = src.getHeight();
+        if (w < 8 || h < 8) return null;
+        try {
+            Rect box = opaqueBounds(src);
+            if (box == null || box.width() < 4 || box.height() < 4) box = new Rect(0, 0, w, h);
+
+            final boolean glass = ModuleConfig.glassEnabled();
+            final boolean rim = ModuleConfig.edgeHighlightEnabled();
+
+            Bitmap out = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(out);
+
+            float gap = Math.max(1f, box.height() * 0.018f);
+            RectF rect = new RectF(box.left + gap, box.top + gap, box.right - gap, box.bottom - gap);
+            if (rect.width() < 4f || rect.height() < 4f) rect = new RectF(box);
+
+            float maxR = Math.min(rect.width(), rect.height()) * 0.5f;
+            float frac = keyRadiusFrac(p);
+            float radius = Math.max(2f, Math.min(rect.width() * frac, maxR));
+            sLastRadius = String.format(Locale.US, "%.2f/%dpx/%dx%d",
+                    frac, Math.round(radius), Math.round(rect.width()), Math.round(rect.height()));
+
+            Path face = new Path();
+            face.addRoundRect(rect, radius, radius, Path.Direction.CW);
+
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setStyle(Paint.Style.FILL);
+
+            // 落影：只在键缝里那一圈，深色模式下很淡，浅色模式下是 iOS 的那种"贴纸感"
+            if (!pressed && Color_alpha(p.shadowColor) > 0) {
+                paint.setColor(withAlphaScale(color, 0.9f));
+                paint.setShadowLayer(p.shadowRadius, 0f, p.shadowDy, p.shadowColor);
+                canvas.drawPath(face, paint);
+                paint.clearShadowLayer();
+            }
+
+            // 键面本体：不透明 + 极轻的竖向渐变（上亮下暗）。
+            // 不透明是有意的 —— 预设给的 key 色就是这颗键该有的颜色，
+            // 半透明会把预设稀释掉（之前 26 键看起来比预设暗两档就是这个原因）。
+            // 渐变也刻意做得很轻（6% / 3%）：九宫格只拉伸中间那 2px，渐变一强，
+            // 拉伸带两侧就会显出横向色阶。真要"更亮"，靠的是键面整体提亮，不是靠渐变。
+            int base = pressed ? darken(color, 0.07f) : color;
+            paint.setShader(new LinearGradient(0f, rect.top, 0f, rect.bottom,
+                    lighten(base, glass ? 0.06f : 0.02f),
+                    darken(base, glass ? 0.03f : 0.02f), Shader.TileMode.CLAMP));
+            canvas.drawPath(face, paint);
+            paint.setShader(null);
+
+            // 液态玻璃：顶部一层白色受光带 + 底部一层压暗。
+            // 上界停在 30% 高度 —— 必须落在九宫格拉伸带（y=38，约 43%）之上，
+            // 跨过去的话受光带会被纵向拉成一大片，看起来像"键帽被切了一刀"。
+            if (glass) {
+                int save = canvas.save();
+                canvas.clipPath(face);
+                Paint sheen = new Paint(Paint.ANTI_ALIAS_FLAG);
+                float yEnd = rect.top + rect.height() * 0.30f;
+                sheen.setShader(new LinearGradient(0f, rect.top, 0f, yEnd,
+                        0x22FFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
+                canvas.drawRect(rect.left, rect.top, rect.right, yEnd, sheen);
+
+                float yStart = rect.bottom - rect.height() * 0.26f;
+                sheen.setShader(new LinearGradient(0f, yStart, 0f, rect.bottom,
+                        0x00000000, 0x1F000000, Shader.TileMode.CLAMP));
+                canvas.drawRect(rect.left, yStart, rect.right, rect.bottom, sheen);
+                canvas.restoreToCount(save);
+            }
+
+            if (rim) drawFaceEdge(canvas, face, rect);
+            return out;
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    /**
+     * 键面内沿的两道边：上沿亮线（受光）+ 下沿暗线（厚度）。
+     *
+     * <p>两条都**裁在轮廓里侧**画，所以九宫格怎么切都不会把它切到键外去。
+     * 上沿只画顶部 18% 那段，越往下自然淡出 —— 这就是 iOS 键帽最容易被认出来的那一笔。
+     */
+    private static void drawFaceEdge(Canvas canvas, Path face, RectF rect) {
+        float sw = Math.max(1f, rect.height() * 0.022f) * 2f; // 裁掉外侧一半，所以给两倍
+        Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+        p.setStyle(Paint.Style.STROKE);
+        p.setStrokeWidth(sw);
+
+        int save = canvas.save();
+        canvas.clipPath(face);
+        canvas.clipRect(rect.left, rect.top, rect.right, rect.top + rect.height() * 0.13f);
+        p.setColor(0x66FFFFFF);
+        canvas.drawPath(face, p);
+        canvas.restoreToCount(save);
+
+        save = canvas.save();
+        canvas.clipPath(face);
+        canvas.clipRect(rect.left, rect.bottom - rect.height() * 0.10f, rect.right, rect.bottom);
+        p.setColor(0x2E000000);
+        canvas.drawPath(face, p);
+        canvas.restoreToCount(save);
+    }
+
     // ── 3.5 真实画布上的键帽（v2.2.0）──────────────────────────────────────
     //
     // 为什么要有这一节：前六版都只改「搜狗喂过来的那张位图」，而那张图最终画到屏幕上

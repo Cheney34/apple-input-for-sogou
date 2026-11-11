@@ -163,6 +163,11 @@ public final class ThemeSkinHook {
                                 return;
                             }
                             SkinPreset preset = preset(HookState.context(), path);
+                            // v2.4.0：顺手把皮肤目录里那几张**空白键面 png** 换成 iOS 键帽。
+                            // 这是唯一一处同时知道「皮肤在磁盘上哪个目录」的地方 ——
+                            // 拿到 ini 路径就等于拿到了它的同级 res/ 目录。
+                            // 放在 patchIni 之前：颜色的 patch 失败与否不影响键面重画。
+                            SkinArtRepaint.noteIni(path);
                             if (!IosSkin.patchIni(path, sections, preset)) return;
                             int n = INI_PATCHED.incrementAndGet();
                             if (n <= LOG_LIMIT) {
@@ -268,6 +273,12 @@ public final class ThemeSkinHook {
             }
             if (!ModuleConfig.themeSkinEnabled()) return;
             int kind = IosSkin.kindOf(name);
+            // v2.4.0：盘上重绘已经生效 ⇒ 解出来的这张图**本身就是**我们画的键帽，
+            // 再重绘一遍就是玻璃叠两层（键面会明显发亮、发灰）。
+            if (SkinArtRepaint.active() && kind == IosSkin.KIND_KEY) {
+                IMG_BYPASS.incrementAndGet();
+                return;
+            }
             if (kind == IosSkin.KIND_NONE) {
                 // 名字没认出来 —— 但九宫格的键帽图名各渠道自己起（key_9 / py9_key / num_normal …），
                 // 对不上就整条链断在这里（"九键没有玻璃和高光"），所以补一道几何判定。
@@ -488,6 +499,11 @@ public final class ThemeSkinHook {
         // H72 手里那些 drawable 的参数都必须按新配色重算一遍
         //（以前只在清缓存成功后重算，结果是「换了预设，键帽还是旧色」）。
         KeyCapDrawableHook_bump();
+        // v2.4.0：盘上那批键面图是按「预设 + 圆角 + 玻璃」画的，换了就得重画。
+        try {
+            SkinArtRepaint.invalidate();
+        } catch (Throwable ignored) {
+        }
         try {
             ClassLoader cl = ThemeSkinHook.class.getClassLoader();
             if (cl == null) return;
@@ -615,6 +631,8 @@ public final class ThemeSkinHook {
                 + ";skinb=" + IosSkin.underCleared()
                 + ";capk=" + KeyCapDrawHook.state()
                 + ";keybg=" + KeyBgDrawableHook.state()
+                + ";art=" + SkinArtRepaint.state()
+                + ";artlast=" + SkinArtRepaint.last()
                 + ";skinse=" + SEEN.size()
                 + ";skintp=" + CUSTOM_SKIPPED.get()
                 + ";monetsrc=" + SkinPreset.monetDescribe()
