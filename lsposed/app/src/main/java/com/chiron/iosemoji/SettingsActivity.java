@@ -592,6 +592,7 @@ public class SettingsActivity extends Activity {
         String skinRadius = null;
         String skinKeyCount = null;
         String skinUnder = null;
+        String capDraw = null;
         String blurState = null;
         String accState = null;
         String monetState = null;
@@ -665,6 +666,10 @@ public class SettingsActivity extends Activity {
                     // v2.1.9：底层被抽掉的按键段数「已透明/段里没有 BG_COLOR」
                     skinUnder = v;
                     break;
+                case "capk":
+                    // v2.2.0：真实画布上的键帽实绘次数「实绘/九宫格切片/落点未知/首个落点」
+                    capDraw = v;
+                    break;
                 case "blur":
                     blurState = v;
                     break;
@@ -715,6 +720,20 @@ public class SettingsActivity extends Activity {
             String cnt = skinKeyCount == null ? null : skinKeyCount;
             if (cnt != null && (cnt.startsWith("0/") || cnt.equals("0"))) {
                 skinLine.append("（键帽未重画，滑块不生效）");
+            }
+        }
+        // v2.2.0：这一行才是"屏幕上到底是不是我们画的"的唯一证据。
+        //   实绘>0 → 落屏重画生效，圆角/玻璃/高光一定看得见
+        //   实绘=0、切片>0 → 搜狗按九宫格把图切成 9 块画，我们放行了（下一步要处理切片）
+        //   三项全 0 → drawBitmap 压根没被调用，键盘是 GL/原生画的，得换 hook 点
+        if (capDraw != null) {
+            skinLine.append('\n').append("实绘=").append(capDraw);
+            String[] seg = capDraw.split("/");
+            boolean none = seg.length > 0 && "0".equals(seg[0]);
+            if (none && seg.length > 2 && !"0".equals(seg[1])) {
+                skinLine.append("（九宫格切片放行，键帽没实绘）");
+            } else if (none) {
+                skinLine.append("（drawBitmap 没被调用）");
             }
         }
         if (eff.length() > 0) skinLine.append('\n').append(eff);

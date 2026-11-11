@@ -14,6 +14,7 @@ import com.chiron.iosemoji.compat.Targets;
 import com.chiron.iosemoji.hook.CandidateProbeHook;
 import com.chiron.iosemoji.hook.ConfigBridge;
 import com.chiron.iosemoji.hook.HookRegistry;
+import com.chiron.iosemoji.hook.KeyCapDrawHook;
 import com.chiron.iosemoji.hook.AssetSkinHook;
 import com.chiron.iosemoji.hook.MiuiBottomBarHook;
 import com.chiron.iosemoji.hook.SetKeyboardViewHook;
@@ -202,6 +203,15 @@ public class HookEntry implements IXposedHookLoadPackage {
             ThemeSkinHook.install(cl, sTargets);
         } catch (Throwable t) {
             HookRegistry.log("theme skin hook failed");
+            HookRegistry.log(t);
+        }
+        // H71：键帽落屏重画（v2.2.0）。挂在 framework 的 Canvas.drawBitmap 上，
+        // 与搜狗的混淆类名无关 —— 换句话说，只要搜狗是用 Canvas 把键画出来的，这条就一定挂得上。
+        // 装不上也不影响任何原有功能（主题仍走 H40/H41）。
+        try {
+            KeyCapDrawHook.install(cl);
+        } catch (Throwable t) {
+            HookRegistry.log("keycap draw hook failed");
             HookRegistry.log(t);
         }
         // 资源级兜底：直接拦 AssetManager.open()，不依赖任何混淆类名。

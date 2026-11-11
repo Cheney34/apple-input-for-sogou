@@ -16,6 +16,7 @@ import android.graphics.Shader;
 
 import com.chiron.iosemoji.config.ModuleConfig;
 
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -470,6 +471,13 @@ public final class IosSkin {
                 || n.equals("key.png") || n.equals("key_n.png") || n.equals("key_p.png")) {
             return KIND_KEY;
         }
+        // v2.2.0：九宫格（py_9 / big_9）用的键帽图不在上面那份白名单里 ——
+        // 反馈「九键的键帽没被改到」就是这里漏的：九键的图名是 key_9 / key_big / key_abc 之类，
+        // 一个都没命中，于是 H41 直接 return，连登记都没登记，落屏时自然什么都画不出来。
+        // 这里放开成「key 开头就算键帽」，但仍然排在 isBgImage / isAccentKey / isProtected 之后，
+        // 后面还有 hasInk / opaqueRatio(≥0.85) / 满幅 三道几何闸门兜着 ——
+        // 图标是"透明底 + 单色字形"，过不了那三道门，不会被刷成色块。
+        if (n.startsWith("key") && !n.startsWith("keyboard")) return KIND_KEY;
         return KIND_NONE;
     }
 
@@ -794,6 +802,205 @@ public final class IosSkin {
         } catch (Throwable t) {
             return null;
         }
+    }
+
+    // ── 3.5 真实画布上的键帽（v2.2.0）──────────────────────────────────────
+    //
+    // 为什么要有这一节：前六版都只改「搜狗喂过来的那张位图」，而那张图最终画到屏幕上
+    // 还要经过 ① 九宫格切边（images_config.ini 的 IMAGE=key.png,28,30,38,40）② 底下的
+    // 容器/底板图层 ③ 各种拉伸。任何一层不配合，圆角、玻璃、高光就全部消失 ——
+    // 用户看到的永远是"改了但没变化"。
+    //
+    // 现在的做法：**不再指望那张位图**。H41 重画完之后把 (位图 → 键帽参数) 登记一下，
+    // 由 {@code KeyCapDrawHook} 在 Canvas.drawBitmap 真正落屏的那一刻，用登记好的参数
+    // 重新画一遍键帽：先把这一格涂满键盘底色（底下垫什么都盖住），再画圆角面/玻璃/高光，
+    // 最后跳过原始绘制。看到的像素 100% 是我们画的，不再取决于搜狗怎么摆图层。
+
+    /**
+     * 一张键帽「落屏时」需要的全部参数。
+     *
+     * <p>为什么要在 H41 那一刻快照下来，而不是每次绘制时现算：
+     * {@code Canvas.drawBitmap} 每秒会被调几百次，里面不能读 SharedPreferences，
+     * 也不该再走一遍预设解析。参数在重画时算一次，之后就是纯数值绘制。
+     *
+     * <p>滑块/预设变化时 {@link #capOf} 会重新算 —— 前提是
+     * {@code ThemeSkinHook.dropCaches()} 把搜狗缓存清掉、位图重新走一遍 H41。
+     */
+    public static final class Cap {
+        public final int kind;
+        public final int color;
+        public final int kbBg;
+        public final boolean dark;
+        public final boolean glass;
+        public final boolean rim;
+        /** 圆角占键高的比例（已含滑块 / 预设区间）。 */
+        public final float ratio;
+
+        Cap(int kind, int color, int kbBg, boolean dark, boolean glass, boolean rim, float ratio) {
+            this.kind = kind;
+            this.color = color;
+            this.kbBg = kbBg;
+            this.dark = dark;
+            this.glass = glass;
+            this.rim = rim;
+            this.ratio = ratio;
+        }
+    }
+
+    /** 把「这张位图该长什么样」打包成落屏参数。 */
+    public static Cap capOf(int kind, int color, SkinPreset p) {
+        if (p == null) return null;
+        try {
+            return new Cap(kind, color, p.kbBg, isDarkPreset(p),
+                    ModuleConfig.glassEnabled(), ModuleConfig.edgeHighlightEnabled(),
+                    targetRatio(p, kind));
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    /**
+     * 在真实画布上画一颗键（落屏路径）。
+     *
+     * <p>{@code dst} 是搜狗自己算出来的落点，所以九宫格几何、行列偏移、横竖屏
+     * 全部照旧，只把「长什么样」换成我们的。
+     *
+     * <p><b>为什么带缓存</b>：边缘高光是 4 层 {@link BlurMaskFilter} 内阴影，
+     * 一颗键现画要几十条 path + 4 次模糊。键盘一屏三四十颗键、每次重绘都要来一遍，
+     * 直接掉帧。所以按「尺寸 + 参数」渲一次到小位图，之后就是一次 drawBitmap
+     * —— 每颗键只付一次模糊的代价，滑块拖到哪档都是新的 key、各渲一次。
+     *
+     * @param alpha 原始绘制用的透明度（按压缩放动画会用到），255 = 不透明
+     */
+    public static void drawCapOn(Canvas canvas, RectF dst, Cap cap, int alpha) {
+        if (canvas == null || dst == null || cap == null) return;
+        float w = dst.width();
+        float h = dst.height();
+        if (w < 6f || h < 6f) return;
+
+        int iw = Math.max(1, Math.round(w));
+        int ih = Math.max(1, Math.round(h));
+        Bitmap cached = capBitmap(iw, ih, cap);
+        if (cached != null) {
+            Paint bp = new Paint(Paint.FILTER_BITMAP_FLAG | Paint.DITHER_FLAG);
+            bp.setAlpha(alpha);
+            // 注意：这张缓存图不在 H71 的登记表里，所以不会再次被拦截，不会递归。
+            canvas.drawBitmap(cached, null, dst, bp);
+        } else {
+            renderCap(canvas, dst, cap, alpha);
+        }
+
+        if (cap.kind == KIND_KEY) {
+            float gap = Math.max(1f, h * 0.02f);
+            float radius = Math.max(2f, Math.min((h - gap * 2f) * cap.ratio,
+                    Math.min(w - gap * 2f, h - gap * 2f) * RADIUS_CAP));
+            sLastRadius = String.format(Locale.US, "%.2f/%dpx/%dx%d(实绘)", cap.ratio,
+                    Math.round(radius), iw, ih);
+        }
+    }
+
+    /** 键帽渲染缓存：key = 尺寸 + 全部绘制参数。上限按张数算，键帽位图很小，不会撑爆内存。 */
+    private static final int CAP_CACHE_MAX = 48;
+    private static final LinkedHashMap<String, Bitmap> CAP_CACHE =
+            new LinkedHashMap<String, Bitmap>(16, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, Bitmap> eldest) {
+                    if (size() <= CAP_CACHE_MAX) return false;
+                    Bitmap b = eldest.getValue();
+                    if (b != null && !b.isRecycled()) b.recycle();
+                    return true;
+                }
+            };
+
+    private static String capKey(int w, int h, Cap cap) {
+        return w + "x" + h + "|" + cap.kind
+                + "|" + Integer.toHexString(cap.color) + "|" + Integer.toHexString(cap.kbBg)
+                + "|" + (cap.dark ? 1 : 0) + (cap.glass ? 1 : 0) + (cap.rim ? 1 : 0)
+                + "|" + Math.round(cap.ratio * 100f);
+    }
+
+    private static Bitmap capBitmap(int w, int h, Cap cap) {
+        String key = capKey(w, h, cap);
+        try {
+            synchronized (CAP_CACHE) {
+                Bitmap hit = CAP_CACHE.get(key);
+                if (hit != null && !hit.isRecycled()) return hit;
+            }
+        } catch (Throwable ignored) {
+            // 查缓存失败就走现画，不影响正确性
+        }
+        Bitmap out = null;
+        try {
+            out = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            renderCap(new Canvas(out), new RectF(0f, 0f, w, h), cap, 255);
+        } catch (Throwable t) {
+            if (out != null && !out.isRecycled()) out.recycle();
+            return null;
+        }
+        try {
+            synchronized (CAP_CACHE) {
+                CAP_CACHE.put(key, out);
+            }
+        } catch (Throwable ignored) {
+            // 放不进缓存也没关系，图还是能用的
+        }
+        return out;
+    }
+
+    /** 换肤 / 换圆角后调用：缓存里的是旧参数渲出来的，必须整批丢掉。 */
+    public static void clearCapCache() {
+        try {
+            synchronized (CAP_CACHE) {
+                for (Bitmap b : CAP_CACHE.values()) {
+                    if (b != null && !b.isRecycled()) b.recycle();
+                }
+                CAP_CACHE.clear();
+            }
+        } catch (Throwable ignored) {
+        }
+    }
+
+    /** 真正画一颗键（无缓存版本，也被 {@link #capBitmap} 用来渲染缓存图）。 */
+    private static void renderCap(Canvas canvas, RectF dst, Cap cap, int alpha) {
+        float w = dst.width();
+        float h = dst.height();
+        Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+        p.setStyle(Paint.Style.FILL);
+
+        // ① 先把这一格整体涂成键盘底色。
+        //    这一笔就是「替换底层」：圆角之外那圈不再是搜狗的方形实心底，而是键盘底。
+        //    注意它画的是 dst 整块（不是内缩后的键），所以底下那层的方角一定被盖住。
+        int under = (cap.glass ? withAlphaScale(cap.kbBg, glassAlpha(KIND_FILL)) : cap.kbBg);
+        p.setColor(applyAlpha(under, alpha));
+        canvas.drawRect(dst, p);
+
+        // ② 键帽本体：留出与 synth() 相同的键缝，再按比例画圆角。
+        float gap = Math.max(1f, h * 0.02f);
+        RectF rect = new RectF(dst.left + gap, dst.top + gap, dst.right - gap, dst.bottom - gap);
+        if (rect.width() < 2f || rect.height() < 2f) rect = new RectF(dst);
+        float shortSide = Math.min(rect.width(), rect.height());
+        float radius = Math.max(2f, Math.min(rect.height() * cap.ratio, shortSide * RADIUS_CAP));
+
+        if (cap.glass) {
+            drawGlassSurface(canvas, rect, radius,
+                    applyAlpha(withAlphaScale(cap.color, glassAlpha(cap.kind)), alpha), cap.dark);
+        } else {
+            p.setColor(applyAlpha(cap.color, alpha));
+            canvas.drawRoundRect(rect, radius, radius, p);
+        }
+
+        // ③ 边缘高光（和位图路径同一套 4 层 inset 阴影）
+        if (cap.rim) {
+            drawRim(canvas, rect, radius, cap.dark);
+        }
+    }
+
+    /** 把 0~255 的外部透明度乘到颜色上（落屏时按压缩放动画要用）。 */
+    private static int applyAlpha(int argb, int alpha) {
+        if (alpha >= 255) return argb;
+        if (alpha <= 0) alpha = 0;
+        int a = (int) (((argb >>> 24) & 0xFF) * (alpha / 255f));
+        return (a << 24) | (argb & 0x00FFFFFF);
     }
 
     // ── 4. 边缘高光 + 液态玻璃（移植自 WeType UI Enhanced）────────────────────

@@ -283,6 +283,11 @@ public final class ThemeSkinHook {
             } else {
                 param.setResult(wrapDrawable(ctx, res, tinted));
             }
+            // v2.2.0：把「这张位图该长什么样」登记给 H71，让它在真正落屏那一刻重画键帽。
+            // 只登记键帽类（KEY / POPUP / ACCENT）：底色图和候选栏底不需要落屏重画。
+            if (kind == IosSkin.KIND_KEY || kind == IosSkin.KIND_POPUP || kind == IosSkin.KIND_ACCENT) {
+                KeyCapDrawHook.register(tinted, IosSkin.capOf(kind, color, preset));
+            }
             int n = IMG_REDRAWN.incrementAndGet();
             if (kind == IosSkin.KIND_KEY) {
                 KEY_REDRAWN.incrementAndGet();
@@ -480,6 +485,8 @@ public final class ThemeSkinHook {
             }
             if (cache == null) return;
             XposedHelpers.callMethod(cache, "clear");
+            // 位图缓存清空 ⇒ 之前登记给 H71 的落屏参数也一起作废，等 H41 用新配色重新登记。
+            KeyCapDrawHook.clear();
             HookRegistry.log("skin caches dropped (preset switch)");
             MiuiBottomBarHook.reapply();
         } catch (Throwable t) {
@@ -518,6 +525,7 @@ public final class ThemeSkinHook {
                 + ";skinr=" + IosSkin.lastRadius()
                 + ";skinkey=" + KEY_REDRAWN.get() + "/" + sKeySample
                 + ";skinb=" + IosSkin.underCleared()
+                + ";capk=" + KeyCapDrawHook.state()
                 + ";skinse=" + SEEN.size()
                 + ";skintp=" + CUSTOM_SKIPPED.get()
                 + ";monetsrc=" + SkinPreset.monetDescribe()
