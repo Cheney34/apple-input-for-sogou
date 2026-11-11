@@ -592,6 +592,7 @@ public class SettingsActivity extends Activity {
         String skinRadius = null;
         String skinKeyCount = null;
         String skinUnder = null;
+        String skinGuess = null;
         String capDraw = null;
         String blurState = null;
         String accState = null;
@@ -666,6 +667,10 @@ public class SettingsActivity extends Activity {
                     // v2.1.9：底层被抽掉的按键段数「已透明/段里没有 BG_COLOR」
                     skinUnder = v;
                     break;
+                case "sking":
+                    // v2.2.1：靠几何（而非名字）判成键帽的张数「张数/首个名字@宽x高」
+                    skinGuess = v;
+                    break;
                 case "capk":
                     // v2.2.0：真实画布上的键帽实绘次数「实绘/九宫格切片/落点未知/首个落点」
                     capDraw = v;
@@ -717,6 +722,9 @@ public class SettingsActivity extends Activity {
             // v2.1.9：底层（[Key*] 段的 BG_COLOR）抽掉了几段。0/0 说明按键段里根本没有这个键，
             // 底层是别的东西（另一张底图 / 另一个图层）——那就要去 hook 那一层，调半径永远没用。
             if (skinUnder != null) skinLine.append("  底层=").append(skinUnder);
+            // v2.2.1：名字没认出来、靠几何判成键帽的张数。九键的玻璃/高光就靠这条接上，
+            // 这里 >0 说明兜底生效了；一直是 0 而九键仍没效果，说明连几何都没过。
+            if (skinGuess != null) skinLine.append("  兜底=").append(skinGuess);
             String cnt = skinKeyCount == null ? null : skinKeyCount;
             if (cnt != null && (cnt.startsWith("0/") || cnt.equals("0"))) {
                 skinLine.append("（键帽未重画，滑块不生效）");

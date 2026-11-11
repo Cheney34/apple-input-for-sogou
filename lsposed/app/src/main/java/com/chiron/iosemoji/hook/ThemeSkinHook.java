@@ -70,6 +70,17 @@ public final class ThemeSkinHook {
     private static volatile String sKeySample = "-";
 
     /**
+     * 靠**几何**（而不是名字）判成键帽的张数，以及第一张的名字@尺寸（v2.2.1 诊断）。
+     *
+     * <p>九宫格的键帽图名是各渠道自己起的，白名单永远补不全。这个数 > 0 就说明
+     * 「名字没认出来但确实是键帽」的那批图被兜住了 —— 九键的玻璃/高光就是靠这条接上的。
+     * 右边那个名字也是给下一版用的：如果右边一直还是 {@code -} 而九键仍然没效果，
+     * 说明连几何都没过（图里有字形，或者尺寸太怪），得换判据。
+     */
+    private static final AtomicInteger IMG_GUESSED = new AtomicInteger();
+    private static volatile String sGuessSample = "-";
+
+    /**
      * 铁律：用户自己装的第三方皮肤一律不动（那是他自己挑的外观）。
      * 只认目录特征，不依赖任何渠道类名。
      */
@@ -258,12 +269,28 @@ public final class ThemeSkinHook {
             if (!ModuleConfig.themeSkinEnabled()) return;
             int kind = IosSkin.kindOf(name);
             if (kind == IosSkin.KIND_NONE) {
-                // 删掉「看着像键帽就当键帽」的兜底：图标是「透明底 + 单色字形」，
-                // 任何形状启发式都会把图标刷成纯色方块（设置齿轮、语言旗帜就是这么坏的）。
-                seen("unknown", path);
-                if (IosSkin.isProtected(name)) IMG_PROTECTED.incrementAndGet();
-                else remember(path);
-                return;
+                // 名字没认出来 —— 但九宫格的键帽图名各渠道自己起（key_9 / py9_key / num_normal …），
+                // 对不上就整条链断在这里（"九键没有玻璃和高光"），所以补一道几何判定。
+                // 判据见 IosSkin.looksLikeKeyCap()：满幅 + 不透明率≥0.86 + 无字形 + 尺寸像键，
+                // 图标（透明底 + 单色字形）和整条底栏（长条形）都过不了。
+                if (!IosSkin.isProtected(name) && IosSkin.looksLikeKeyCap(src)) {
+                    kind = IosSkin.KIND_KEY;
+                    int g = IMG_GUESSED.incrementAndGet();
+                    if (g <= LOG_LIMIT) {
+                        HookRegistry.log("H41 keycap by geometry: " + name + " "
+                                + src.getWidth() + "x" + src.getHeight() + " (total " + g + ")");
+                    }
+                    if ("-".equals(sGuessSample)) {
+                        sGuessSample = name + "@" + src.getWidth() + "x" + src.getHeight();
+                    }
+                } else {
+                    // 删掉「看着像键帽就当键帽」的兜底：图标是「透明底 + 单色字形」，
+                    // 任何形状启发式都会把图标刷成纯色方块（设置齿轮、语言旗帜就是这么坏的）。
+                    seen("unknown", path);
+                    if (IosSkin.isProtected(name)) IMG_PROTECTED.incrementAndGet();
+                    else remember(path);
+                    return;
+                }
             }
             Context ctx = pickContext(param);
             SkinPreset preset = preset(ctx, path);
@@ -524,6 +551,7 @@ public final class ThemeSkinHook {
                 + ";skint=" + IosSkin.contrastFixes()
                 + ";skinr=" + IosSkin.lastRadius()
                 + ";skinkey=" + KEY_REDRAWN.get() + "/" + sKeySample
+                + ";sking=" + IMG_GUESSED.get() + "/" + sGuessSample
                 + ";skinb=" + IosSkin.underCleared()
                 + ";capk=" + KeyCapDrawHook.state()
                 + ";skinse=" + SEEN.size()

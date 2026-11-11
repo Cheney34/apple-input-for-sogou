@@ -187,6 +187,27 @@ public final class IosSkin {
         return UNDER_CLEARED.get() + "/" + UNDER_SEEN.get();
     }
 
+    /**
+     * 还需不需要「整格铺键盘底色」这层兜底（v2.2.1）。
+     *
+     * <p>v2.1.9 无条件铺，结果在深色模式下变成一颗颗<b>比背景略浅的小方块</b> ——
+     * 因为默认皮肤的键盘底是 {@code BG_IMAGE=Background} 那张**图片**，
+     * 而 {@code p.kbBg} 只是个近似纯色，铺上去必然对不上（浅色模式下色差小，看不出来）。
+     *
+     * <p>所以改成有条件：
+     * <ul>
+     *   <li>{@code UNDER_CLEARED > 0}：patchIni 至少清成功过一段 → 底下已经没东西了，
+     *       再铺色只会制造方块，<b>不铺</b>；</li>
+     *   <li>{@code UNDER_CLEARED == 0 && UNDER_SEEN > 0}：看到了按键段、段里有底图，
+     *       但段里压根没有 {@code BG_COLOR} 这个键（清不掉）→ 底下确实有东西，<b>铺</b>；</li>
+     *   <li>两个都是 0：这一段代码没跑到任何按键段，情况不明 → 也<b>不铺</b>，
+     *       免得无端多出一块色。</li>
+     * </ul>
+     */
+    private static boolean coverNeeded() {
+        return UNDER_CLEARED.get() == 0 && UNDER_SEEN.get() > 0;
+    }
+
     /** 因对比度不足而被改写的文字/图标颜色次数（诊断用）。 */
     public static int contrastFixes() {
         return TXT_FIXED.get();
@@ -545,6 +566,44 @@ public final class IosSkin {
     }
 
     /**
+     * 名字没认出来、但<b>几何上就是键帽</b>的兜底判定（v2.2.1，专治九宫格）。
+     *
+     * <p>为什么要有这一步：九键（九宫格）的键帽图名是各渠道自己起的，可能是
+     * {@code key_9}、{@code py9_key}、{@code num_normal} 甚至没规律的名字。
+     * 名字对不上时 {@link #kindOf} 返回 {@code KIND_NONE}，H41 直接 return ——
+     * 连重绘都没有，自然也没有液态玻璃和边缘高光（用户反馈的「九键依旧没有任何玻璃和高光」）。
+     *
+     * <p>判据跟 {@link #synth} 里那三道闸门完全一致，只多一条尺寸/长宽比：
+     * <ol>
+     *   <li><b>满幅</b>：不透明区几乎铺满整张图（键帽是出血图，图标四周一定留透明边）；</li>
+     *   <li><b>不透明率 ≥ 0.86</b>：实心色块（键帽 ≈ 1.0，字形/图标明显更低）；</li>
+     *   <li><b>无字形</b>：图里本来没画图标/文字（⌫、⏎ 这类要保留原样）；</li>
+     *   <li><b>尺寸像键</b>：16px 以上、长宽比 0.45~3.2（排除整条底栏那种大长图）。</li>
+     * </ol>
+     *
+     * <p>图标是「透明底 + 单色字形」，过不了第 1、2 条；整条候选栏底是长条形，过不了第 4 条。
+     * 所以这条兜底不会把图标刷成色块 —— alpha8 那次的教训（设置齿轮、语言旗帜被涂掉）
+     * 靠的是几何而不是名字。
+     */
+    public static boolean looksLikeKeyCap(Bitmap src) {
+        if (src == null || src.isRecycled()) return false;
+        try {
+            int w = src.getWidth();
+            int h = src.getHeight();
+            if (w < 16 || h < 16) return false;
+            float ar = (float) w / (float) h;
+            if (ar < 0.45f || ar > 3.2f) return false;
+            Rect box = opaqueBounds(src);
+            if (box == null || box.width() <= 0 || box.height() <= 0) return false;
+            if (box.width() < w * 0.94f || box.height() < h * 0.94f) return false;
+            if (opaqueRatio(src, box) < 0.86f) return false;
+            return !hasInk(src, box);
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    /**
      * 「名字没在清单里，但看着就是键帽」的兜底判断。
      *
      * <p><b>alpha9 起已停用（不要再接回来）</b>：图标是「透明底 + 单色字形」，
@@ -670,23 +729,20 @@ public final class IosSkin {
                 return out;
             }
 
-            // ── 先「替换底层」，再画键帽（v2.1.9）──────────────────────────────
+            // ── 底层兜底（v2.1.9 铺满 → v2.2.1 改成有条件）──────────────────────
             //
-            // 圆角一直「看不见」的根因在这里：H41 只换掉了搜狗取到的那张键帽位图，
-            // 而这一格底下还有搜狗自己的一层实心底 —— 可能是 [Key*] 段的 BG_COLOR，
-            // 也可能是键盘/容器底图。那层是**方的**，而且完全不随预设变色（默认皮肤恒为近白）。
-            // 我们把圆角画成透明，四个角就把底下那层方的颜色露出来：
-            // 半径从 24px 调到 48px，看到的轮廓依旧是方的 —— 前几版一直在调半径公式，
-            // 量的都是上面这张图，坏的是底下那张。
+            // 这里铺的是一层**猜测**的键盘底色：默认皮肤的键盘底是 BG_IMAGE=Background
+            // 那张图片，p.kbBg 只是它的近似纯色。浅色模式下两者差得少，看不出；
+            // 深色模式下就变成一颗颗比背景略浅的方块（用户反馈的那个「淡灰色小方块」）。
             //
-            // 做法：整张位图先铺满键盘底色，让这张图成为「这一格唯一的底」。
-            // 圆角以外那块直接就是键盘底色，底下垫着什么都盖住了。
-            // 配合 patchIni 里把 [Key*] 段的 BG_COLOR 打成透明（仅限有底图的段），两层保险：
-            // 一层保证「底下没东西」，一层保证「就算有也看不见」。
-            final int under = glassOn ? withAlphaScale(p.kbBg, glassAlpha(KIND_FILL)) : p.kbBg;
-            paint.setShader(null);
-            paint.setColor(under);
-            canvas.drawRect(0f, 0f, w, h, paint);
+            // 所以只在 patchIni 确实清不掉 BG_COLOR 时才铺（判据见 coverNeeded()）。
+            // 清得掉的时候，圆角外的四个角透出来的是搜狗自己的键盘底图 —— 那才是对的。
+            if (coverNeeded()) {
+                final int under = glassOn ? withAlphaScale(p.kbBg, glassAlpha(KIND_FILL)) : p.kbBg;
+                paint.setShader(null);
+                paint.setColor(under);
+                canvas.drawRect(0f, 0f, w, h, paint);
+            }
 
             // 强调键（回车 / 发送）：铺 accent 圆角底，再把原图字形抠出来改成对比色盖回去。
             // 必须排在 hasInk / opaqueRatio 之前 —— 那两个判据是「有字形就不动」，
@@ -967,12 +1023,17 @@ public final class IosSkin {
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
         p.setStyle(Paint.Style.FILL);
 
-        // ① 先把这一格整体涂成键盘底色。
-        //    这一笔就是「替换底层」：圆角之外那圈不再是搜狗的方形实心底，而是键盘底。
-        //    注意它画的是 dst 整块（不是内缩后的键），所以底下那层的方角一定被盖住。
-        int under = (cap.glass ? withAlphaScale(cap.kbBg, glassAlpha(KIND_FILL)) : cap.kbBg);
-        p.setColor(applyAlpha(under, alpha));
-        canvas.drawRect(dst, p);
+        // ① 这一格要不要先铺一层键盘底色 —— 只在 patchIni 清不掉按键段 BG_COLOR 时才铺。
+        //
+        //    v2.2.0 是无条件铺的，于是深色模式下每颗键都比背景略浅一块：
+        //    键盘底是图片、p.kbBg 是近似纯色，两层叠出来的差值就是那个「淡灰色小方块」。
+        //    现在不铺的时候，圆角外直接透出搜狗自己的键盘底（图），既没有方块，
+        //    液态玻璃也是真的"透过去"，而不是透在一层我们自己涂的假底色上。
+        if (coverNeeded()) {
+            int under = (cap.glass ? withAlphaScale(cap.kbBg, glassAlpha(KIND_FILL)) : cap.kbBg);
+            p.setColor(applyAlpha(under, alpha));
+            canvas.drawRect(dst, p);
+        }
 
         // ② 键帽本体：留出与 synth() 相同的键缝，再按比例画圆角。
         float gap = Math.max(1f, h * 0.02f);
