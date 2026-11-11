@@ -243,6 +243,8 @@ public final class IosSkin {
     private static final AtomicInteger ACCENT_KEYS = new AtomicInteger();
     /** 强调键上保住原字形的次数（远小于 accentKeys 说明字形被涂掉了）。 */
     private static final AtomicInteger GLYPH_KEPT = new AtomicInteger();
+    /** 九宫格这类「带字形键帽」保住字形的次数（v2.2.2）。 */
+    private static final AtomicInteger INK_KEPT = new AtomicInteger();
 
     /** 刷成强调色的回车 / 发送键数量。 */
     public static int accentKeys() {
@@ -252,6 +254,28 @@ public final class IosSkin {
     /** 强调键保住原字形的次数。 */
     public static int accentGlyphs() {
         return GLYPH_KEPT.get();
+    }
+
+    /** 带字形键帽（九宫格）保住字形的次数。 */
+    public static int inkKeys() {
+        return INK_KEPT.get();
+    }
+
+    /**
+     * 这张皮肤图里**本来就画了字形**吗（九宫格的数字 + ABC）。
+     *
+     * <p>H41 用它决定要不要把这颗键交给 H71 落屏重画：H71 只会画「底 + 玻璃 + 高光」，
+     * 不认识字形，交过去等于把数字擦掉。带字形的键留在位图那条路上 ——
+     * {@code synth()} 已经把「保留字形、只换底」做完了，画面上一样是圆角 + 玻璃 + 高光。
+     */
+    public static boolean hasBakedGlyph(Bitmap src) {
+        if (src == null || src.isRecycled()) return false;
+        try {
+            Rect box = opaqueBounds(src);
+            return box != null && hasInk(src, box);
+        } catch (Throwable t) {
+            return false;
+        }
     }
 
     public static int ensureContrast(int fg, int bg, double min) {
@@ -575,15 +599,18 @@ public final class IosSkin {
      *
      * <p>判据跟 {@link #synth} 里那三道闸门完全一致，只多一条尺寸/长宽比：
      * <ol>
-     *   <li><b>满幅</b>：不透明区几乎铺满整张图（键帽是出血图，图标四周一定留透明边）；</li>
-     *   <li><b>不透明率 ≥ 0.86</b>：实心色块（键帽 ≈ 1.0，字形/图标明显更低）；</li>
-     *   <li><b>无字形</b>：图里本来没画图标/文字（⌫、⏎ 这类要保留原样）；</li>
+     *   <li><b>满幅</b>：不透明区 ≥ 图片的 85%（键帽是出血图，图标四周一定留透明边）；</li>
+     *   <li><b>不透明率 ≥ 0.85</b>：实心色块（键帽 ≈ 1.0，字形/图标明显更低）；</li>
      *   <li><b>尺寸像键</b>：16px 以上、长宽比 0.45~3.2（排除整条底栏那种大长图）。</li>
      * </ol>
      *
-     * <p>图标是「透明底 + 单色字形」，过不了第 1、2 条；整条候选栏底是长条形，过不了第 4 条。
-     * 所以这条兜底不会把图标刷成色块 —— alpha8 那次的教训（设置齿轮、语言旗帜被涂掉）
-     * 靠的是几何而不是名字。
+     * <p><b>不再要求「无字形」</b>（v2.2.2 改）：九宫格的键帽图把数字和 ABC 烧在图里，
+     * 旧判据要求无字形，等于直接把九键全部排除在外。带字形的键帽现在走
+     * {@code synth()} 的「保留字形、只换底」那条路。
+     *
+     * <p>图标是「透明底 + 单色字形」，过不了第 1 条（包围盒远小于整张图）；
+     * 整条候选栏底是长条形，过不了第 3 条。所以这条兜底不会把图标刷成色块 ——
+     * alpha8 那次的教训（设置齿轮、语言旗帜被涂掉）靠的是几何而不是名字。
      */
     public static boolean looksLikeKeyCap(Bitmap src) {
         if (src == null || src.isRecycled()) return false;
@@ -595,9 +622,10 @@ public final class IosSkin {
             if (ar < 0.45f || ar > 3.2f) return false;
             Rect box = opaqueBounds(src);
             if (box == null || box.width() <= 0 || box.height() <= 0) return false;
-            if (box.width() < w * 0.94f || box.height() < h * 0.94f) return false;
-            if (opaqueRatio(src, box) < 0.86f) return false;
-            return !hasInk(src, box);
+            float ratio = opaqueRatio(src, box);
+            boolean fullBleed = box.width() >= w * 0.85f && box.height() >= h * 0.85f;
+            // 满幅，或者「不满幅但矩形非常实心」（九宫格键帽自带透明外边距的情况）
+            return fullBleed ? ratio >= 0.85f : ratio >= 0.95f;
         } catch (Throwable t) {
             return false;
         }
@@ -776,27 +804,41 @@ public final class IosSkin {
                 return out;
             }
 
-            // 原图里已经画了图标/文字的图（例如带 ⌫ 的删除键、带 ⏎ 的回车键）不要动：
-            // 平铺一层颜色会把图标一起刷掉。这类图保持搜狗原样，观感反而正常。
-            if (kind != KIND_FILL && hasInk(src, box)) {
+            // 图里自带字形/图标（⌫、⏎、**九宫格键帽上烧进去的数字和字母**）怎么处理？
+            //
+            // v2.1.9 以前一律「不动」—— 因为平铺一层颜色会把字形一起刷掉。
+            // 但九宫格的键帽图恰恰是**带字形**的：26 键的字母是搜狗按 TEXT_COLOR 单独画的，
+            // 而九键的数字 + ABC 是烧在位图里的。于是这条「有字形就不动」的规则
+            // 让九键走进了死胡同：一张都不重绘 ⇒ 没有圆角、没有玻璃、没有高光。
+            // 用户反复反馈的「九宫格没有变化」，根因就是这一行 return。
+            //
+            // v2.2.2 起：键帽 / 气泡这两类改成「保留字形、只换底」——
+            // 画完圆角面 + 边缘高光后，把原图里的字形（inkMask，保留原色）原样叠回去。
+            // 图标不在这条路上：它们的不透明区远小于整张图，过不了下面的「满幅」闸门。
+            final boolean inked = hasInk(src, box);
+            final float ratio2 = opaqueRatio(src, box);
+
+            // 覆盖率兜底（alpha9）：真正的键帽图不透明像素几乎填满包围盒（一般 ≥85%）；
+            // 图标/字形只占其中一部分。带字形的键帽整张是实心的，覆盖率照样很高，所以放行。
+            if (!inked && kind != KIND_FILL && ratio2 < 0.85f) {
                 return null;
             }
 
-            // 覆盖率兜底（alpha9 新增）：真正的键帽图不透明像素几乎填满包围盒（一般 ≥85%）；
-            // 图标/字形（设置齿轮、语言与地区旗帜等）只占其中一部分。名字万一没被
-            // isProtected 拦住，就靠这一步保命 —— 宁可这张不改，也不能把图标涂成方块。
-            if (kind != KIND_FILL && opaqueRatio(src, box) < 0.85f) {
-                return null;
-            }
-
-            // 「满幅」判据（alpha10 新增）：九宫格键帽图是**满幅出血**的（不透明区几乎等于整张图），
-            // 而图标/字形图四周一定留透明边。名字里同时带 key 和 emoji/face 的图最容易误判，
-            // 这里用几何再挡一次，保证「Emoji 图标显示不全」这类问题不会复现。
+            // 「满幅」判据（alpha10）：键帽图是**满幅出血**的（不透明区≈整张图），
+            // 图标四周一定留透明边。这条同时是「带字形」那类的守门人。
+            //
+            // v2.2.2 补了个例外：九宫格的键比 26 键大得多，图上常常自带一圈透明外边距
+            // （那是键与键之间的缝），包围盒只占整图 70%~85% —— 旧判据直接把九键全部挡掉。
+            // 现在「不满幅但**矩形非常实心**（≥0.95）」也放行：键帽是一整块实心矩形，
+            // 而圆形/星形图标在包围盒内只占 70%~80%，过不了这一关。
             if (kind == KIND_KEY || kind == KIND_POPUP) {
                 boolean fullBleed = box.width() >= w * 0.85f && box.height() >= h * 0.85f;
-                if (!fullBleed) {
+                if (!fullBleed && ratio2 < 0.95f) {
                     return null;
                 }
+            } else if (inked) {
+                // 底色图 / 其它类型带字形：仍旧不动（整块刷色会把字涂掉）
+                return null;
             }
 
             // 留出键缝：搜狗原图的 bbox 常常把整格都占满，直接铺色会让相邻键粘在一起。
@@ -853,6 +895,21 @@ public final class IosSkin {
             // 边缘高光：最后画，永远落在最上层（和 WeType 把高光 drawable 叠在 surface 之上一致）
             if (rimOn) {
                 drawRim(canvas, rect, radius, darkOn);
+            }
+
+            // 带字形的键帽（九宫格）：把原图里的字形按原色叠回去 —— 只换了底，字还在。
+            if (inked) {
+                Bitmap ink = inkMask(src);
+                if (ink != null) {
+                    Paint ip = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+                    canvas.drawBitmap(ink, 0f, 0f, ip);
+                    ink.recycle();
+                    INK_KEPT.incrementAndGet();
+                } else {
+                    // 抠不出字形（阈值没命中）—— 那就别冒险换底，保持原样
+                    if (out != null && !out.isRecycled()) out.recycle();
+                    return null;
+                }
             }
             return out;
         } catch (Throwable t) {
@@ -1453,6 +1510,63 @@ public final class IosSkin {
         int g = (argb >> 8) & 0xFF;
         int b = argb & 0xFF;
         return (int) (0.299f * r + 0.587f * g + 0.114f * b);
+    }
+
+    /**
+     * 把「图里原本画上去的字形」抠出来，<b>保留原色</b>（v2.2.2）。
+     *
+     * <p>和 {@link #glyphMask} 的区别：glyphMask 取的是「比中位数更亮」的像素 ——
+     * 那是给 ⌫ / ⏎ 这种「深底亮图标」准备的、最后还要重新染色（SRC_IN）的掩膜。
+     * 九宫格键帽上的数字是**深字压浅底**，方向正好相反，而且不能染色（染了就跟底色撞）。
+     *
+     * <p>所以这里用「偏离中位数」当判据 —— 跟 {@link #hasInk} 完全一致：
+     * 取亮度与中位数差 ≥ 40 的像素，保留它们原本的 RGB 和 alpha。
+     * 这样不管是浅底深字还是深底浅字，都能抠对。
+     *
+     * <p>返回 null 表示抠不出字形（说明这张图其实是干净的键帽），调用方按"没字形"处理。
+     */
+    private static Bitmap inkMask(Bitmap src) {
+        int w = src.getWidth();
+        int h = src.getHeight();
+        if (w <= 0 || h <= 0) return null;
+        int n = w * h;
+        int[] px = new int[n];
+        src.getPixels(px, 0, w, 0, 0, w, h);
+
+        int[] hist = new int[32];
+        int opaque = 0;
+        for (int c : px) {
+            if (((c >>> 24) & 0xFF) <= 24) continue;
+            hist[Math.min(31, luminance(c) >> 3)]++;
+            opaque++;
+        }
+        if (opaque < 32) return null;
+        int acc = 0;
+        int median = 0;
+        for (int i = 0; i < 32; i++) {
+            acc += hist[i];
+            if (acc * 2 >= opaque) {
+                median = i * 8 + 4;
+                break;
+            }
+        }
+
+        int[] out = new int[n];
+        int ink = 0;
+        for (int i = 0; i < n; i++) {
+            int c = px[i];
+            int a = (c >>> 24) & 0xFF;
+            if (a <= 24) continue;
+            if (Math.abs(luminance(c) - median) >= 40) {
+                out[i] = c;          // 原色保留
+                ink++;
+            }
+        }
+        // 少于 8 个像素就当没有字形 —— 免得把噪点/抗锯齿边当成字叠上去
+        if (ink < 8) return null;
+        Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        b.setPixels(out, 0, w, 0, 0, w, h);
+        return b;
     }
 
     private static int Color_alpha(int argb) {

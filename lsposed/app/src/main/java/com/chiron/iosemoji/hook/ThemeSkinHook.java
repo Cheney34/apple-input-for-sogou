@@ -312,7 +312,14 @@ public final class ThemeSkinHook {
             }
             // v2.2.0：把「这张位图该长什么样」登记给 H71，让它在真正落屏那一刻重画键帽。
             // 只登记键帽类（KEY / POPUP / ACCENT）：底色图和候选栏底不需要落屏重画。
-            if (kind == IosSkin.KIND_KEY || kind == IosSkin.KIND_POPUP || kind == IosSkin.KIND_ACCENT) {
+            //
+            // v2.2.2：**带字形的键（九宫格）不登记** —— H71 只画底 + 玻璃 + 高光，不认识字形，
+            // 交过去会把数字擦掉。这类键留在位图那条路：synth() 已经做完「保留字形、只换底」，
+            // 画面上同样是圆角 + 玻璃 + 高光。
+            boolean baked = IosSkin.hasBakedGlyph(src);
+            if (!baked
+                    && (kind == IosSkin.KIND_KEY || kind == IosSkin.KIND_POPUP
+                    || kind == IosSkin.KIND_ACCENT)) {
                 KeyCapDrawHook.register(tinted, IosSkin.capOf(kind, color, preset));
             }
             int n = IMG_REDRAWN.incrementAndGet();
@@ -557,7 +564,8 @@ public final class ThemeSkinHook {
                 + ";skinse=" + SEEN.size()
                 + ";skintp=" + CUSTOM_SKIPPED.get()
                 + ";monetsrc=" + SkinPreset.monetDescribe()
-                + ";acc=" + IosSkin.accentKeys() + "/" + IosSkin.accentGlyphs();
+                + ";acc=" + IosSkin.accentKeys() + "/" + IosSkin.accentGlyphs()
+                + "/" + IosSkin.inkKeys();
     }
 
     /** 见到但没处理的名字（带原因 tag），诊断用。 */

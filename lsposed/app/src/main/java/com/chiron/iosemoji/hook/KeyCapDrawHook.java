@@ -2,6 +2,7 @@ package com.chiron.iosemoji.hook;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -129,7 +130,7 @@ public final class KeyCapDrawHook {
      *   (Bitmap, float, float, Paint)          ← 1:1 贴图
      *   (Bitmap, Rect, Rect, Paint)            ← 拉伸（键帽最常见）
      *   (Bitmap, Rect, RectF, Paint)           ← 拉伸（浮点落点）
-     *   (Bitmap, Matrix, Paint)                ← 矩阵绘制，拿不到落点，放行
+     *   (Bitmap, Matrix, Paint)                ← 矩阵绘制（v2.2.2 起：轴对齐时也接手）
      * </pre>
      */
     private static void onDrawBitmap(XC_MethodHook.MethodHookParam param) {
@@ -160,6 +161,29 @@ public final class KeyCapDrawHook {
                 float x = (Float) a[1];
                 float y = (Float) a[2];
                 dst = new RectF(x, y, x + bmp.getWidth(), y + bmp.getHeight());
+            } else if (a[1] instanceof Matrix) {
+                // 矩阵绘制：原来一律当「落点未知」放行。九宫格的键可能就走这条路
+                // （缩放/位移用 matrix 更省事），放行等于九键永远没有效果。
+                // 只在**轴对齐**（无旋转、无斜切）时才接手：把四个角映过去，取出包围盒。
+                Matrix m = (Matrix) a[1];
+                float[] p4 = new float[]{
+                        0f, 0f,
+                        bmp.getWidth(), 0f,
+                        0f, bmp.getHeight(),
+                        bmp.getWidth(), bmp.getHeight()};
+                m.mapPoints(p4);
+                boolean axisAligned =
+                        Math.abs(p4[1] - p4[3]) < 0.5f && Math.abs(p4[3] - p4[5]) < 0.5f
+                                && Math.abs(p4[0] - p4[6]) < 0.5f && Math.abs(p4[2] - p4[4]) < 0.5f;
+                if (!axisAligned) {
+                    SKIPPED.incrementAndGet();
+                    return;
+                }
+                dst = new RectF(
+                        Math.min(Math.min(p4[0], p4[2]), Math.min(p4[4], p4[6])),
+                        Math.min(Math.min(p4[1], p4[3]), Math.min(p4[5], p4[7])),
+                        Math.max(Math.max(p4[0], p4[2]), Math.max(p4[4], p4[6])),
+                        Math.max(Math.max(p4[1], p4[3]), Math.max(p4[5], p4[7])));
             } else {
                 SKIPPED.incrementAndGet();   // Matrix 绘制等：落点未知
                 return;
