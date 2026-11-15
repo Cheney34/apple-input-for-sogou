@@ -154,6 +154,13 @@ public final class KeyBgDrawableHook {
             if (src.isRecycled()) return;
 
             int kind = IosSkin.kindOf(name);
+            // v2.3.3：工厂第 3 个参数有时是 image_list.ini 里的**逻辑名**（KeyBg_Default_Latin、
+            // key_qwerty_png …），不带 .png 扩展名；而 kindOf() 要求以 .png/.webp 结尾，
+            // 于是直接返回 KIND_NONE，H72 在这里就断了 —— 这是「圆角永远不变」的第二个成因。
+            // 只在名字里完全没有点时补一次带扩展名的判定，避免影响真正的带后缀路径。
+            if (kind == IosSkin.KIND_NONE && !name.contains(".")) {
+                kind = IosSkin.kindOf(name + ".png");
+            }
             // 只接管「键帽」这一类。候选栏底、键盘底、图标、气泡一律不动：
             //   它们是整条/整块的图，套上圆角反而把字和图标切坏。
             if (kind != IosSkin.KIND_KEY) return;
@@ -164,9 +171,12 @@ public final class KeyBgDrawableHook {
             // 数字和 ABC 是另画的 FG_STYLE，所以这条闸门不会挡住九宫格。
             if (IosSkin.hasBakedGlyph(src)) return;
             if (!ModuleConfig.themeSkinEnabled()) return;
-            // v2.3.1：盘上重绘（H73）已经把这张键面换成 iOS 键帽了。
-            // 这里再接管一次就是"玻璃叠玻璃"，所以让它先。
-            if (SkinArtRepaint.active()) return;
+            // v2.3.3：这里**不再**因为 SkinArtRepaint.active() 提前返回。
+            // active() 只能证明「我们把图画到磁盘上了 / marker 签名命中」，**不能证明搜狗真的读了
+            // 那些文件**（它可能走 assets、走别的密度目录，或每次启动重新解包覆盖掉我们的图）。
+            // 它一旦误判为 true，就会把唯一「按真实落屏 bounds 现场算圆角」的 H72 关掉 ——
+            // 屏幕上一个像素都不变，这就是「圆角其实没有变化」的根因。
+            // draw() 里 param.setResult(null) 会跳过原始绘制，不存在「玻璃叠玻璃」。
 
             SkinPreset p = ThemeSkinHook.presetForName(name);
             if (p == null) return;

@@ -1,3 +1,48 @@
+## v2.3.3 圆角「其实没变化」的真根因：H72 被 H73 的假成功关掉了
+
+你说圆角其实没有变化。查下来是两个独立的门，任何一个都能让圆角一动不动。
+
+### ① `hook/KeyBgDrawableHook.java`：`if (SkinArtRepaint.active()) return;`
+
+这行的理由是「盘上重绘已经把键面换掉了，再接管就是玻璃叠玻璃」。但
+`SkinArtRepaint.active()` 返回的只是「**我们把图画进磁盘了 / marker 签名命中**」，
+它**不能证明搜狗真的读了那些文件**：搜狗可能走 assets、走别的密度目录（720 / 480），
+或者每次启动重新解包把我们的图覆盖掉。于是一旦它误判为 true：
+
+- H72（唯一「按真实落屏 bounds 现场算圆角」的那条路）被主动关掉；
+- 屏幕上还是搜狗原图 → **一个像素都不变**。
+
+本版**删掉这道提前返回**。H72 在 `draw()` 里 `param.setResult(null)` 跳过原始绘制，
+本身就不会「叠两层」；而且它算圆角用的是 `getBounds()` 的真实落屏尺寸，
+键盘多宽、键多大，圆角就跟着多大，跟密度目录、九宫格切片都无关。
+
+### ② 逻辑名不带 `.png`，被 `kindOf()` 判成 `KIND_NONE`
+
+drawable 工厂 `com.sogou.theme.utils.e#f(Context, Bitmap, 名字, 内边距)` 传进来的「名字」
+有时是 `image_list.ini` 里的逻辑名（`KeyBg_Default_Latin`、`key_qwerty_png`），**不带扩展名**；
+而 `IosSkin.kindOf()` 第一行就要求以 `.png` / `.webp` 结尾 → 直接 `KIND_NONE`，
+H72 连登记都没有，自然也不会画。
+
+本版在 `onFactory` 补一次：名字里完全没有点时，用 `名字 + ".png"` 再判一次。
+
+### 顺带
+
+- `lsposed/app/build.gradle.kts` 的 `versionCode / versionName` 从 `60 / 2.1.0`
+  同步到 `76 / 2.3.3`（此前只有 `AndroidManifest.xml` 在更新 —— 出包读 manifest，
+  所以 APK 一直是对的，但 Gradle / IDE 里显示的版本是错的）。
+- `res/values/strings.xml` 的 `version_label` 从 `v2.1.2` 同步到 `v2.3.3`。
+
+### 怎么验证（设置页「连接状态」卡）
+
+- `键底=接管数/已画次数/首个名字`：**接管数 0** = 工厂没抓到（名字或形状没过闸）；
+  **接管 > 0 但已画 0** = 抓到了、但 draw 没被调用。
+- 这次只要「已画次数」在你按键时往上走，屏幕上就一定是我们的圆角键帽。
+
+### 已知限制
+
+- 若某个渠道把键面画在**完全不走 Drawable** 的路径上（目前没遇到），H72 仍可能抓不到。
+  那种情况要看 `键底=` 的数字才能判断，不做盲猜。
+
 ## v2.3.2 九宫格根本没有那张图 —— 它一直是一块纯色
 
 上一版把 `res/` 下的键面 png 重画成 iOS 键帽，26 键立刻变了样，九宫格还是老样子。
