@@ -45,8 +45,35 @@ public final class SkinPreset {
      */
     public static final String SOGOU_OLD = "sogouold";
 
+    // ── 社区配色（v2.4.0-beta5）：直接取自 heliboard-themes 的扁平色表 ──────────
+    // 这些不是"我调好看一点"的近似色，而是社区主题作者逐项调好的整键盘色表。
+    // 映射关系（见每套下面的注释）：
+    //   MAIN_BACKGROUND        → kbBg        键盘底
+    //   KEY_BACKGROUND         → key         字母键
+    //   FUNCTIONAL_KEY_BACKGROUND → func      功能键
+    //   POPUP_KEYS_BACKGROUND  → popup       长按气泡
+    //   STRIP_BACKGROUND       → barBg       候选栏 / 顶部条
+    //   KEY_TEXT               → text        正文
+    //   ACTION_KEY_BACKGROUND  → accent      回车 / 首候选强调（accentEnter=true）
+    //   SPACE_BAR_BACKGROUND   → spaceBg     空格键底色（v2.4.0-beta5 新增，heliboard 有而原预设没有）
+    // 这些主题本身自带明暗极性（例如 RosePineMain 恒为深色），所以 of() 里不区分 dark，
+    // 深/浅一律返回同一套真色；玻璃与高光是否按夜间压暗由 IosSkin.isDarkPreset(kbBg) 自动判定。
+    /** 玫瑰松 / Rosé Pine Main（深紫底 + 泡沫青功能键 + 玫瑰强调）。 */
+    public static final String ROSEPINE = "rosepine";
+    /** 猫布奇诺 Frappé（深蓝灰底 + 紫罗兰强调）。 */
+    public static final String CATPPUCCIN = "catppuccin";
+    /** 幽夜 Mellow Dark（近黑底 + 粉强调）。 */
+    public static final String MELLOW = "mellow";
+    /** 玫瑰黎明 / Rosé Pine Dawn（米白底 + 玫瑰空格）。 */
+    public static final String ROSEDAWN = "rosedawn";
+    /** 青绿 Teal Vibes（浅灰青底 + 橙强调）。 */
+    public static final String TEALVIBES = "tealvibes";
+    /** 深海金 / Sea Green Gold（墨绿底 + 金强调）。 */
+    public static final String SEAGREEN = "seagreen";
+
     /** 顺序即设置页里的显示顺序。 */
-    public static final String[] IDS = {SOGOU_OLD, IOS, IOS_CLEAN, WECHAT, GOOGLE, MATERIAL, PIXEL, SAKURA, MONET};
+    public static final String[] IDS = {SOGOU_OLD, IOS, IOS_CLEAN, WECHAT, GOOGLE, MATERIAL, PIXEL, SAKURA, MONET,
+            ROSEPINE, CATPPUCCIN, MELLOW, ROSEDAWN, TEALVIBES, SEAGREEN};
 
     public final String id;
 
@@ -58,6 +85,8 @@ public final class SkinPreset {
     public final int funcPressed;
     public final int popup;         // 长按气泡底
     public final int barBg;         // 候选栏 / 顶部工具条底色（可与键盘底色不同）
+    /** 空格键底色（0 = 不单独上色，沿用字母键色）。v2.4.0-beta5 起，取自 heliboard 的 SPACE_BAR_BACKGROUND。 */
+    public final int spaceBg;
 
     // 文字与强调色
     public final int text;
@@ -94,6 +123,22 @@ public final class SkinPreset {
                 int popup, int barBg, int text, int textPressed, int accent,
                 float radiusRatio, int shadowColor, float shadowRadius, float shadowDy,
                 boolean edgeLine, boolean gradient, boolean accentEnter) {
+        this(id, kbBg, key, keyPressed, func, funcPressed, popup, barBg, text, textPressed,
+                accent, radiusRatio, shadowColor, shadowRadius, shadowDy, edgeLine, gradient,
+                accentEnter, 0);
+    }
+
+    /**
+     * 全参构造器（v2.4.0-beta5 新增 {@code spaceBg}）。
+     *
+     * <p>{@code spaceBg == 0} 表示「空格键不单独上色」—— 九套老预设全部走后两个构造器，
+     * 行为与 beta4 完全一致。只有从 heliboard 色表来的六套社区配色会传真值，
+     * 因为「空格键换一个颜色」正是那些主题最容易被一眼认出来的地方。
+     */
+    SkinPreset(String id, int kbBg, int key, int keyPressed, int func, int funcPressed,
+                int popup, int barBg, int text, int textPressed, int accent,
+                float radiusRatio, int shadowColor, float shadowRadius, float shadowDy,
+                boolean edgeLine, boolean gradient, boolean accentEnter, int spaceBg) {
         this.id = id;
         this.kbBg = kbBg;
         this.key = key;
@@ -102,6 +147,7 @@ public final class SkinPreset {
         this.funcPressed = funcPressed;
         this.popup = popup;
         this.barBg = barBg;
+        this.spaceBg = spaceBg;
         this.text = text;
         this.textPressed = textPressed;
         this.accent = accent;
@@ -129,6 +175,12 @@ public final class SkinPreset {
         if (SAKURA.equals(id)) return "樱花粉";
         if (GOOGLE.equals(id)) return "Google";
         if (MONET.equals(id)) return "莫奈取色";
+        if (ROSEPINE.equals(id)) return "玫瑰松 Rosé Pine";
+        if (CATPPUCCIN.equals(id)) return "猫布奇诺 Frappé";
+        if (MELLOW.equals(id)) return "幽夜 Mellow";
+        if (ROSEDAWN.equals(id)) return "玫瑰黎明 Dawn";
+        if (TEALVIBES.equals(id)) return "青绿 Teal Vibes";
+        if (SEAGREEN.equals(id)) return "深海金 Sea Green";
         return "iOS";
     }
 
@@ -147,6 +199,13 @@ public final class SkinPreset {
         if (SAKURA.equals(id)) return dark ? sakuraDark() : sakuraLight();
         if (GOOGLE.equals(id)) return dark ? googleDark() : googleLight();
         if (MONET.equals(id)) return dark ? monetDark(ctx) : monetLight(ctx);
+        // 社区配色自带明暗极性，不看 dark 参数（见文件头映射说明）
+        if (ROSEPINE.equals(id)) return rosePine();
+        if (CATPPUCCIN.equals(id)) return catppuccinFrappe();
+        if (MELLOW.equals(id)) return mellowDarkPreset();
+        if (ROSEDAWN.equals(id)) return rosePineDawn();
+        if (TEALVIBES.equals(id)) return tealVibes();
+        if (SEAGREEN.equals(id)) return seaGreenGold();
         return dark ? iosDark() : iosLight();
     }
 
@@ -389,6 +448,120 @@ public final class SkinPreset {
                 0xFFF5F5F5,   // 文字按下
                 0xFFFF7A45,   // 强调色（夜间把橙红提亮一档）
                 0.10f, 0x33000000, 2f, 1f, false, false);
+    }
+
+    // ── 社区配色六套（v2.4.0-beta5，直接取自 heliboard-themes 的扁平色表）──────
+    //
+    // 为什么搬这些：用户发的参考项目里有 24 套**真人逐项调好的整键盘色表**
+    // （`heliboard-themes/themes/*.json`，键名见文件头映射说明）。
+    // 比自己随手配六七套灰要靠谱得多 —— 这些配色的对比度、按键/功能键/底色的层次
+    // 都是别人在真机上反复用过的。六套覆盖深三套 + 浅两套 + 墨绿金一套。
+    //
+    // 画法参数统一：圆角 0.14、投影按极性取 0x33/0x1A、无底边线、无渐变、回车吃强调色。
+    // 空格键单独上色（spaceBg）—— 这是 heliboard 主题最容易被一眼认出来的特征。
+    //
+    // pressed 态统一规则：亮度 > 140 → 压暗 10%，否则提亮 10%（保证按下有明确反馈）。
+
+    /** 玫瑰松 Rosé Pine Main：深紫底 + 泡沫青功能键 + 玫瑰强调。 */
+    private static SkinPreset rosePine() {
+        return new SkinPreset(ROSEPINE,
+                0xFF1F1D2E,   // MAIN_BACKGROUND 深紫底
+                0xFF1F1D2E,   // KEY_BACKGROUND 与底色同（罗盘松的键靠功能键拉开层次）
+                0xFF353443,   // 按下：提亮一档
+                0xFF9CCFD8,   // FUNCTIONAL_KEY_BACKGROUND 泡沫青
+                0xFF8CBAC2,   // 功能键按下：泡沫青压暗
+                0xFF1F1D2E,   // POPUP_KEYS_BACKGROUND
+                0xFF191724,   // STRIP_BACKGROUND 候选栏（比键盘底更深一层）
+                0xFFEBBCBA,   // KEY_TEXT 玫瑰
+                0xFFEBBCBA,   // 文字按下不变
+                0xFFEB6F92,   // 强调色 = Rose Pine 的 love（原 ACTION 0xFF26233A 太暗，不显）
+                0.14f, 0x33000000, 2f, 1f, false, false, true,
+                0xFF26233A);  // SPACE_BAR_BACKGROUND
+    }
+
+    /** 猫布奇诺 Frappé：深蓝灰底 + 紫罗兰强调。 */
+    private static SkinPreset catppuccinFrappe() {
+        return new SkinPreset(CATPPUCCIN,
+                0xFF303446,   // MAIN_BACKGROUND
+                0xFF414559,   // KEY_BACKGROUND
+                0xFF54586A,   // 按下
+                0xFF51576D,   // FUNCTIONAL_KEY_BACKGROUND
+                0xFF62687C,   // 功能键按下
+                0xFF51576D,   // POPUP_KEYS_BACKGROUND
+                0xFF292C3C,   // STRIP_BACKGROUND
+                0xFFC6D0F5,   // KEY_TEXT
+                0xFFC6D0F5,
+                0xFFCA9EE6,   // 强调色 mauve
+                0.14f, 0x33000000, 2f, 1f, false, false, true,
+                0xFF51576D);  // SPACE_BAR_BACKGROUND
+    }
+
+    /** 幽夜 Mellow Dark：近黑底 + 粉强调。 */
+    private static SkinPreset mellowDarkPreset() {
+        return new SkinPreset(MELLOW,
+                0xFF161617,   // MAIN_BACKGROUND 近黑
+                0xFF27272A,   // KEY_BACKGROUND
+                0xFF3D3D3F,   // 按下
+                0xFF3E3E43,   // FUNCTIONAL_KEY_BACKGROUND
+                0xFF515156,   // 功能键按下
+                0xFF3E3E43,   // POPUP_KEYS_BACKGROUND
+                0xFF161617,   // STRIP_BACKGROUND 与底同色（极简）
+                0xFFC1C0D4,   // KEY_TEXT
+                0xFFC1C0D4,
+                0xFFEA83A5,   // 强调色 粉
+                0.14f, 0x33000000, 2f, 1f, false, false, true,
+                0xFF2A2A2D);  // SPACE_BAR_BACKGROUND
+    }
+
+    /** 玫瑰黎明 Rosé Pine Dawn：米白底 + 玫瑰色空格键。 */
+    private static SkinPreset rosePineDawn() {
+        return new SkinPreset(ROSEDAWN,
+                0xFFFAF4ED,   // MAIN_BACKGROUND 米白
+                0xFFFFFAF3,   // KEY_BACKGROUND
+                0xFFE5E1DA,   // 按下：压暗一档
+                0xFFF2E9E1,   // FUNCTIONAL_KEY_BACKGROUND
+                0xFFD9D1CA,   // 功能键按下
+                0xFFFFFAF3,   // POPUP_KEYS_BACKGROUND
+                0xFFFAF4ED,   // STRIP_BACKGROUND
+                0xFF000000,   // KEY_TEXT 纯黑（这套的字最实）
+                0xFF000000,
+                0xFF286983,   // 强调色 = Rose Pine 的 pine 蓝（原 ACTION 0xFFF2E9E1 太淡）
+                0.14f, 0x1A000000, 2f, 1f, false, false, true,
+                0xFFB4637A);  // SPACE_BAR_BACKGROUND 玫瑰色空格 —— 这套最出彩的地方
+    }
+
+    /** 青绿 Teal Vibes：浅灰青底 + 橙功能键。 */
+    private static SkinPreset tealVibes() {
+        return new SkinPreset(TEALVIBES,
+                0xFFE4EBED,   // MAIN_BACKGROUND
+                0xFFFBFCFC,   // KEY_BACKGROUND
+                0xFFE1E2E2,   // 按下
+                0xFFFCE3CC,   // FUNCTIONAL_KEY_BACKGROUND 浅橙
+                0xFFE2CCB7,   // 功能键按下
+                0xFFFFFFFF,   // POPUP_KEYS_BACKGROUND 纯白
+                0xFFD5E0E4,   // STRIP_BACKGROUND
+                0xFF15405A,   // KEY_TEXT 深青
+                0xFF15405A,
+                0xFFF4A04A,   // 强调色 橙
+                0.14f, 0x1A000000, 2f, 1f, false, false, true,
+                0xFFFBFCFC);  // SPACE_BAR_BACKGROUND
+    }
+
+    /** 深海金 Sea Green Gold：墨绿底 + 金强调。 */
+    private static SkinPreset seaGreenGold() {
+        return new SkinPreset(SEAGREEN,
+                0xFF10222C,   // MAIN_BACKGROUND
+                0xFF17323F,   // KEY_BACKGROUND
+                0xFF2E4652,   // 按下
+                0xFF1F4357,   // FUNCTIONAL_KEY_BACKGROUND
+                0xFF355668,   // 功能键按下
+                0xFF17323F,   // POPUP_KEYS_BACKGROUND
+                0xFF0B1920,   // STRIP_BACKGROUND 更深
+                0xFFF2EAD8,   // KEY_TEXT 米金
+                0xFFF2EAD8,
+                0xFFDDB878,   // 强调色 金
+                0.14f, 0x33000000, 2f, 1f, false, false, true,
+                0xFF17323F);  // SPACE_BAR_BACKGROUND
     }
 
     /** 莫奈取色诊断（哪一路种子、什么颜色）——给状态卡用。 */

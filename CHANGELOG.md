@@ -1,3 +1,118 @@
+## v2.4.0-beta5 键盘皮肤：搬了社区配色的整键盘色表 + 玻璃重做 + 界面简化
+
+用户 m06732 的原话：「这个操作的逻辑还是不够好，这个界面写的，而且你界面的那个玻璃的 Ui 也不好看，
+而且我给你发了好几个链接都是键盘的皮肤啊。」
+
+上一版（beta4）我把那四个参考项目当成了**模块 App 界面**的参考 —— 方向错了。
+它们是**键盘皮肤**的参考。所以本版分成两条线：①② 改键盘皮肤（这次的主体），③ 顺手把 App 界面
+里确实难看 / 难用的地方收掉。
+
+### ① 六套社区配色：直接搬 heliboard-themes 的整键盘色表
+
+参考项目 [heliboard-themes](https://github.com/Star-Trowa/heliboard-themes) 的 `themes/*.json`
+是 24 套**真人逐项调好的扁平色表**（对比度、按键 / 功能键 / 底色的层次都是别人在真机上用过的）。
+比自己随手配几套灰靠谱得多，所以直接搬六套，覆盖深三套 + 浅两套 + 墨绿金一套：
+
+| 预设 id | 名字 | 色调 | 空格键 |
+| --- | --- | --- | --- |
+| `rosepine` | 玫瑰松 Rosé Pine | 深紫底 + 泡沫青功能键 | `0xFF26233A` |
+| `catppuccin` | 猫布奇诺 Frappé | 深蓝灰底 + 紫罗兰强调 | `0xFF51576D` |
+| `mellow` | 幽夜 Mellow | 近黑底 + 粉强调 | `0xFF2A2A2D` |
+| `rosedawn` | 玫瑰黎明 Dawn | 米白底 + **玫瑰色空格** | `0xFFB4637A` |
+| `tealvibes` | 青绿 Teal Vibes | 浅灰青底 + 浅橙功能键 | `0xFFFBFCFC` |
+| `seagreen` | 深海金 Sea Green | 墨绿底 + 金强调 | `0xFF17323F` |
+
+字段映射（写进 `SkinPreset` 的注释，别再猜）：
+
+```
+MAIN_BACKGROUND           -> kbBg
+KEY_BACKGROUND            -> key
+FUNCTIONAL_KEY_BACKGROUND -> func
+POPUP_KEYS_BACKGROUND     -> popup
+STRIP_BACKGROUND          -> barBg
+KEY_TEXT                  -> text
+ACTION_KEY_BACKGROUND     -> accent（accentEnter = true，回车 / 发送吃这个色）
+SPACE_BAR_BACKGROUND      -> spaceBg（本版新增）
+```
+
+两处**没有照抄**，因为原值放进来不成立：
+
+- `rosepine` 的 `accent` 原值是 `0xFF26233A`（比键帽还暗），当强调色等于没有 → 改 Rose Pine 的 love 粉 `0xFFEB6F92`；
+- `rosedawn` 的 `accent` 原值是 `0xFFF2E9E1`（米色，压在米白底上看不见）→ 改 Rose Pine 的 pine 蓝 `0xFF286983`。
+
+按下态统一规则：亮度 > 140 压暗 10%，否则提亮 10%（保证按下有明确反馈）。
+
+### ② 空格键单独上色（`KIND_SPACE` + `SkinPreset#spaceBg`）
+
+参考主题最容易被一眼认出来的就是 `SPACE_BAR_BACKGROUND` —— 玫瑰黎明那套的玫瑰色空格、
+青绿那套的白空格。所以：
+
+- `SkinPreset` 新增 `spaceBg` 字段（`0` = 不单独上色）；
+- `IosSkin.kindOf()` 新增 `KIND_SPACE`（`key_space*` / `space.png` / `space_n|p|normal|pressed.png`），
+  **排在 `isProtected` 之后**，所以 `space_icon.png` 仍然被保护、不会被刷成色块；
+- `colorOfKind()` 对 `KIND_SPACE`：`spaceBg == 0` 返回 0（H41 跳过，九套老预设行为完全不变）；
+- `synth()` 里 `KIND_SPACE` 与 `KIND_KEY` 走同一条画法（圆角 + 投影 + 玻璃 + 高光），只是取色不同；
+  `ThemeSkinHook` 的落屏重画登记表也加上了它，所以空格键同样由 H71 按真实 bounds 现场算圆角。
+
+### ③ 液态玻璃重做（按 SogouGlass 的思路）
+
+用户说的是"玻璃不好看"，指模块 App 的卡片；但键盘这边的玻璃也确实是"一层灰膜"。
+参考 [SogouGlass](https://github.com/zijueyi1/SogouGlass)（macOS 上给搜狗候选框垫系统玻璃的工具）
+的做法，落到 `IosSkin.drawGlassSurface()`：
+
+1. **暗部托亮**（它叫"托底 0.58"）：深色下先把 tint 的亮度抬到一个下限再画。
+   阈值没有照抄 0.58 —— 它托的是系统玻璃底板，我们托的是键帽 tint；0.58 会把深色键帽抬成中灰，
+   iOS 深色那套直接废掉。本版：键帽 `KEY_LIFT_MIN = 0.22`、底色 `FILL_LIFT_MIN = 0.30`，
+   两者的落差就是"键帽比底色亮一档"。实现是朝白色混合（`darkLift()`），色相不变、alpha 保留。
+2. **三段渐变**：上亮 12~14% → 中本色（52%） → 下压暗 6~9%。原来的两段式在浅色键帽上几乎看不出来。
+3. **顶部窄高光**：贴住圆角上沿铺一条占高度 18% 的白 10%（夜 6%）渐变带，模拟它那层
+   `shadowOpacity 0.18` 的光。键帽横向会被九宫格拉伸，所以只能做纯竖向的东西。
+4. **透明度下调**：键帽 `0.74→0.66`、底色 `0.66→0.58`（新增空格 `0.68`、气泡 `0.88→0.84`、强调 `0.82→0.80`）。
+   原来的数值下"透"和"灰"是同时发生的，压下来以后下面的模糊背景才真的透上来。
+
+### ④ App 界面：把"玻璃卡片"换掉，把操作挪到该在的地方
+
+（这条对应 m06732 前半句"操作的逻辑还是不够好 / 玻璃 Ui 也不好看"）
+
+1. **卡片不再是玻璃**：`ui/IosSection.IosGlass` → `IosCard`，浅色纯白 / 深色 `#1C1C1E` 实色，
+   只留 `0.5dp`、约 `1/12` 透明度的描边，圆角 16→14dp，取消 `elevation`。
+   beta4 那套"半透明白色渐变 + 白色发丝边"在浅色是一层雾、在深色是比背景更亮的灰膜 ——
+   iOS 自己从来不是这样，分组卡片就是一块实色。
+2. **头部只留「返回 / 标题 / 完成」**：「全部展开」从标题条挪到页面最底部（新增 `buildFooter()`）。
+   原来四个可点区挤在一行，最常用的"完成"紧挨着最容易误触的"全部展开"。
+3. **主界面「表情分组」默认展开**，并把 id 从 `groups` 改成 `groups2` —— 折叠状态是按 id 存进
+   `chiron_ui` 的，沿用旧 id 的话 beta4 已经把 `false` 写进去了，改默认值对老用户无效。
+   "装哪些分组"是这一页的主要操作，折叠起来等于把主操作藏进抽屉。
+4. 皮肤风格副标题改成"15 套：…"，弹窗列表自动跟着 `SkinPreset.IDS` 变长。
+
+### 构建与校验
+
+- `versionCode 81` / `versionName 2.4.0-beta5`；产物 `build/v240b5/AppleInputForSogou_v2.4.0-beta5.apk`
+  **22,787,653 B**，证书 `CN=Android Debug` SHA-256 `4fbf65ed…c207`（与 beta1~beta4 同签名，可覆盖升级）。
+- `classes.dex` **227,792 B**；`dexdump -f` 定义类 **156 个，全部 `Lcom/chiron/iosemoji/*`**，
+  非 chiron 0 个、`de/robv` 定义 0 个（xposed-stubs 没有进 dex）。
+- dex 字符串确认：`rosepine` `catppuccin` `mellow` `rosedawn` `tealvibes` `seagreen`
+  `spaceBg` `darkLift` `KEY_LIFT_MIN` `FILL_LIFT_MIN` `IosCard` `groups2` +
+  「玫瑰松」「猫布奇诺」「玫瑰黎明」「青绿」「幽夜」「深海金」。
+
+### 怎么验证
+
+1. 装 beta5 → 打开模块 App「功能开关 → 外观 → 皮肤风格」，列表里应多出六套（共 15 套）；
+2. 选「玫瑰黎明 Dawn」→ 键盘底色米白、**空格键是玫瑰色**（这条最能确认 `spaceBg` 真的生效）；
+3. 选「玫瑰松」→ 功能键是泡沫青、回车 / 发送是 love 粉；
+4. 开「液态玻璃」→ 深色夜间下键帽不应再是一团黑（暗部托亮），边沿仍有一圈高光；
+5. 从「玫瑰松」切回「iOS」→ 空格键应**恢复成普通字母键色**（`spaceBg = 0` 的跳过逻辑）。
+
+### 已知限制
+
+- 六套配色里 `rosepine` 的功能键是 `#9CCFD8`（泡沫青）—— 那是主题作者的原值，不是 bug；
+  觉得太跳就换 `catppuccin` 或 `seagreen`，那两套功能键只比底色亮一档。
+- 「暗部托亮」只作用于**玻璃开启且深色**的情况。关掉玻璃就是实色平涂，没有托亮这一步。
+- 空格键的分类依赖文件名（`key_space*` / `space*.png`）。如果某个渠道的空格底图叫别的名字，
+  它就不会被单独上色（不会出错，只是没效果）。
+- SogouGlass 记录的「搜狗会画一个颜色固定等于首选词颜色的细框」是它的已知问题，
+  我们这边同样的现象仍在（那是搜狗自己画的描边，皮肤层关不掉）。
+
 ## v2.4.0-beta4 模块 App 界面重做：每个分列都能折叠
 
 用户反馈：「重新做一下那个模块的 apk 界面，现在这个界面的操作逻辑有点不够好，帮我把每一个分列折叠。」

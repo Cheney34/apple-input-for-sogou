@@ -330,7 +330,7 @@ public final class ThemeSkinHook {
             boolean baked = IosSkin.hasBakedGlyph(src);
             if (!baked
                     && (kind == IosSkin.KIND_KEY || kind == IosSkin.KIND_POPUP
-                    || kind == IosSkin.KIND_ACCENT)) {
+                    || kind == IosSkin.KIND_ACCENT || kind == IosSkin.KIND_SPACE)) {
                 KeyCapDrawHook.register(tinted, IosSkin.capOf(kind, color, preset));
             }
             int n = IMG_REDRAWN.incrementAndGet();

@@ -97,6 +97,7 @@ public class SettingsActivity extends Activity {
         buildStatusCard(root);
         buildSwitchCards(root);
         buildInfoCards(root);
+        buildFooter(root);
         refreshSectionSummaries();
     }
 
@@ -124,25 +125,37 @@ public class SettingsActivity extends Activity {
         header.addView(title, new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
-        final TextView toggleAll = IosUi.text(this, "全部展开", 15f, IosUi.BLUE, false);
-        toggleAll.setPadding(IosUi.dp(this, 12), IosUi.dp(this, 8), IosUi.dp(this, 4), IosUi.dp(this, 8));
-        toggleAll.setOnClickListener(new android.view.View.OnClickListener() {
-            private boolean allOpen = false;
-            @Override
-            public void onClick(android.view.View v) {
-                allOpen = !allOpen;
-                IosSection.setAll(sections, allOpen, true);
-                toggleAll.setText(allOpen ? "全部收起" : "全部展开");
-            }
-        });
-        header.addView(toggleAll);
-
         TextView done = IosUi.text(this, "完成", 17f, IosUi.BLUE, false);
         done.setPadding(IosUi.dp(this, 12), IosUi.dp(this, 8), 0, IosUi.dp(this, 8));
         done.setOnClickListener(v -> finish());
         header.addView(done);
 
         root.addView(header);
+    }
+
+    /**
+     * 页脚：只留一个「全部展开 / 全部收起」。
+     *
+     * <p>v2.4.0-beta5 从头部挪下来（用户 m06732「操作逻辑还是不够好」）：
+     * 顶部同时挤着「返回 / 标题 / 全部展开 / 完成」四个可点区，最常用的「完成」
+     * 跟最容易误触的「全部展开」紧挨着，视线也没有落点。现在头部只有「返回 + 标题 + 完成」
+     * 这个 iOS 标准结构，「全部展开」是一次性工具，放到页面最底部 —— 想收整页时自然会滚到底。
+     */
+    private void buildFooter(LinearLayout root) {
+        root.addView(IosUi.space(this, 14));
+        TextView toggleAll = IosUi.text(this, "全部展开", 15f, IosUi.BLUE, false);
+        toggleAll.setPadding(IosUi.dp(this, 20), IosUi.dp(this, 6), IosUi.dp(this, 20), IosUi.dp(this, 6));
+        toggleAll.setOnClickListener(new android.view.View.OnClickListener() {
+            private boolean allOpen = false;
+
+            @Override
+            public void onClick(android.view.View v) {
+                allOpen = !allOpen;
+                IosSection.setAll(sections, allOpen, true);
+                ((TextView) v).setText(allOpen ? "全部收起" : "全部展开");
+            }
+        });
+        root.addView(toggleAll);
     }
 
     // ── 连接状态卡片 ─────────────────────────────────────────────────────
@@ -280,7 +293,8 @@ public class SettingsActivity extends Activity {
         String cur = prefs.getString(ModuleConfig.KEY_SKIN_PRESET, ModuleConfig.DEFAULT_SKIN_PRESET);
         LinearLayout row = IosRow.base(this);
         row.addView(IosRow.textColumn(this, "皮肤风格",
-                "iOS / 微信 / Google / 幽墨 Material / 幽墨 Pixel / 樱花粉 / 莫奈取色（莫奈要 Android 12+）"), IosRow.weight());
+                "15 套：iOS / 净白 / 微信 / Google / Material / Pixel / 樱花 / 莫奈"
+                        + " / 玫瑰松 / 猫布奇诺 / 幽夜 / 玫瑰黎明 / 青绿 / 深海金"), IosRow.weight());
         presetValue = IosUi.text(this, SkinPreset.labelOf(cur), 15f, IosUi.label2(this), false);
         presetValue.setPadding(IosUi.dp(this, 12), 0, 0, 0);
         row.addView(presetValue);

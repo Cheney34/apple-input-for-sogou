@@ -59,6 +59,15 @@ public final class IosSkin {
      * 是跟功能键同色的，不该变绿。所以只有 accentEnter=true 的预设才走这一类。
      */
     public static final int KIND_ACCENT = 4;
+    /**
+     * 空格键（v2.4.0-beta5）：画法与 {@link #KIND_KEY} 完全一致，只是取色走
+     * {@link SkinPreset#spaceBg}。
+     *
+     * <p>为什么值得单开一类：参考的 heliboard 主题里 {@code SPACE_BAR_BACKGROUND}
+     * 是最容易被一眼认出来的那一项（Rosé Pine Dawn 的玫瑰色空格、Teal Vibes 的白空格）。
+     * 预设没有 spaceBg（值 = 0）时 {@link #colorOfKind} 返回 0，H41 直接跳过，行为不变。
+     */
+    public static final int KIND_SPACE = 6;
 
     /**
      * 键帽圆角目标区间（v2.1.5）：**把每套皮肤的比例都拉进这一带**，而不是统一乘一个倍数。
@@ -545,13 +554,24 @@ public final class IosSkin {
 
         if (isProtected(n)) return KIND_NONE;
 
+        // 空格键（v2.4.0-beta5）：单独一类，只有预设有 spaceBg 时才会真正上色
+        // （colorOfKind 返回 0，ThemeSkinHook 跳过 —— 九套老预设的行为完全不变）。
+        // 为什么要单独一类：参考的 heliboard 主题里 SPACE_BAR_BACKGROUND 是最显眼的一项，
+        // 空格换色 = 整块键盘立刻被认出来（Rosé Pine Dawn 的玫瑰色空格就是这么来的）。
+        // 注意 `space_icon.png` 会被上面的 isProtected 先吃掉，不会被当空格键刷色。
+        if (n.startsWith("key_space") || n.equals("space.png")
+                || n.equals("space_n.png") || n.equals("space_p.png")
+                || n.equals("space_normal.png") || n.equals("space_pressed.png")) {
+            return KIND_SPACE;
+        }
+
         // 键帽：startsWith("key") 白名单（key_qwerty / key_us / key_n / key_function …）
         if (n.startsWith("key_qwerty") || n.startsWith("key_us") || n.startsWith("key_uk")
                 || n.startsWith("key_number") || n.startsWith("key_digit")
                 || n.startsWith("key_char") || n.startsWith("key_symbol")
                 || n.startsWith("key_normal") || n.startsWith("key_pressed")
                 || n.startsWith("key_function") || n.startsWith("key_func")
-                || n.startsWith("key_space") || n.startsWith("key_bg")
+                || n.startsWith("key_bg")
                 || n.equals("key.png") || n.equals("key_n.png") || n.equals("key_p.png")) {
             return KIND_KEY;
         }
@@ -729,10 +749,14 @@ public final class IosSkin {
             case KIND_POPUP:
                 return p.popup;
             case KIND_ACCENT:
-                // 只有 accentEnter 预设（目前只有微信）才给颜色；返回 0 时调用方
-                // （ThemeSkinHook）会跳过，等于回到「动作键完全不动」的旧行为。
+                // 只有 accentEnter 预设（微信 + v2.4.0-beta5 的六套社区配色）才给颜色；
+                // 返回 0 时调用方（ThemeSkinHook）会跳过，等于回到「动作键完全不动」的旧行为。
                 if (!p.accentEnter) return 0;
                 return pressed ? darken(p.accent, 0.12f) : p.accent;
+            case KIND_SPACE:
+                // 空格键：只有预设有 spaceBg 才上色（九套老预设 = 0 → 返回 0 → 跳过）
+                if (p.spaceBg == 0) return 0;
+                return pressed ? darken(p.spaceBg, 0.10f) : p.spaceBg;
             case KIND_KEY:
             default:
                 if (func) return pressed ? p.funcPressed : p.func;
@@ -775,6 +799,10 @@ public final class IosSkin {
                 // 液态玻璃：整块底色半透明，下面的（模糊后的）背景才透得上来。
                 // 透明度见 glassAlpha()：没挂上澎湃模糊时只做"有一点点透"，避免一片灰黑。
                 int fillColor = glassOn ? withAlphaScale(color, glassAlpha(KIND_FILL)) : color;
+                // v2.4.0-beta5「暗部托亮」（思路取自 SogouGlass）：深色底 + 半透明 ⇒ 真实画面
+                // 会塌成一片近黑，搜狗画上去的正文就糊在里面。把底色的亮度抬到一个下限，
+                // 让"键帽比底色亮一档"这个层级关系在任何壁纸下都成立。
+                if (glassOn && darkOn) fillColor = darkLift(fillColor, FILL_LIFT_MIN);
                 // 莫奈取色：底色不是一块死板的灰，而是一层极轻的竖向渐变
                 // （顶部略提亮 6%、底部略压暗 5%），这就是"氛围感"的来源。
                 if (p.gradient && h > 4) {
@@ -870,7 +898,7 @@ public final class IosSkin {
             // （那是键与键之间的缝），包围盒只占整图 70%~85% —— 旧判据直接把九键全部挡掉。
             // 现在「不满幅但**矩形非常实心**（≥0.95）」也放行：键帽是一整块实心矩形，
             // 而圆形/星形图标在包围盒内只占 70%~80%，过不了这一关。
-            if (kind == KIND_KEY || kind == KIND_POPUP) {
+            if (kind == KIND_KEY || kind == KIND_POPUP || kind == KIND_SPACE) {
                 boolean fullBleed = box.width() >= w * 0.85f && box.height() >= h * 0.85f;
                 if (!fullBleed && ratio2 < 0.95f) {
                     return null;
@@ -907,7 +935,7 @@ public final class IosSkin {
             // 用户看到的就是"调整模块没用"。宁可小图上圆角偏小（那也只是保守），
             // 也不能让用户的每一次拖动都落空。
             radius = Math.max(2f, Math.min(radius, shortSide * RADIUS_CAP));
-            if (kind == KIND_KEY) {
+            if (kind == KIND_KEY || kind == KIND_SPACE) {
                 sLastRadius = String.format(Locale.US, "%.2f/%dpx/%dx%d", ratio,
                         Math.round(radius), Math.round(rect.width()), Math.round(rect.height()));
             }
@@ -1212,7 +1240,7 @@ public final class IosSkin {
             renderCap(canvas, dst, cap, alpha);
         }
 
-        if (cap.kind == KIND_KEY) {
+        if (cap.kind == KIND_KEY || cap.kind == KIND_SPACE) {
             float gap = Math.max(1f, h * 0.02f);
             float radius = Math.max(2f, Math.min((h - gap * 2f) * cap.ratio,
                     Math.min(w - gap * 2f, h - gap * 2f) * RADIUS_CAP));
@@ -1379,6 +1407,17 @@ public final class IosSkin {
     private static final float RIM_DARK_SCALE = 0.25f;
 
     /**
+     * 「暗部托亮」下限（v2.4.0-beta5，思路取自 SogouGlass 的「托底 0.58」）。
+     *
+     * <p>单位是亮度占 255 的比例。为什么不是 0.58：SogouGlass 托的是**系统玻璃底板**，
+     * 那里要求整块都够亮才看得见字；我们托的是**键帽的 tint**，只要「比底色亮一档」
+     * 就能把键从背景里分出来。0.58 会把深色键帽抬成中灰（iOS 深色那套直接废掉）。
+     * 键帽 0.22、底色 0.30 —— 两者的落差就是键帽的可见度。
+     */
+    private static final float KEY_LIFT_MIN = 0.22f;
+    private static final float FILL_LIFT_MIN = 0.30f;
+
+    /**
      * BlurMaskFilter 的 radius 与 CSS blur 的 sigma 换算。
      *
      * <p>Android 的 BlurMaskFilter 半径对应的 sigma ≈ 0.5773×radius，而 CSS blur 的 sigma = blur/2，
@@ -1509,21 +1548,67 @@ public final class IosSkin {
     }
 
     /**
-     * 画"液态玻璃"键帽：竖向 tint 渐变 + 半透明。
+     * 画"液态玻璃"键帽：三段竖向 tint + 顶部一道窄高光。
      *
-     * <p>WeType 的玻璃是交给澎湃合成器实时取背景的，我们这边没有视图层可挂，所以做同一件事的
-     * 另一半：把面做成**半透明 + 上亮下暗的 tint**（对应它 {@code setMiBackgroundBlendColors}
-     * 的三段同色系叠加），下面的背景（有 {@code HyperGlassHook} 时是实时模糊）就会透上来。
+     * <p>v2.4.0-beta5 按 SogouGlass 的做法重校（用户 m06732：参考项目都是"键盘皮肤"）：
+     * <ol>
+     *   <li><b>暗部托亮</b>：深色下先把颜色的亮度抬到 {@link #KEY_LIFT_MIN}，
+     *       否则半透明深色面叠在深壁纸上还是一团黑，键与键分不开（SogouGlass 的
+     *       「托底 0.58」是同一个思路，只是它作用在系统玻璃层、我们作用在 tint 上，
+     *       阈值按键盘键帽的实际情况定得低得多）；</li>
+     *   <li><b>三段渐变</b>：上亮 12% → 中本色 → 下压暗 8%。两段式（上亮下暗）在
+     *       浅色键帽上几乎看不出来，三段才让"玻璃有厚度"；</li>
+     *   <li><b>顶部高光</b>：贴住圆角上沿画一条占高度 18% 的窄亮带（白 10%/夜 6%），
+     *       模拟 SogouGlass 里 {@code shadowOpacity 0.18} 那层光。键帽横向会被九宫格
+     *       拉伸，所以只能用纯竖向的东西 —— 任何横向渐变都会跟着被拉歪。</li>
+     * </ol>
      */
     private static void drawGlassSurface(Canvas canvas, RectF rect, float radius, int color,
                                          boolean dark) {
+        int base = dark ? darkLift(color, KEY_LIFT_MIN) : color;
+        int a = (base >>> 24) & 0xFF;   // 保留原 alpha（半透明是玻璃的前提）
+        int top = lighten(base, dark ? 0.14f : 0.10f) & 0x00FFFFFF | (a << 24);
+        int mid = base;
+        int bot = darken(base, dark ? 0.06f : 0.09f) & 0x00FFFFFF | (a << 24);
+
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setStyle(Paint.Style.FILL);
         paint.setShader(new LinearGradient(rect.left, rect.top, rect.left, rect.bottom,
-                lighten(color, dark ? 0.10f : 0.07f),
-                darken(color, dark ? 0.04f : 0.07f), Shader.TileMode.CLAMP));
+                new int[]{top, mid, bot}, new float[]{0f, 0.52f, 1f}, Shader.TileMode.CLAMP));
         canvas.drawRoundRect(rect, radius, radius, paint);
         paint.setShader(null);
+
+        // 顶部窄高光：整块 clip 进圆角，再铺一条贴顶的透明渐变带。
+        float band = rect.height() * 0.18f;
+        if (band > 1f) {
+            int save = canvas.save();
+            Path clip = new Path();
+            clip.addRoundRect(rect, radius, radius, Path.Direction.CW);
+            canvas.clipPath(clip);
+            paint.setShader(new LinearGradient(rect.left, rect.top, rect.left, rect.top + band,
+                    dark ? 0x14FFFFFF : 0x26FFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
+            canvas.drawRect(rect.left, rect.top, rect.right, rect.top + band, paint);
+            paint.setShader(null);
+            canvas.restoreToCount(save);
+        }
+    }
+
+    /**
+     * 「暗部托亮」：把颜色的亮度抬到一个下限，高于下限原样返回。
+     *
+     * <p>做法就是朝白色混合，只混多少由缺口决定 —— 这样色相不变，只是整体抬亮，
+     * 不会像直接 {@code lighten(f, 0.2)} 那样把深紫抬成灰紫（不同键抬的幅度一样）。
+     * alpha 原样保留。
+     */
+    private static int darkLift(int argb, float minLum) {
+        int lum = luminance(argb);
+        float floor = Math.max(0f, Math.min(1f, minLum)) * 255f;
+        if (lum >= floor) return argb;
+        // 缺口 / (255 - lum) = 需要朝白混合的比例；留一点余量避免正好卡在下限
+        float f = (floor - lum) / Math.max(1f, 255f - lum);
+        f = Math.max(0f, Math.min(1f, f));
+        int a = (argb >>> 24) & 0xFF;
+        return lighten(argb, f) & 0x00FFFFFF | (a << 24);
     }
 
     /**
@@ -1534,20 +1619,23 @@ public final class IosSkin {
      * 第一次弹键盘必然是"兜底档"，之后又不会重解码，用户看到的就是"开了没反应"。
      * 固定透明度以后，开了就是开了，与先后顺序无关。
      *
-     * <p>数值取向：键帽 0.74、底色 0.66 —— 比 WeType 的 50% tint 保守一点（我们的字色是
-     * 搜狗按 ini 画的，透太多会影响正文对比度），但足以让下面的模糊背景透上来。
+     * <p>数值取向（v2.4.0-beta5 下调）：键帽 0.66、底色 0.58 —— 用户反馈原来的
+     * 0.74 / 0.66 像"蒙了一层灰膜"，不平滑也不透。压下来以后下面的（模糊）背景才真的透上来，
+     * 配合 {@link #drawGlassSurface} 的暗部托亮，键帽反而更清楚而不是更闷。
      */
     private static float glassAlpha(int kind) {
         switch (kind) {
             case KIND_FILL:
-                return 0.66f;
+                return 0.58f;
             case KIND_POPUP:
-                return 0.88f;
+                return 0.84f;
             case KIND_ACCENT:
-                return 0.82f;
+                return 0.80f;
+            case KIND_SPACE:
+                return 0.68f;
             case KIND_KEY:
             default:
-                return 0.74f;
+                return 0.66f;
         }
     }
 

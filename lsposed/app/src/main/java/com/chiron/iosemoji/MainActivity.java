@@ -254,7 +254,11 @@ public class MainActivity extends Activity {
         statusCard.addView(bar, barLp);
 
         // 分组卡（默认收起：占屏太高，点开才铺 10 行）
-        IosSection sec_groups = section(root, "groups", "表情分组", false);
+        // v2.4.0-beta5：默认展开 —— 「装哪些表情分组」是这一页的主要操作，
+        // 折叠起来等于把主操作藏进抽屉（用户 m06732「操作逻辑还是不够好」）。
+        // id 从 "groups" 改成 "groups2"：折叠状态是按 id 存在 chiron_ui 里的，
+        // 沿用旧 id 的话，beta4 已经把 false 写进去了，这次改默认值对老用户无效。
+        IosSection sec_groups = section(root, "groups2", "表情分组", true);
         groupsCard = sec_groups.content();
 
         summaryView = IosUi.footer(this, "");

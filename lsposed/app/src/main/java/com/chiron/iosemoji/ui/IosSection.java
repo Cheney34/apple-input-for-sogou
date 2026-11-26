@@ -97,9 +97,9 @@ public final class IosSection {
         // ── 内容卡（玻璃底）────────────────────────────────────────────
         card = new LinearLayout(ctx);
         card.setOrientation(LinearLayout.VERTICAL);
-        card.setBackground(IosGlass.cardBg(ctx));
+        card.setBackground(IosCard.cardBg(ctx));
         card.setClipToOutline(true);
-        card.setElevation(IosUi.dp(ctx, 0.5f));
+        card.setElevation(0f);
         root.addView(card, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         card.setVisibility(expanded ? View.VISIBLE : View.GONE);
@@ -171,31 +171,37 @@ public final class IosSection {
         }
     }
 
-    /** 玻璃卡片底：半透明渐变 + 一圈发丝高光。 */
-    static final class IosGlass {
-        private IosGlass() {
+    /**
+     * 卡片底（v2.4.0-beta5：不再是"玻璃"）。
+     *
+     * <p>为什么换掉：beta4 用的是「半透明白色渐变 + 白色发丝边」，在浅色系统上是"一层雾"、
+     * 在深色上是一块比背景更亮的灰膜 —— 用户 m06732 说"玻璃的 Ui 也不好看"就是指这个。
+     * iOS 自己从来不是这样：分组卡片就是**一块实色 + 一圈极淡的描边**，层次全靠颜色差，
+     * 不靠渐变和透明度。所以这里退回实色：浅色纯白 / 深色 #1C1C1E，描边只做 0.5dp 的
+     * 1/12 透明度（够看出边界，又不会像一条线），圆角 14dp。
+     *
+     * <p>保留类名 IosGlass 会让后来的人以为还是玻璃实现，所以一并改名 IosCard。
+     */
+    static final class IosCard {
+        private IosCard() {
         }
 
         static LayerDrawable cardBg(Context ctx) {
             boolean dark = IosUi.isDark(ctx);
-            int top = dark ? 0x2EFFFFFF : 0xF2FFFFFF;
-            int bottom = dark ? 0x14FFFFFF : 0xD6FFFFFF;
 
-            GradientDrawable fill = new GradientDrawable(
-                    GradientDrawable.Orientation.TOP_BOTTOM, new int[]{top, bottom});
+            GradientDrawable fill = new GradientDrawable();
             fill.setShape(GradientDrawable.RECTANGLE);
-            fill.setCornerRadius(IosUi.dp(ctx, 16));
-            fill.setGradientType(GradientDrawable.LINEAR_GRADIENT);
+            fill.setCornerRadius(IosUi.dp(ctx, 14));
+            fill.setColor(dark ? 0xFF1C1C1E : 0xFFFFFFFF);
 
             GradientDrawable stroke = new GradientDrawable();
             stroke.setShape(GradientDrawable.RECTANGLE);
-            stroke.setCornerRadius(IosUi.dp(ctx, 16));
+            stroke.setCornerRadius(IosUi.dp(ctx, 14));
             stroke.setColor(0x00000000);
-            stroke.setStroke(Math.max(1, IosUi.dp(ctx, 0.6f)),
-                    dark ? 0x33FFFFFF : 0x40FFFFFF);
+            stroke.setStroke(Math.max(1, IosUi.dp(ctx, 0.5f)),
+                    dark ? 0x1AFFFFFF : 0x14000000);
 
-            LayerDrawable ld = new LayerDrawable(new android.graphics.drawable.Drawable[]{fill, stroke});
-            return ld;
+            return new LayerDrawable(new android.graphics.drawable.Drawable[]{fill, stroke});
         }
     }
 }
