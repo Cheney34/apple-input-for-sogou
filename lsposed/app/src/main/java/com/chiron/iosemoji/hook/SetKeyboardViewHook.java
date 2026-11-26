@@ -52,6 +52,14 @@ public final class SetKeyboardViewHook {
                                     HookRegistry.log("H70 apply failed");
                                     HookRegistry.log(t);
                                 }
+                                // H80：键盘每次被装上，顺手把候选栏也按当前配置对齐一遍
+                                // （候选栏对象会被搜狗反复换掉，只靠它自己的构造器抓不住）。
+                                try {
+                                    PanelIosHook.refreshCandidates(param.thisObject);
+                                } catch (Throwable t) {
+                                    HookRegistry.log("H80 refresh candidates failed");
+                                    HookRegistry.log(t);
+                                }
                             }
                         });
             }
