@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.chiron.iosemoji"
-    android:versionCode="78"
-    android:versionName="2.4.0-beta2">
+    android:versionCode="79"
+    android:versionName="2.4.0-beta3">
 
     <queries>
         <package android:name="com.sohu.inputmethod.sogou.xiaomi" />

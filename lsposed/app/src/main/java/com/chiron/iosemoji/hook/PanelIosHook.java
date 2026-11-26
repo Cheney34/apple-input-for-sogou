@@ -62,6 +62,9 @@ public final class PanelIosHook {
     private static volatile int sPopupTakes;
     private static volatile int sMissing;
     private static volatile int sClipOn;
+    /** 留平的上 / 下边缘计数 —— 用来确认"接缝一侧确实没有倒角"。 */
+    private static volatile int sSquareTop;
+    private static volatile int sSquareBottom;
     private static volatile String sLastCandidateName = "-";
 
     private PanelIosHook() {
@@ -169,10 +172,23 @@ public final class PanelIosHook {
     }
 
     /**
-     * 上色：圆角背景 + 把子 View 一起裁进这个圆角（{@code clipToOutline}）。
+     * 上色：<b>按拼接方向只倒外侧两个角</b> + 把子 View 一起裁进这个形状（{@code clipToOutline}）。
      *
      * <p>为什么要 clip：搜狗这些面板里，真正的「方框」往往是我们设的那层背景<b>下面的子 View</b>
      * 自己画的，只设背景就会被它盖住一角 —— 真机反馈「长按气泡背景还有个方框没贴合」就是这个。
+     *
+     * <p>v2.4.0-beta3 的关键修正（真机反馈「工具栏和面板的衔接处圆角被切成两半」）：
+     * 候选栏和表情面板是<b>上下叠在一起的一块面</b>（候选栏在上、表情面板在下，色值都是 {@code barBg}），
+     * 如果两块都把四个角倒圆，接缝处就是<b>两条相反的弧线</b>，中间露出窗口底色，看起来像两张卡片拼起来。
+     * 真实的 iOS 键盘是一整块：只有最上沿和最下沿是圆的。
+     * 所以这里改成按槽位只倒外侧角：
+     * <ul>
+     *   <li>候选栏（在上面）→ 只倒<b>上面两个角</b>，下边缘留平，与下方同色的面板严丝合缝；</li>
+     *   <li>表情面板（在下面）→ 只倒<b>下面两个角</b>，上边缘留平；</li>
+     *   <li>长按气泡是浮动卡片 → 四个角都倒，并且保留发丝描边。</li>
+     * </ul>
+     * 接缝一侧同时<b>不画描边</b>（{@code GradientDrawable} 的 stroke 只能描一整圈，
+     * 留着就会在接缝上画出一条横线，那正是「被分割成两个部分」的另一半原因）。
      */
     private static void paint(View v, String kind) {
         try {
@@ -183,25 +199,55 @@ public final class PanelIosHook {
             if (p == null) return;
             int color;
             float rDp;
+            boolean roundTop;
+            boolean roundBottom;
+            boolean stroke;
+            String cornerNote;
             if ("candidate".equals(kind)) {
                 color = p.barBg;
                 rDp = R_PANEL_DP;
+                // 候选栏与下方的表情面板是同一块面：接缝那一侧（下沿）必须留平，
+                // 否则两块各画两道相反的弧，中间露出窗口底色 = "被分割成两个部分"。
+                // 只保留最上沿的圆角（iOS 键盘最外侧的那道弧）。
+                roundTop = true;
+                roundBottom = false;
+                stroke = false;
+                cornerNote = "top-only";
                 sCandidateTakes++;
             } else if ("emoji".equals(kind)) {
-                // 用 barBg 而不是 kbBg：表情面板正上方是候选栏/工具条，两者同色 → 圆角缺口不可见
+                // 用 barBg 而不是 kbBg：表情面板正上方是候选栏/工具条，两者同色 → 接缝不可见
                 color = p.barBg;
                 rDp = R_PANEL_DP;
+                roundTop = false;
+                roundBottom = true;
+                stroke = false;
+                cornerNote = "bottom-only";
                 sEmojiTakes++;
             } else {
                 color = p.popup;
                 rDp = R_POPUP_DP;
+                roundTop = true;
+                roundBottom = true;
+                stroke = true;
+                cornerNote = "all";
                 sPopupTakes++;
             }
+            if (!roundTop) sSquareTop++;
+            if (!roundBottom) sSquareBottom++;
             float r = rDp * ctx.getResources().getDisplayMetrics().density;
+            float z = 0f;
+            // setCornerRadii 顺序：左上、右上、右下、左下（每个角 x/y 两个 float）
+            float[] radii = roundTop
+                    ? (roundBottom ? new float[]{r, r, r, r, r, r, r, r}
+                    : new float[]{r, r, r, r, z, z, z, z})
+                    : (roundBottom ? new float[]{z, z, z, z, r, r, r, r}
+                    : new float[]{z, z, z, z, z, z, z, z});
             GradientDrawable d = new GradientDrawable();
             d.setColor(color);
-            d.setCornerRadius(r);
-            d.setStroke(1, alphaOf(p.text, 0.12f));
+            d.setCornerRadii(radii);
+            if (stroke) {
+                d.setStroke(1, alphaOf(p.text, 0.12f));
+            }
             v.setBackground(d);
             try {
                 v.setClipToOutline(true);
@@ -210,7 +256,7 @@ public final class PanelIosHook {
                 // 极老系统没有这个 API，忽略
             }
             HookRegistry.log("H80 " + kind + " bg -> #" + Integer.toHexString(color)
-                    + " r=" + Math.round(rDp) + "dp clip=on");
+                    + " r=" + Math.round(rDp) + "dp corners=" + cornerNote + " clip=on");
         } catch (Throwable t) {
             HookRegistry.log("H80 paint " + kind + " failed: " + t);
         }
@@ -241,14 +287,21 @@ public final class PanelIosHook {
         return (alpha << 24) | (rgb & 0x00FFFFFF);
     }
 
-    /** 状态卡：候选/表情/气泡/未找到/被裁数/最后一个候选栏类名。 */
+    /**
+     * 状态卡：候选/表情/气泡/未找到/被裁数/留平上沿/留平下沿/最后一个候选栏类名。
+     *
+     * <p>「留平上沿 / 留平下沿」是 v2.4.0-beta3 新增的两段：接缝那一侧应当<b>不倒角</b>，
+     * 这两段只要大于 0，就说明拼接逻辑真的跑到了。
+     */
     public static String state() {
         return sCandidateTakes + "/" + sEmojiTakes + "/" + sPopupTakes + "/" + sMissing
-                + "/" + sClipOn + "/" + sLastCandidateName;
+                + "/" + sClipOn + "/" + sSquareTop + "/" + sSquareBottom
+                + "/" + sLastCandidateName;
     }
 
     public static String summary() {
         return "panel(cand=" + sCandidateTakes + ",emoji=" + sEmojiTakes
-                + ",popup=" + sPopupTakes + ",miss=" + sMissing + ",clip=" + sClipOn + ")";
+                + ",popup=" + sPopupTakes + ",miss=" + sMissing + ",clip=" + sClipOn
+                + ",flatT=" + sSquareTop + ",flatB=" + sSquareBottom + ")";
     }
 }
