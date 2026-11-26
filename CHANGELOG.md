@@ -1,3 +1,69 @@
+## v2.4.0-beta4 模块 App 界面重做：每个分列都能折叠
+
+用户反馈：「重新做一下那个模块的 apk 界面，现在这个界面的操作逻辑有点不够好，帮我把每一个分列折叠。」
+
+参考了四个项目（只取思路，不引入任何依赖）：
+- [Future-Keyboard](https://github.com/davidren0513/Future-Keyboard)：分组式设置页的信息密度处理 —— 一组一卡、组内不再套二级标题；
+- [AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass)：液态玻璃的层次感来自「半透明渐变 + 一圈极细高光」，不是靠模糊；
+- [heliboard-themes](https://github.com/Star-Trowa/heliboard-themes)：主题选项的呈现方式（一行一个当前值 + 右侧箭头，点开弹选择）；
+- [SogouGlass](https://github.com/zijueyi1/SogouGlass)：搜狗场景下「候选条/面板」用同一种玻璃底，边界只留外侧圆角。
+
+### 改了什么
+
+1. **每个分列都能折叠**（新增 `ui/IosSection.java`，手风琴组件）
+   - 点标题行 = 展开 / 收起，右侧 `›` 旋转 90°；
+   - 每个分组的展开状态写进 `chiron_ui` 偏好（键 `sec_<id>`），下次进来保持上次的样子；
+   - 内容用 `LayoutTransition` 过渡（展开 170ms / 收起 150ms），不是硬切。
+
+2. **标题行右侧加了实时摘要**，不展开也能看出这个分组现在是什么状态
+   - 状态 → `已连接` / `未连接`
+   - 核心 → `总开关 开 · 探针 关`
+   - 外观 → `iOS · 圆角 自动 · 玻璃 · 高光`
+   - 面板（实验）→ `1/3 开`
+   - 表情 → `分组 开 · 滑动 开 · 快捷码 关`
+   - 诊断 → `开` / `关`
+   - 兼容信息 → `v2.4.0-beta4`
+   - 摘要只是锦上添花：`refreshSectionSummaries()` 整段包在 try/catch 里，算不出来也不影响功能。
+
+3. **卡片改成液态玻璃底**（`IosSection.IosGlass`）
+   - 浅色：上 `0xF2FFFFFF` → 下 `0xD6FFFFFF` 竖向渐变 + 一圈 `0x40FFFFFF` 发丝边；
+   - 深色：上 `0x2EFFFFFF` → 下 `0x14FFFFFF` + 一圈 `0x33FFFFFF`；
+   - 纯 `GradientDrawable` 两层叠（`LayerDrawable`），**不用 RenderEffect**，所以 Android 8+ 都能画，
+     不需要系统支持实时模糊 —— 这也是从 AndroidLiquidGlass 学到的：先要「看得出层次」，再谈「折射」。
+
+4. **两个页面都加了「全部展开 / 全部收起」**
+   - 主界面在标题下；功能开关页在顶部工具行（原来只有「完成」，现在多了这一个）；
+   - 长页面不用一段段点。
+
+5. **默认展开哪个重新定过**
+   - 主界面：状态 / 操作 展开，表情分组 / 模块 / 运行日志 收起（10 行分组不再一进来就铺满整屏）；
+   - 功能开关：连接状态 / 外观 展开，核心 / 面板 / 表情 / 诊断 / 兼容信息 收起。
+
+6. **运行日志去掉了「双层折叠」**
+   - 以前是「卡片 → 内部再一个『展开』按钮」，现在是分组头本身折叠，少一次点击。
+
+### 构建与校验
+
+- versionCode **80** / versionName **2.4.0-beta4**（`AndroidManifest.xml`、`app/build.gradle.kts`、`strings.xml#version_label` 三处同步）；
+- 产物 `build/v240b4/AppleInputForSogou_v2.4.0-beta4.apk` **22,787,653 B**，证书 `CN=Android Debug`
+  SHA-256 `4fbf65ed…c207`（可覆盖 v2.3.x / v2.4.0-beta1~beta3）；
+- `classes.dex` 224,948 B、**156 个类全部 `Lcom/chiron/iosemoji/*`**、非 chiron 0、`de/robv` 定义 0；
+- dex 内确认含 `ui/IosSection`、`IosGlass`、`chiron_ui`、`sec_`、「全部展开」「全部收起」。
+
+### 怎么验证
+
+1. 覆盖安装后打开模块 App：应该看到「状态」「操作」展开、「表情分组」「模块」「运行日志」收起；
+2. 点任意标题行 → 内容滑出 / 收回，右侧箭头跟着转；
+3. 杀掉 App 重进 → 上次的展开状态还在；
+4. 点「全部展开」→ 所有分组一起打开，按钮变「全部收起」；
+5. 打字进搜狗 → 回到模块 App，状态分组摘要应变成「已连接」。
+
+### 已知限制
+
+- 玻璃底是「高光 + 渐变」的**模拟**，没有真实背景折射（原生 View 没有 RenderEffect 的通用入口，
+  真做折射要上 RenderNode/AGSL，成本远大于收益）；
+- 摘要文字过长会省略号截断（单行），点开能看全。
+
 ## v2.4.0-beta3 接缝处的圆角：两块同色面板不该各倒各的角
 
 真机反馈：「那个工具栏和面板的衔接的圆角好就分割成两个部分了。」

@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.chiron.iosemoji.config.ConfigMigration;
 import com.chiron.iosemoji.ui.IosRow;
+import com.chiron.iosemoji.ui.IosSection;
 import com.chiron.iosemoji.ui.IosSwitch;
 import com.chiron.iosemoji.ui.IosUi;
 
@@ -207,10 +208,30 @@ public class MainActivity extends Activity {
         sub.setPadding(pad, IosUi.dp(this, 4), pad, 0);
         root.addView(sub);
 
+        // 页面比较长，给一个「全部展开 / 全部收起」，不用一段段点
+        LinearLayout tools = new LinearLayout(this);
+        tools.setOrientation(LinearLayout.HORIZONTAL);
+        tools.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        tools.setPadding(pad, IosUi.dp(this, 10), pad, IosUi.dp(this, 2));
+        final TextView toggleAll = IosUi.text(this, "全部展开", 13f, IosUi.BLUE, false);
+        toggleAll.setPadding(IosUi.dp(this, 10), IosUi.dp(this, 5), IosUi.dp(this, 12), IosUi.dp(this, 5));
+        toggleAll.setBackground(IosUi.rounded(this, IosUi.alpha(IosUi.BLUE, 0.12f), 14f));
+        toggleAll.setOnClickListener(new View.OnClickListener() {
+            private boolean allOpen = false;
+
+            @Override
+            public void onClick(View v) {
+                allOpen = !allOpen;
+                IosSection.setAll(sections, allOpen, true);
+                toggleAll.setText(allOpen ? "全部收起" : "全部展开");
+            }
+        });
+        tools.addView(toggleAll);
+        root.addView(tools);
+
         // 状态卡
-        root.addView(IosUi.sectionHeader(this, "状态"));
-        LinearLayout statusCard = IosUi.card(this);
-        root.addView(statusCard, IosUi.cardParams(this));
+        IosSection sec_status = section(root, "status", "状态", true);
+        LinearLayout statusCard = sec_status.content();
 
         LinearLayout statusRow = IosRow.base(this);
         dot = IosUi.dot(this, 0xFF6C6E7A);
@@ -232,18 +253,16 @@ public class MainActivity extends Activity {
         barLp.bottomMargin = IosUi.dp(this, 12);
         statusCard.addView(bar, barLp);
 
-        // 分组卡
-        root.addView(IosUi.sectionHeader(this, "表情分组"));
-        groupsCard = IosUi.card(this);
-        root.addView(groupsCard, IosUi.cardParams(this));
+        // 分组卡（默认收起：占屏太高，点开才铺 10 行）
+        IosSection sec_groups = section(root, "groups", "表情分组", false);
+        groupsCard = sec_groups.content();
 
         summaryView = IosUi.footer(this, "");
         root.addView(summaryView);
 
         // 操作卡
-        root.addView(IosUi.sectionHeader(this, "操作"));
-        LinearLayout actionCard = IosUi.card(this);
-        root.addView(actionCard, IosUi.cardParams(this));
+        IosSection sec_action = section(root, "action", "操作", true);
+        LinearLayout actionCard = sec_action.content();
 
         btnInstallRow = IosRow.button(this, "安装选中分组", IosUi.BLUE, v -> {
             if (selected.isEmpty()) return;
@@ -262,9 +281,8 @@ public class MainActivity extends Activity {
         actionCard.addView(btnRestoreRow);
 
         // 模块卡
-        root.addView(IosUi.sectionHeader(this, "模块"));
-        LinearLayout moduleCard = IosUi.card(this);
-        root.addView(moduleCard, IosUi.cardParams(this));
+        IosSection sec_module = section(root, "module", "模块", false);
+        LinearLayout moduleCard = sec_module.content();
 
         moduleCard.addView(IosRow.clickable(this, "功能开关 / 兼容信息",
                 "键盘替换、候选探针、表情分组、日志", v ->
@@ -285,17 +303,9 @@ public class MainActivity extends Activity {
         moduleCard.addView(IosRow.clickable(this, "重启输入法",
                 "重新加载皮肤与配置（不用去系统设置强停）", v -> restartIme()));
 
-        // 日志卡
-        root.addView(IosUi.sectionHeader(this, "运行日志"));
-        LinearLayout logCard = IosUi.card(this);
-        root.addView(logCard, IosUi.cardParams(this));
-
-        LinearLayout logHeader = IosRow.base(this);
-        logHeader.addView(IosUi.text(this, "Hook 日志", 17f, IosUi.label(this), false),
-                new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-        logToggle = IosUi.text(this, "展开", 15f, IosUi.label2(this), false);
-        logHeader.addView(logToggle);
-        logCard.addView(logHeader);
+        // 日志卡（分组头就是折叠开关，不再套第二层「展开」）
+        IosSection sec_log = section(root, "log", "运行日志", false);
+        LinearLayout logCard = sec_log.content();
 
         logView = new TextView(this);
         logView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f);
@@ -306,14 +316,29 @@ public class MainActivity extends Activity {
                 IosUi.dp(this, 16), IosUi.dp(this, 14));
         logCard.addView(logView);
 
-        logHeader.setOnClickListener(v -> {
-            boolean visible = logView.getVisibility() == View.VISIBLE;
-            logView.setVisibility(visible ? View.GONE : View.VISIBLE);
-            logToggle.setText(visible ? "展开" : "收起");
-        });
+    }
+
+    private IosSection section(LinearLayout root, String id, String title, boolean expanded) {
+        IosSection s = IosSection.create(this, id, title, expanded);
+        if ("status".equals(id)) statusSection = s;
+        else if ("groups".equals(id)) groupsSection = s;
+        else if ("action".equals(id)) actionSection = s;
+        else if ("module".equals(id)) moduleSection = s;
+        else if ("log".equals(id)) logSection = s;
+        sections.add(s);
+        root.addView(s.view());
+        return s;
     }
 
     private LinearLayout groupsCard;
+
+    /** 五个分列都是可折叠分组，展开状态单独记在 chiron_ui 里。 */
+    private final List<IosSection> sections = new ArrayList<>();
+    private IosSection statusSection;
+    private IosSection groupsSection;
+    private IosSection actionSection;
+    private IosSection moduleSection;
+    private IosSection logSection;
 
     private IosSwitch findSwitch(LinearLayout row) {
         for (int i = 0; i < row.getChildCount(); i++) {
@@ -408,6 +433,11 @@ public class MainActivity extends Activity {
             summaryView.setText("未选择任何分组，点上面的行选择要替换的表情");
         } else {
             summaryView.setText("已选 " + selected.size() + " 组 · 共 " + total + " 张表情");
+        }
+        if (groupsSection != null) {
+            groupsSection.setSummary(selected.isEmpty()
+                    ? "未选择"
+                    : "已选 " + selected.size() + " 组 · " + total + " 张");
         }
         if (btnInstallText != null) {
             btnInstallText.setText(selected.isEmpty()
@@ -640,6 +670,7 @@ public class MainActivity extends Activity {
     }
 
     private void setConnected(boolean connected) {
+        if (statusSection != null) statusSection.setSummary(connected ? "已连接" : "未连接");
         if (dot == null) return;
         dot.setBackgroundTintList(ColorStateList.valueOf(
                 connected ? 0xFF34C759 : 0xFF6C6E7A));
@@ -657,6 +688,7 @@ public class MainActivity extends Activity {
         StringBuilder sb = new StringBuilder();
         for (String s : logLines) sb.append(s).append('\n');
         logView.setText(sb.toString());
+        if (logSection != null) logSection.setSummary(logLines.size() + " 行");
     }
 
     private int dp(int value) {

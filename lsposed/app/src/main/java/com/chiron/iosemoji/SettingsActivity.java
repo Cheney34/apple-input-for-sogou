@@ -26,7 +26,11 @@ import com.chiron.iosemoji.skin.MonetPalette;
 import com.chiron.iosemoji.skin.SkinPreset;
 import com.chiron.iosemoji.ui.IosRow;
 import com.chiron.iosemoji.ui.IosSwitch;
+import com.chiron.iosemoji.ui.IosSection;
 import com.chiron.iosemoji.ui.IosUi;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 功能开关页（iOS 设置页样式）。
@@ -58,6 +62,16 @@ public class SettingsActivity extends Activity {
     /** 最近一次连上的渠道名（小米定制版 / 搜狗官方版 / …），用于状态卡与 Toast。 */
     private String lastChannel;
 
+    /** 每个分列都是可折叠分组（手风琴）。 */
+    private final List<IosSection> sections = new ArrayList<>();
+    private IosSection statusSection;
+    private IosSection coreSection;
+    private IosSection lookSection;
+    private IosSection panelsSection;
+    private IosSection emojiSection;
+    private IosSection diagSection;
+    private IosSection infoSection;
+
     /** 广播回执窗口：500ms 内没回执就认为进程不在。 */
     private static final long REPLY_TIMEOUT_MS = 500L;
 
@@ -83,11 +97,13 @@ public class SettingsActivity extends Activity {
         buildStatusCard(root);
         buildSwitchCards(root);
         buildInfoCards(root);
+        refreshSectionSummaries();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        refreshSectionSummaries();
         queryStatus(false);
     }
 
@@ -108,6 +124,19 @@ public class SettingsActivity extends Activity {
         header.addView(title, new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
+        final TextView toggleAll = IosUi.text(this, "全部展开", 15f, IosUi.BLUE, false);
+        toggleAll.setPadding(IosUi.dp(this, 12), IosUi.dp(this, 8), IosUi.dp(this, 4), IosUi.dp(this, 8));
+        toggleAll.setOnClickListener(new android.view.View.OnClickListener() {
+            private boolean allOpen = false;
+            @Override
+            public void onClick(android.view.View v) {
+                allOpen = !allOpen;
+                IosSection.setAll(sections, allOpen, true);
+                toggleAll.setText(allOpen ? "全部收起" : "全部展开");
+            }
+        });
+        header.addView(toggleAll);
+
         TextView done = IosUi.text(this, "完成", 17f, IosUi.BLUE, false);
         done.setPadding(IosUi.dp(this, 12), IosUi.dp(this, 8), 0, IosUi.dp(this, 8));
         done.setOnClickListener(v -> finish());
@@ -119,9 +148,8 @@ public class SettingsActivity extends Activity {
     // ── 连接状态卡片 ─────────────────────────────────────────────────────
 
     private void buildStatusCard(LinearLayout root) {
-        root.addView(IosUi.sectionHeader(this, "连接状态"));
-        LinearLayout card = IosUi.card(this);
-        root.addView(card, IosUi.cardParams(this));
+        IosSection sec_status = section(root, "status", "连接状态", true);
+        LinearLayout card = sec_status.content();
 
         statusText = IosUi.text(this, "检测中…", 15f, IosUi.label2(this), false);
         card.addView(labelRow("搜狗进程", statusText));
@@ -166,17 +194,15 @@ public class SettingsActivity extends Activity {
     // ── 开关卡片 ─────────────────────────────────────────────────────────
 
     private void buildSwitchCards(LinearLayout root) {
-        root.addView(IosUi.sectionHeader(this, "核心"));
-        LinearLayout core = IosUi.card(this);
-        root.addView(core, IosUi.cardParams(this));
+        IosSection sec_core = section(root, "core", "核心", false);
+        LinearLayout core = sec_core.content();
         addSwitch(core, ModuleConfig.KEY_MASTER, "总开关",
                 "关闭后本模块在搜狗进程内不做任何事（表情、皮肤、诊断全部停用）。", true);
         addSwitch(core, ModuleConfig.KEY_CANDIDATE_PROBE, "候选数据探针",
                 "只读打印候选列表推送情况，日志量大，仅在排查问题时打开。", false);
 
-        root.addView(IosUi.sectionHeader(this, "外观"));
-        LinearLayout look = IosUi.card(this);
-        root.addView(look, IosUi.cardParams(this));
+        IosSection sec_look = section(root, "look", "外观", true);
+        LinearLayout look = sec_look.content();
         addSwitch(look, ModuleConfig.KEY_THEME_SKIN, "改皮肤（推荐）",
                 "改搜狗**自己的默认皮肤**：配色、键帽形状、候选栏底色都按所选风格重画。"
                         + "布局、按键命中、候选栏高度全部沿用搜狗原样，所以不会错位。", true);
@@ -206,9 +232,8 @@ public class SettingsActivity extends Activity {
         addMonetSeedRow(look);
 
 
-        root.addView(IosUi.sectionHeader(this, "面板（实验）"));
-        LinearLayout panels = IosUi.card(this);
-        root.addView(panels, IosUi.cardParams(this));
+        IosSection sec_panels = section(root, "panels", "面板（实验）", false);
+        LinearLayout panels = sec_panels.content();
         addSwitch(panels, ModuleConfig.KEY_CANDIDATE_IOS, "候选栏 iOS 化",
                 "给候选栏容器加圆角、预设底色和一道发丝线（只改背景，不动布局与高度）。"
                         + "实验功能，默认关；若出现候选栏错位/遮挡，关掉即可恢复。", true);
@@ -219,9 +244,8 @@ public class SettingsActivity extends Activity {
                 "表情面板与表情键盘的底色换成所选皮肤（只改背景，不动分页与分组）。"
                         + "实验功能，默认关。", true);
 
-        root.addView(IosUi.sectionHeader(this, "表情"));
-        LinearLayout emoji = IosUi.card(this);
-        root.addView(emoji, IosUi.cardParams(this));
+        IosSection sec_emoji = section(root, "emoji", "表情", false);
+        LinearLayout emoji = sec_emoji.content();
         addSwitch(emoji, ModuleConfig.KEY_EMOJI_GROUPS, "隐藏搜狗自带分组",
                 "隐藏「组合」和「拼装」两个内置分组，让位给 Apple 风格分组。", true);
         addSwitch(emoji, ModuleConfig.KEY_EMOJI_SWIPE, "左右滑动切换分组",
@@ -230,9 +254,8 @@ public class SettingsActivity extends Activity {
                 "打完直接上屏，不经过候选。苹果logo →  Logo；pg1–pg8 → 变形的脸 / 打斗云团 / 毛怪 / "
                         + "虎鲸 / 山体滑坡 / 长号 / 宝箱 / 芭蕾舞者。全等匹配，不误伤正常句子。", false);
 
-        root.addView(IosUi.sectionHeader(this, "诊断"));
-        LinearLayout diag = IosUi.card(this);
-        root.addView(diag, IosUi.cardParams(this));
+        IosSection sec_diag = section(root, "diag", "诊断", false);
+        LinearLayout diag = sec_diag.content();
         addSwitch(diag, ModuleConfig.KEY_DIAGNOSTICS, "视图树诊断",
                 "输入法启动 3 秒后 dump 一次输入窗口视图树到日志。", false);
     }
@@ -782,16 +805,78 @@ public class SettingsActivity extends Activity {
             skinLine.append("\n没认出来的图：").append(skinSkip);
         }
         effectiveText.setText(skinLine.toString());
+        if (statusSection != null) {
+            statusSection.setSummary((statusText == null ? "未连接" : statusText.getText().toString()));
+        }
+        refreshSectionSummaries();
         requestHint.setText("搜狗版本 " + (sg == null ? "unknown" : sg)
                 + " · 模块 " + (version == null ? "unknown" : version));
     }
 
     // ── 兼容信息 ─────────────────────────────────────────────────────────
 
+    // ── 可折叠分组 ────────────────────────────────────────────────────────
+
+    private IosSection section(LinearLayout root, String id, String title, boolean expanded) {
+        IosSection s = IosSection.create(this, id, title, expanded);
+        if ("status".equals(id)) statusSection = s;
+        else if ("core".equals(id)) coreSection = s;
+        else if ("look".equals(id)) lookSection = s;
+        else if ("panels".equals(id)) panelsSection = s;
+        else if ("emoji".equals(id)) emojiSection = s;
+        else if ("diag".equals(id)) diagSection = s;
+        else if ("info".equals(id)) infoSection = s;
+        sections.add(s);
+        root.addView(s.view());
+        return s;
+    }
+
+    /** 每个分组标题行右侧的实时摘要：不展开也能看出当前状态。 */
+    private void refreshSectionSummaries() {
+        try {
+            if (coreSection != null) {
+                coreSection.setSummary("总开关 " + onOff(ModuleConfig.masterEnabled())
+                        + " · 探针 " + onOff(prefs.getBoolean(ModuleConfig.KEY_CANDIDATE_PROBE, false)));
+            }
+            if (lookSection != null) {
+                String preset = SkinPreset.labelOf(
+                        prefs.getString(ModuleConfig.KEY_SKIN_PRESET, ModuleConfig.DEFAULT_SKIN_PRESET));
+                StringBuilder sb = new StringBuilder(preset);
+                sb.append(" · 圆角 ").append(radiusLabel(readRadiusPercent()));
+                if (prefs.getBoolean(ModuleConfig.KEY_GLASS, true)) sb.append(" · 玻璃");
+                if (prefs.getBoolean(ModuleConfig.KEY_EDGE_HIGHLIGHT, true)) sb.append(" · 高光");
+                lookSection.setSummary(sb.toString());
+            }
+            if (panelsSection != null) {
+                int n = 0;
+                if (prefs.getBoolean(ModuleConfig.KEY_CANDIDATE_IOS, false)) n++;
+                if (prefs.getBoolean(ModuleConfig.KEY_POPUP_IOS, false)) n++;
+                if (prefs.getBoolean(ModuleConfig.KEY_EMOJI_IOS, false)) n++;
+                panelsSection.setSummary(n + "/3 开");
+            }
+            if (emojiSection != null) {
+                emojiSection.setSummary("分组 " + onOff(prefs.getBoolean(ModuleConfig.KEY_EMOJI_GROUPS, true))
+                        + " · 滑动 " + onOff(prefs.getBoolean(ModuleConfig.KEY_EMOJI_SWIPE, true))
+                        + " · 快捷码 " + onOff(prefs.getBoolean(ModuleConfig.KEY_LOGO_TRIGGER, false)));
+            }
+            if (diagSection != null) {
+                diagSection.setSummary(onOff(prefs.getBoolean(ModuleConfig.KEY_DIAGNOSTICS, false)));
+            }
+            if (infoSection != null) {
+                infoSection.setSummary("v" + moduleVersionLine());
+            }
+        } catch (Throwable ignored) {
+            // 摘要只是锦上添花，出错不影响功能
+        }
+    }
+
+    private static String onOff(boolean value) {
+        return value ? "开" : "关";
+    }
+
     private void buildInfoCards(LinearLayout root) {
-        root.addView(IosUi.sectionHeader(this, "兼容信息"));
-        LinearLayout info = IosUi.card(this);
-        root.addView(info, IosUi.cardParams(this));
+        IosSection sec_info = section(root, "info", "兼容信息", false);
+        LinearLayout info = sec_info.content();
 
         addInfo(info, "本模块版本", moduleVersionLine());
         addInfo(info, "已 DEX 验证的搜狗版本", VersionProfile.TARGET_VERSION_NAME);
