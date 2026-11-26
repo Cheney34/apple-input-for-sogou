@@ -7,4 +7,6 @@ public final class XposedBridge {
     public static Set<XC_MethodHook.Unhook> hookAllMethods(Class<?> hookClass, String methodName, XC_MethodHook callback) {
         return new HashSet<XC_MethodHook.Unhook>();
     }
+
+    public static java.util.Set<XC_MethodHook.Unhook> hookAllConstructors(Class<?> hookClass, XC_MethodHook callback) { return null; }
 }

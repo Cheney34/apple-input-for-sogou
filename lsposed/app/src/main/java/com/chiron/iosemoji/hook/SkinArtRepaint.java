@@ -121,19 +121,31 @@ public final class SkinArtRepaint {
     }
 
     /**
-     * 同一个 res 目录只处理一次。
+     * 同一个 res 目录 + 同一套签名只处理一次。
      *
      * <p>两条入口（提前扫描 / ini 路径）可能撞在一起：{@code scanEarly} 在后台线程跑，
      * H40 在解析线程跑。加锁 + DONE 集合，保证 17 张图不会被人同时写两遍。
+     *
+     * <p>注意 key 里带上了<b>当前设置签名</b>：以前只用路径去重，导致「换了皮肤预设但
+     * 同一个目录已经画过」时永远不再重画，屏幕停在上一套配色 —— 必须按签名区分。
      */
     private static void paintOnce(File statesParent) {
+        String path = statesParent.getAbsolutePath();
+        String key = path + "#" + configSig();
         synchronized (DONE) {
-            String key = statesParent.getAbsolutePath();
             if (DONE.contains(key)) return;
             DONE.add(key);
         }
         LAST_ROOT = statesParent;
         paintStates(statesParent);
+    }
+
+    /** 影响键面外观的全部设置（换皮肤 / 改圆角 / 开关玻璃高光都要重画）。 */
+    private static String configSig() {
+        return ART_VERSION + "|" + ModuleConfig.skinPreset()
+                + "|" + ModuleConfig.glassEnabled()
+                + "|" + ModuleConfig.edgeHighlightEnabled()
+                + "|" + ModuleConfig.keyRadiusPercent();
     }
 
     /**
@@ -172,6 +184,22 @@ public final class SkinArtRepaint {
             if (ctx == null || !ModuleConfig.themeSkinEnabled()) return;
             File base = ctx.getFilesDir();
             if (base == null) return;
+            // 冷启动时模块 App 的配置（ContentProvider）可能还没回来。若此刻就用默认 ios 画，
+            // 磁盘上会留下一套 iOS 键面，用户看到的就是「重启后变成 iOS」。
+            // 先等一会儿（有上限，绝不死等），等到了就用真实预设画。
+            if (!ConfigBridge.providerLoaded()) {
+                for (int i = 0; i < 40 && !ConfigBridge.providerLoaded(); i++) {
+                    try {
+                        Thread.sleep(50L);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+                HookRegistry.log("H73 scanEarly waited for config: providerLoaded="
+                        + ConfigBridge.providerLoaded() + " preset=" + ModuleConfig.skinPreset());
+            }
+            ConfigBridge.notePaintPreset(ModuleConfig.skinPreset());
             File res = findStatesDir(base, 0);
             if (res == null) return;
             paintOnce(res);
@@ -221,6 +249,7 @@ public final class SkinArtRepaint {
         File dir = new File(res, state);
         if (!dir.isDirectory()) return 0;
         String presetId = ModuleConfig.skinPreset();
+        ConfigBridge.notePaintPreset(presetId);
         String sig = ART_VERSION + "|" + presetId + "|" + (dark ? "d" : "l")
                 + "|" + ModuleConfig.glassEnabled()
                 + "|" + ModuleConfig.edgeHighlightEnabled()

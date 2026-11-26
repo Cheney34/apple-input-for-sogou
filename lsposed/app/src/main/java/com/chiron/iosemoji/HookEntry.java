@@ -18,6 +18,7 @@ import com.chiron.iosemoji.hook.KeyBgDrawableHook;
 import com.chiron.iosemoji.hook.KeyCapDrawHook;
 import com.chiron.iosemoji.hook.AssetSkinHook;
 import com.chiron.iosemoji.hook.MiuiBottomBarHook;
+import com.chiron.iosemoji.hook.PanelIosHook;
 import com.chiron.iosemoji.hook.SetKeyboardViewHook;
 import com.chiron.iosemoji.hook.SkinArtRepaint;
 import com.chiron.iosemoji.hook.ThemeSkinHook;
@@ -256,6 +257,8 @@ public class HookEntry implements IXposedHookLoadPackage {
         // 小米版能命中就命中；OPPO 等改名字的版本靠这一层也能改到皮肤。
         try {
             AssetSkinHook.install(cl);
+            // 面板 iOS 化（实验，默认关）：候选栏 / 长按气泡 / 表情面板
+            PanelIosHook.install(cl, sTargets);
         } catch (Throwable t) {
             HookRegistry.log("asset skin hook failed");
             HookRegistry.log(t);

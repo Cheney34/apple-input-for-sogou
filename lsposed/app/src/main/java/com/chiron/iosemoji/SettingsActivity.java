@@ -206,6 +206,19 @@ public class SettingsActivity extends Activity {
         addMonetSeedRow(look);
 
 
+        root.addView(IosUi.sectionHeader(this, "面板（实验）"));
+        LinearLayout panels = IosUi.card(this);
+        root.addView(panels, IosUi.cardParams(this));
+        addSwitch(panels, ModuleConfig.KEY_CANDIDATE_IOS, "候选栏 iOS 化",
+                "给候选栏容器加圆角、预设底色和一道发丝线（只改背景，不动布局与高度）。"
+                        + "实验功能，默认关；若出现候选栏错位/遮挡，关掉即可恢复。", true);
+        addSwitch(panels, ModuleConfig.KEY_POPUP_IOS, "长按气泡 iOS 化",
+                "长按按键时的放大气泡换成圆角 + 预设气泡底色（只改背景）。"
+                        + "实验功能，默认关；部分渠道找不到气泡类会自动跳过。", true);
+        addSwitch(panels, ModuleConfig.KEY_EMOJI_IOS, "表情面板 iOS 化",
+                "表情面板与表情键盘的底色换成所选皮肤（只改背景，不动分页与分组）。"
+                        + "实验功能，默认关。", true);
+
         root.addView(IosUi.sectionHeader(this, "表情"));
         LinearLayout emoji = IosUi.card(this);
         root.addView(emoji, IosUi.cardParams(this));

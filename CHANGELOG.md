@@ -1,3 +1,74 @@
+## v2.4.0-beta1 修掉「重启后先变回 iOS」+ 面板 iOS 化（实验，默认关）
+
+### ① 重启输入法后显示的是 iOS，不是用户选的皮肤 —— 根因与修法
+
+症状：把皮肤切成微信/Google/莫奈后，只要搜狗进程被系统拉起（重启手机、切换输入法、
+被清理后台后再唤起），第一屏永远是 iOS 配色；必须进模块 App 点一次「重启输入法」才对。
+
+根因是**时间差**，三处叠加：
+
+1. `skin_preset` 正常来自两条路：模块 App 的 `XSharedPreferences`（同步、但部分 ROM /
+   多用户环境读不到）与 ContentProvider（可靠、但查询是**异步**的）。
+2. `HookEntry.onAttached()` 起的后台线程 `SkinArtRepaint.scanEarly()`、以及搜狗第一次
+   解析皮肤 ini，都**早于** ContentProvider 返回 → `ModuleConfig.skinPreset()` 拿到默认
+   值 `ios`；
+3. `SkinArtRepaint` 的「已画过」集合 `DONE` 以前只用**目录路径**去重 → 用 iOS 画过一遍
+   之后，即使稍后配置回来了也不会再画；`paintState()` 里那个含预设名的 marker 签名
+   也拦不到这一层（`DONE` 先 return 了）。于是磁盘键面停在 iOS，ini 颜色也停在 iOS。
+
+修法（三条，互相兜底）：
+
+- **新增 `config/PresetStore.java`**：把「上一次确认生效的预设 / 圆角 / 莫奈主色」写进
+  搜狗进程自己的 `filesDir/chiron_skin_state.txt`。下次冷启动可**毫秒级同步读到**，
+  早于任何皮肤解析。`ModuleConfig.getString()` 的优先级变成
+  `运行中广播下发 > 本次落盘值 > XSharedPreferences > 默认值`。
+- **`ConfigBridge`**：①配置经广播下发后立刻 `PresetStore.save()`；
+  ②ContentProvider 回来后若发现「真实预设 ≠ 画键帽时用的预设」，自动
+  `ThemeSkinHook.dropCaches()`（重画磁盘键面 + 清位图缓存 + 清键帽缓存），并把新值落盘。
+  记录「画键帽那一刻用的预设」的是 `ConfigBridge.notePaintPreset()`。
+- **`SkinArtRepaint`**：`DONE` 的去重键从「路径」改成「路径 + 设置签名」
+  （`ART_VERSION|预设|玻璃|高光|圆角`），换皮肤必重画；`scanEarly()` 在配置还没回来时
+  **最多等 2 秒**（40×50ms，绝不死等），等到用真实预设画，等不到才用当前值。
+
+状态卡对应新增：`preset=` 在 `cfg` 段里（`RuntimeConfig.describe()`），
+日志行 `config provider: preset changed X -> Y，重画键帽`、`H73 scanEarly waited for config: ...`。
+
+### ② 面板 iOS 化（三个实验开关，默认全关）
+
+新增 `hook/PanelIosHook.java`（H80），只做一件事：给三类面板的 View **换背景**
+（圆角 + 预设底色 + 一道发丝线），**不改布局、不改测量、不加子 View**：
+
+| 开关（设置 → 面板（实验）） | 作用对象 | 取色 |
+| --- | --- | --- |
+| 候选栏 iOS 化 | `com.sohu.inputmethod.main.view.IMEInputCandidateViewContainer` | `preset.barBg` |
+| 长按气泡 iOS 化 | `com.sohu.inputmethod.sogou.KeyboardPopupView` / `AbsKeyPopupView` | `preset.popup` |
+| 表情面板 iOS 化 | `com.sogou.expressionplugin.expression.ExpressionViewContainer` / `...emoji.EmojiKeyboardView` | `preset.kbBg` |
+
+为什么默认关：这三处都是搜狗自己的 View，改背景属于"替搜狗重画 UI"，某个渠道对象树形状
+不同就可能出现键盘弹不出来。所以每个面板一个独立开关、类找不到就跳过并记日志、全程
+try/catch。状态卡新增 `panel=候选/表情/气泡/未找到类数`；三处都是 0 且「未找到」>0，
+说明这个渠道根本没有这些类（比如 vivo/OPPO 的部分视图类被重打包），此时开关无效属正常。
+
+### ③ 构建与验证
+
+- `build/v240b1/AppleInputForSogou_v2.4.0-beta1.apk` = **22,783,557 B**；
+  `package=com.chiron.iosemoji versionCode=77 versionName=2.4.0-beta1`，
+  label `Apple Input for Sogou`，证书 `CN=Android Debug`
+  SHA-256 `4fbf65ed205c4a25bb592673714533c5effbcd234b9c08ed1be20ad7bf53c207`（可覆盖升级）。
+- `classes.dex` = 215,980 B，`dexdump -f` 列出 **149 个类全部 `Lcom/chiron/iosemoji/*`**，
+  非 chiron 类 0（`de/robv` 只有类型引用、没有定义，符合预期）。
+- dex 里可查到 `config/PresetStore`、`hook/PanelIosHook`、`candidate_bar_ios_enabled`、
+  `popup_ios_enabled`、`emoji_panel_ios_enabled`、`H80 hooked `、
+  `scanEarly waited for config`、`config provider: preset changed`、`;panel=`。
+
+### 怎么验证
+
+1. 覆盖安装后进模块 App：外观 → 皮肤风格选「微信」，点「重启输入法」。
+2. 再杀掉搜狗（或重启手机 / 切到别的输入法再切回来）——**第一屏就该是微信**，
+   不需要再点重启。若仍是 iOS，请把状态卡里 `cfg` 段与 `preset=` 整行发我。
+3. 面板实验：分别打开三个开关 → 重启输入法 → 看候选栏/长按气泡/表情面板是否换成圆角底色；
+   任何一个出问题就单独关掉那一个（互不影响）。
+
 ## v2.3.3 圆角「其实没变化」的真根因：H72 被 H73 的假成功关掉了
 
 你说圆角其实没有变化。查下来是两个独立的门，任何一个都能让圆角一动不动。
@@ -1013,66 +1084,126 @@ v2.1.1 把 8 个新表情补进了搜狗的面板清单，但那只解决「面�
   而 H41 是按**图片路径**上色的，无法区分「这张图是给回车键用的」。需要真机回报 `acc=A/B` 与该皮肤 `[Key_Enter]` 段后再做 2.1.1。
 - 官方 / OPPO / vivo 的皮肤为**部分适配**；vivo 的皮肤类被重打包，位图入口尚未定位（可开 H50 兜底）。
 
-## v2.0.3-beta18 — 莫奈改按 Material 3 Expressive（2025）色阶
-
-### 为什么改
-- beta16 把色度压到「近中性」（底色 chroma ≤0.055），用户反馈**饱和度太低、对比度不够**：
-  键盘看起来是一块灰板，键帽和底几乎分不开。这符合 M3 的 2021 baseline，但不符合 2025 的 Expressive 方向。
-
-### 改法（`skin/MonetPalette.java`）
-- 色度档重定：`BG_CHROMA_RATIO=0.42`（底色取主色色度 42%，上限 0.16）、`KEY_CHROMA_RATIO=0.10`（键帽近中性，上限 0.05）、
-  `FUNC_CHROMA_RATIO=0.85`（功能键最饱和，上限 0.30）。
-- 角色对照（Expressive）：底 = `surfaceContainer`、键帽 = `surfaceContainerLowest`、按下 = `surfaceContainerHigh`、
-  功能键 = `secondaryContainer`、功能键文字 = `onSecondaryContainer`、正文 = `onSurface`、强调 = `primary`。
-- 明度阶梯：浅色 键 1.00 / 底 0.888 / 按下 0.828 / 功能键 0.880；深色 键 0.265 / 底 0.135 / 按下 0.335 / 功能键 0.300。
-- **对比度保底**：`KEY_MIN_LIGHT=1.28`、`KEY_MIN_DARK=1.55`，不足就把底色继续压暗（最多 20 档），不靠描边凑层次。
-- 系统动态色分支改读 `system_surface_container_lowest / _low / _highest`；若系统给的底与键帽拉不开
-  （浅色系统里常见同色），**不再硬用**，直接退回自派生色阶 —— 之前「对比度太低」就是这里来的。
-- 功能键按下色也改由同一色阶派生（`funcC × 0.85`）。
-
-### 与 beta17 的关系
-- beta17（微信发送键强调色 `accentEnter` + `IosSkin.KIND_ACCENT/glyphMask`）**未单独发版**，已包含在本版内。
-
-### 构建验证
-- APK `build/v203b18/AppleInputForSogou_v2.0.3-beta18.apk` = 22,758,981 B；
-  badging `com.chiron.iosemoji` / 58 / 2.0.3-beta18 / label `Apple Input for Sogou`；证书 `4fbf65ed…c207`。
-
-### 待验证
-- 六套主色在浅色/深色下的观感（脚本实测键/底亮度比：浅色 1.28–1.30、深色 1.55–1.60）。
-- 系统动态色可用时（Android 12+ 且壁纸取色正常）是否直接用系统 surface，不再二次染色。
-## v2.0.3-beta17 — 微信风格：发送键刷成强调色（按交接包选摘移植）
-
-### 来源
-- 用户提供的 `wechat-skin-handoff.zip`（`HANDOFF.txt` + `SkinPreset.java` + `IosSkin.java`）。
-- 该交接包**没有** `MonetPalette`（自带旧版 system_neutral 掺色实现）、也没有 `SOGOU_OLD`，
-  且 wechat 的配色值与本仓库 beta11 已一致，所以**不做整文件覆盖**，只选摘两处新增能力：
-  1. `SkinPreset.accentEnter` 字段（只有微信为 true，其余预设默认 false）；
-  2. `IosSkin.KIND_ACCENT` + `glyphMask`：强调键铺 accent 圆角底、把原图字形抠成对比色盖回。
-
-### 改法（`lsposed/app/src/main/java/com/chiron/iosemoji/skin/`）
-- `SkinPreset.java`：新增 `public final boolean accentEnter`；构造器加 18 参重载（17 参版本委托、默认 false），
-  `wechatLight()/wechatDark()` 传 `true`；其余工厂方法一行未动。
-- `IosSkin.java`：新增 `KIND_ACCENT = 4`、`ACCENT_KEYS`/`GLYPH_KEPT` 计数与 `accentKeys()/accentGlyphs()`；
-  `kindOf()` 在 `isBgImage` 之后、**`isProtected` 之前**判 `isAccentKey()`（否则 enter/return 被保护名单吃掉）；
-  `colorOfKind()` 增 `case KIND_ACCENT`（`!p.accentEnter` 时返回 0，调用方跳过 ⇒ 其他预设回到旧行为）；
-  `synth()` 增强调键分支（排在 `hasInk`/`opaqueRatio` 之前，因为这两个判据是「有字形就不动」，
-  而强调键要「留住字形、只换底」）；`patchIni()` 在 `accentEnter` 时把 `isAccentSection()` 命中的段
-  底色改 accent、`TEXT_COLOR(_PRESSED)` 改成对 accent 收口后的对比色。
-- 新增 `isAccentKey()`（只看名字，排除 `icon*`/`*_icon`/`voice`/`mic`/`smile`）、
-  `isAccentSection()`（段名含 enter/send/confirm，排除 candidate/cloud/popup）、
-  `glyphMask()`（亮度中位数二分，输出白字 + 透明底的蒙版；纯色图返回 null 只铺底不盖字）。
-
-### 构建验证
-- APK `build/v203b17/AppleInputForSogou_v2.0.3-beta17.apk` = 22,758,981 B；
-  badging `com.chiron.iosemoji` / 57 / 2.0.3-beta17 / label `Apple Input for Sogou`；证书 `4fbf65ed…c207`。
-- `classes.dex` 164,768 B：126 个类全部 `Lcom/chiron/iosemoji/*`，`de/robv` 定义 0；
-  串 `KIND_ACCENT`/`accentEnter`/`isAccentKey`/`isAccentSection`/`glyphMask`/`accentKeys`/`accentGlyphs` 均在。
-
-### 待验证
-- 微信风格下回车/发送键是否变绿且**字形仍在**（对比 `accentKeys` 与 `accentGlyphs` 两个计数，
-  前者明显大于后者说明有些键只铺了底、字形没保住）。
-- iOS / Google / 莫奈 / 搜狗经典 的发送键必须**保持原样**（它们 `accentEnter=false`）。
-
+## v2.0.3-beta18 — 莫奈改按 Material 3 Expressive（2025）色阶
+
+
+
+### 为什么改
+
+- beta16 把色度压到「近中性」（底色 chroma ≤0.055），用户反馈**饱和度太低、对比度不够**：
+
+  键盘看起来是一块灰板，键帽和底几乎分不开。这符合 M3 的 2021 baseline，但不符合 2025 的 Expressive 方向。
+
+
+
+### 改法（`skin/MonetPalette.java`）
+
+- 色度档重定：`BG_CHROMA_RATIO=0.42`（底色取主色色度 42%，上限 0.16）、`KEY_CHROMA_RATIO=0.10`（键帽近中性，上限 0.05）、
+
+  `FUNC_CHROMA_RATIO=0.85`（功能键最饱和，上限 0.30）。
+
+- 角色对照（Expressive）：底 = `surfaceContainer`、键帽 = `surfaceContainerLowest`、按下 = `surfaceContainerHigh`、
+
+  功能键 = `secondaryContainer`、功能键文字 = `onSecondaryContainer`、正文 = `onSurface`、强调 = `primary`。
+
+- 明度阶梯：浅色 键 1.00 / 底 0.888 / 按下 0.828 / 功能键 0.880；深色 键 0.265 / 底 0.135 / 按下 0.335 / 功能键 0.300。
+
+- **对比度保底**：`KEY_MIN_LIGHT=1.28`、`KEY_MIN_DARK=1.55`，不足就把底色继续压暗（最多 20 档），不靠描边凑层次。
+
+- 系统动态色分支改读 `system_surface_container_lowest / _low / _highest`；若系统给的底与键帽拉不开
+
+  （浅色系统里常见同色），**不再硬用**，直接退回自派生色阶 —— 之前「对比度太低」就是这里来的。
+
+- 功能键按下色也改由同一色阶派生（`funcC × 0.85`）。
+
+
+
+### 与 beta17 的关系
+
+- beta17（微信发送键强调色 `accentEnter` + `IosSkin.KIND_ACCENT/glyphMask`）**未单独发版**，已包含在本版内。
+
+
+
+### 构建验证
+
+- APK `build/v203b18/AppleInputForSogou_v2.0.3-beta18.apk` = 22,758,981 B；
+
+  badging `com.chiron.iosemoji` / 58 / 2.0.3-beta18 / label `Apple Input for Sogou`；证书 `4fbf65ed…c207`。
+
+
+
+### 待验证
+
+- 六套主色在浅色/深色下的观感（脚本实测键/底亮度比：浅色 1.28–1.30、深色 1.55–1.60）。
+
+- 系统动态色可用时（Android 12+ 且壁纸取色正常）是否直接用系统 surface，不再二次染色。
+
+## v2.0.3-beta17 — 微信风格：发送键刷成强调色（按交接包选摘移植）
+
+
+
+### 来源
+
+- 用户提供的 `wechat-skin-handoff.zip`（`HANDOFF.txt` + `SkinPreset.java` + `IosSkin.java`）。
+
+- 该交接包**没有** `MonetPalette`（自带旧版 system_neutral 掺色实现）、也没有 `SOGOU_OLD`，
+
+  且 wechat 的配色值与本仓库 beta11 已一致，所以**不做整文件覆盖**，只选摘两处新增能力：
+
+  1. `SkinPreset.accentEnter` 字段（只有微信为 true，其余预设默认 false）；
+
+  2. `IosSkin.KIND_ACCENT` + `glyphMask`：强调键铺 accent 圆角底、把原图字形抠成对比色盖回。
+
+
+
+### 改法（`lsposed/app/src/main/java/com/chiron/iosemoji/skin/`）
+
+- `SkinPreset.java`：新增 `public final boolean accentEnter`；构造器加 18 参重载（17 参版本委托、默认 false），
+
+  `wechatLight()/wechatDark()` 传 `true`；其余工厂方法一行未动。
+
+- `IosSkin.java`：新增 `KIND_ACCENT = 4`、`ACCENT_KEYS`/`GLYPH_KEPT` 计数与 `accentKeys()/accentGlyphs()`；
+
+  `kindOf()` 在 `isBgImage` 之后、**`isProtected` 之前**判 `isAccentKey()`（否则 enter/return 被保护名单吃掉）；
+
+  `colorOfKind()` 增 `case KIND_ACCENT`（`!p.accentEnter` 时返回 0，调用方跳过 ⇒ 其他预设回到旧行为）；
+
+  `synth()` 增强调键分支（排在 `hasInk`/`opaqueRatio` 之前，因为这两个判据是「有字形就不动」，
+
+  而强调键要「留住字形、只换底」）；`patchIni()` 在 `accentEnter` 时把 `isAccentSection()` 命中的段
+
+  底色改 accent、`TEXT_COLOR(_PRESSED)` 改成对 accent 收口后的对比色。
+
+- 新增 `isAccentKey()`（只看名字，排除 `icon*`/`*_icon`/`voice`/`mic`/`smile`）、
+
+  `isAccentSection()`（段名含 enter/send/confirm，排除 candidate/cloud/popup）、
+
+  `glyphMask()`（亮度中位数二分，输出白字 + 透明底的蒙版；纯色图返回 null 只铺底不盖字）。
+
+
+
+### 构建验证
+
+- APK `build/v203b17/AppleInputForSogou_v2.0.3-beta17.apk` = 22,758,981 B；
+
+  badging `com.chiron.iosemoji` / 57 / 2.0.3-beta17 / label `Apple Input for Sogou`；证书 `4fbf65ed…c207`。
+
+- `classes.dex` 164,768 B：126 个类全部 `Lcom/chiron/iosemoji/*`，`de/robv` 定义 0；
+
+  串 `KIND_ACCENT`/`accentEnter`/`isAccentKey`/`isAccentSection`/`glyphMask`/`accentKeys`/`accentGlyphs` 均在。
+
+
+
+### 待验证
+
+- 微信风格下回车/发送键是否变绿且**字形仍在**（对比 `accentKeys` 与 `accentGlyphs` 两个计数，
+
+  前者明显大于后者说明有些键只铺了底、字形没保住）。
+
+- iOS / Google / 莫奈 / 搜狗经典 的发送键必须**保持原样**（它们 `accentEnter=false`）。
+
+
+
 ## v2.0.3-beta16 — 莫奈底色改回「近中性」（上一版被主色染成了色布）
 
 ### 问题

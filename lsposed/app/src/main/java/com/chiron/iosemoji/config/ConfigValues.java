@@ -22,6 +22,11 @@ public final class ConfigValues {
             ModuleConfig.KEY_EMOJI_SWIPE,
             ModuleConfig.KEY_LOGO_TRIGGER,
 
+            // 面板 iOS 化（实验，默认关）
+            ModuleConfig.KEY_CANDIDATE_IOS,
+            ModuleConfig.KEY_POPUP_IOS,
+            ModuleConfig.KEY_EMOJI_IOS,
+
             ModuleConfig.KEY_CANDIDATE_PROBE,
             ModuleConfig.KEY_DIAGNOSTICS,
     };
@@ -46,6 +51,9 @@ public final class ConfigValues {
             case ModuleConfig.KEY_ASSET_SKIN:
             case ModuleConfig.KEY_ASSET_SKIN_IMAGES:
             case ModuleConfig.KEY_DIAGNOSTICS:
+            case ModuleConfig.KEY_CANDIDATE_IOS:
+            case ModuleConfig.KEY_POPUP_IOS:
+            case ModuleConfig.KEY_EMOJI_IOS:
                 return false;
             default:
                 return false;
@@ -82,6 +90,12 @@ public final class ConfigValues {
                 return "快捷码";
             case ModuleConfig.KEY_DIAGNOSTICS:
                 return "视图树诊断";
+            case ModuleConfig.KEY_CANDIDATE_IOS:
+                return "候选栏 iOS 化";
+            case ModuleConfig.KEY_POPUP_IOS:
+                return "长按气泡 iOS 化";
+            case ModuleConfig.KEY_EMOJI_IOS:
+                return "表情面板 iOS 化";
             default:
                 return key;
         }

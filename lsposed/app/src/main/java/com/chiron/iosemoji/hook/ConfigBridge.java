@@ -13,6 +13,7 @@ import com.chiron.iosemoji.compat.Targets;
 import com.chiron.iosemoji.Protocol;
 import com.chiron.iosemoji.config.ConfigValues;
 import com.chiron.iosemoji.config.ModuleConfig;
+import com.chiron.iosemoji.config.PresetStore;
 import com.chiron.iosemoji.config.RuntimeConfig;
 import com.chiron.iosemoji.core.HookState;
 
@@ -43,6 +44,17 @@ public final class ConfigBridge {
 
     /** 配置发生变化后要重做的事（补装 hook 等），由 HookEntry 在 attach 时注入。 */
     private static volatile Runnable sOnConfigChanged;
+
+    /**
+     * 「画键帽那一刻用的预设」。冷启动时磁盘键面是按它画的；等 ContentProvider 回来若发现
+     * 真实预设不同，就据此判断要不要重画 —— 这是「重启后先显示 iOS、要再手动重启才对」的补丁点。
+     */
+    private static final java.util.concurrent.atomic.AtomicReference<String> PRESET_AT_PAINT =
+            new java.util.concurrent.atomic.AtomicReference<>();
+
+    public static void notePaintPreset(String preset) {
+        if (preset != null) PRESET_AT_PAINT.set(preset);
+    }
 
     private ConfigBridge() {
     }
@@ -75,6 +87,8 @@ public final class ConfigBridge {
                         MiuiBottomBarHook.reapply();
                         // 液态玻璃开了/关了要立刻在这块面板上生效（不用等下次弹键盘）
                         HyperGlassHook.reapply();
+                        // 记下落盘：下次冷启动第一帧就能用对皮肤（不必再手动重启）
+                        PresetStore.save(ctx);
                                     setResultCode(Protocol.RESULT_OK);
                         setResultData(state(ctx));
                         runConfigCallback();
@@ -176,6 +190,8 @@ public final class ConfigBridge {
         sb.append(';').append(ThemeSkinHook.stateFields());
         // 液态玻璃：blur=ok 说明澎湃实时模糊真的挂上了；其它值就是被哪一步挡住（一句话原因）
         sb.append(";blur=").append(HyperGlassHook.status());
+        // 面板 iOS 化（H80）：接管次数/未找到类数，全 0 且 miss>0 说明这个渠道没有这些类
+        sb.append(";panel=").append(PanelIosHook.state());
         String unmatched = ThemeSkinHook.unmatchedNames();
         if (unmatched.length() > 0) sb.append(";skip=").append(unmatched);
         String seen = ThemeSkinHook.seenNames();
@@ -220,6 +236,7 @@ public final class ConfigBridge {
             @Override
             public void run() {
                 try {
+                    if (PRESET_AT_PAINT.get() == null) PRESET_AT_PAINT.set(ModuleConfig.skinPreset());
                     Uri uri = Uri.parse("content://" + Protocol.CFG_AUTHORITY + "/config");
                     ContentResolver cr = app.getContentResolver();
                     Cursor cursor = cr.query(uri, null, null, null, null);
@@ -255,6 +272,21 @@ public final class ConfigBridge {
                         HookRegistry.log("config provider: loaded " + n + " keys -> "
                                 + RuntimeConfig.describe());
                         PROVIDER_DONE.set(true);
+                        // 拿到的可能和冷启动时用的默认值不一样：重画磁盘键面 + 丢缓存，免手动重启
+                        String before = PRESET_AT_PAINT.get();
+                        String now = ModuleConfig.skinPreset();
+                        if (before != null && !before.equals(now)) {
+                            HookRegistry.log("config provider: preset changed " + before + " -> " + now
+                                    + "，重画键帽");
+                            try {
+                                ThemeSkinHook.dropCaches();
+                            } catch (Throwable t) {
+                                HookRegistry.log("dropCaches failed: " + t);
+                            }
+                        }
+                        PRESET_AT_PAINT.set(now);
+                        // 落盘：下次冷启动第一帧就用对皮肤
+                        PresetStore.save(app);
                         runConfigCallback();
                     } finally {
                         cursor.close();

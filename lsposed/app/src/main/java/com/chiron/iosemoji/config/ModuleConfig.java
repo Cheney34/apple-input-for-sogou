@@ -100,6 +100,14 @@ public final class ModuleConfig {
 
     public static final String KEY_ASSET_SKIN_IMAGES = "asset_skin_images_enabled";
 
+    // ── 面板 iOS 化（实验功能，默认全关）──────────────────────────────────
+    /** 候选栏圆角 + 预设底色（H80）。 */
+    public static final String KEY_CANDIDATE_IOS = "candidate_bar_ios_enabled";
+    /** 长按气泡圆角/底色（H80）。 */
+    public static final String KEY_POPUP_IOS = "popup_ios_enabled";
+    /** 表情面板圆角/底色（H80）。 */
+    public static final String KEY_EMOJI_IOS = "emoji_panel_ios_enabled";
+
     private static volatile XSharedPreferences sPrefs;
     private static final Object LOCK = new Object();
 
@@ -165,7 +173,10 @@ public final class ModuleConfig {
         // 优先级 1：设置页广播下发的覆盖值
         String live = RuntimeConfig.getString(key);
         if (live != null) return live;
-        // 优先级 2：XSharedPreferences
+        // 优先级 2：本进程落盘的「上次生效值」——冷启动时它比 XSharedPreferences / ContentProvider 都早
+        String cached = cachedValue(key);
+        if (cached != null && cached.length() > 0) return cached;
+        // 优先级 3：XSharedPreferences
         try {
             XSharedPreferences p = prefs();
             if (p == null) return def;
@@ -174,6 +185,17 @@ public final class ModuleConfig {
         } catch (Throwable t) {
             return def;
         }
+    }
+
+    /** 本进程落盘的「上次生效值」；只对三个字符串键有效。 */
+    private static String cachedValue(String key) {
+        try {
+            if (KEY_SKIN_PRESET.equals(key)) return PresetStore.preset();
+            if (KEY_KEY_RADIUS.equals(key)) return PresetStore.radius();
+            if (KEY_MONET_SEED.equals(key)) return PresetStore.monetSeed();
+        } catch (Throwable ignored) {
+        }
+        return null;
     }
 
     /** 当前皮肤预设 id（{@code ios}/{@code wechat}/{@code google}/{@code monet}）。 */
@@ -258,6 +280,19 @@ public final class ModuleConfig {
 
     public static boolean assetSkinImagesEnabled() {
         return assetSkinEnabled() && getBoolean(KEY_ASSET_SKIN_IMAGES, false);
+    }
+
+    // ── 面板 iOS 化（实验），默认全关 ─────────────────────────────────────
+    public static boolean candidateBarIosEnabled() {
+        return masterEnabled() && getBoolean(KEY_CANDIDATE_IOS, false);
+    }
+
+    public static boolean popupIosEnabled() {
+        return masterEnabled() && getBoolean(KEY_POPUP_IOS, false);
+    }
+
+    public static boolean emojiPanelIosEnabled() {
+        return masterEnabled() && getBoolean(KEY_EMOJI_IOS, false);
     }
 
     /** 设置页写入的快捷方法（由模块自己的 UI 进程调用）。 */
